@@ -6,35 +6,23 @@ const path = require("path");
 
 // Usage: node scripts/create-registry-json.js <item-name> <item-title> <item-description> [category] [tags]
 // Usage: node scripts/create-registry-json.js --all
-const [, , firstArg, itemTitle, itemDescription, itemCategory, itemTags] = process.argv;
+const [, , firstArg, itemTitle, itemDescription, itemCategory, itemTags] =
+  process.argv;
 
 if (!firstArg) {
   console.error(
-    "Usage: node scripts/create-registry-json.js <item-name> [title] [description] [category] [tags]"
+    "Usage: node scripts/create-registry-json.js <item-name> [title] [description] [category] [tags]",
   );
   console.error("       node scripts/create-registry-json.js --all");
   console.error("Examples:");
-  console.error("  node scripts/create-registry-json.js login-form \"Login Form\" \"A login form component\" authentication \"form,login,auth\"");
+  console.error(
+    '  node scripts/create-registry-json.js login-form "Login Form" "A login form component" authentication "form,login,auth"',
+  );
   process.exit(1);
 }
 
 const isAllFlag = firstArg === "--all";
 const itemName = isAllFlag ? null : firstArg;
-
-// Type mapping configuration
-const TYPE_MAPPINGS = {
-  components: "component",
-  blocks: "block",
-  themes: "theme",
-  ui: "ui",
-};
-
-const REGISTRY_TYPE_MAPPINGS = {
-  component: "registry:component",
-  block: "registry:block",
-  theme: "registry:theme",
-  ui: "registry:ui",
-};
 
 function scanRegistryFiles(dir = null) {
   const registryPath = dir || path.join(process.cwd(), "registry");
@@ -58,7 +46,7 @@ function scanRegistryFiles(dir = null) {
       }
     } catch (error) {
       console.warn(
-        `Warning: Could not read directory ${currentPath}: ${error.message}`
+        `Warning: Could not read directory ${currentPath}: ${error.message}`,
       );
     }
   }
@@ -70,23 +58,7 @@ function scanRegistryFiles(dir = null) {
   return files;
 }
 
-function inferTypeFromPath(filePath) {
-  const registryPath = path.join(process.cwd(), "registry");
-  const relativePath = path.relative(registryPath, filePath);
-  const pathSegments = relativePath.split(path.sep);
-
-  // First segment after registry/ is the type directory
-  const typeDir = pathSegments[0];
-
-  // Use mapping if available, otherwise use the directory name directly
-  return TYPE_MAPPINGS[typeDir] || typeDir;
-}
-
-function getRegistryType(type) {
-  return REGISTRY_TYPE_MAPPINGS[type] || `registry:${type}`;
-}
-
-function findAllRelatedFiles(itemPath, itemName, type) {
+function findAllRelatedFiles(itemPath, itemName) {
   const itemDir = path.dirname(itemPath);
   const registryPath = path.join(process.cwd(), "registry");
   const allFiles = [];
@@ -108,14 +80,13 @@ function findAllRelatedFiles(itemPath, itemName, type) {
           allFiles.push({
             path: fullPath,
             relativePath: relativePath,
-            type: type,
             name: itemName,
           });
         }
       }
     } catch (error) {
       console.warn(
-        `Warning: Could not read directory ${dirPath}: ${error.message}`
+        `Warning: Could not read directory ${dirPath}: ${error.message}`,
       );
     }
   }
@@ -133,14 +104,12 @@ function findMatchingFiles(name) {
 
     // Check if this file matches the name we're looking for
     if (fileName === name) {
-      const type = inferTypeFromPath(filePath);
       const registryPath = path.join(process.cwd(), "registry");
       const relativePath = path.relative(registryPath, filePath);
 
       matches.push({
         path: filePath,
         relativePath: relativePath,
-        type: type,
         name: fileName,
       });
     }
@@ -155,7 +124,6 @@ function getAllRegistryItems() {
 
   for (const filePath of allFiles) {
     const fileName = path.basename(filePath, path.extname(filePath));
-    const type = inferTypeFromPath(filePath);
     const registryPath = path.join(process.cwd(), "registry");
     const relativePath = path.relative(registryPath, filePath);
     const pathSegments = relativePath.split(path.sep);
@@ -183,7 +151,6 @@ function getAllRegistryItems() {
       registryItems.set(registryItemName, {
         path: filePath,
         relativePath: relativePath,
-        type: type,
         name: registryItemName,
       });
     }
@@ -211,12 +178,18 @@ function extractDependencies(content) {
   return Array.from(dependencies);
 }
 
-function processRegistryFile(fileInfo, title = null, description = null, category = null, tags = null) {
-  const { path: filePath, type, name } = fileInfo;
+function processRegistryFile(
+  fileInfo,
+  title = null,
+  description = null,
+  category = null,
+  tags = null,
+) {
+  const { path: filePath, name } = fileInfo;
   const OUTPUT_PATH = path.join(process.cwd(), "public", "r", `${name}.json`);
 
   // Find all related files in the same directory structure
-  const allRelatedFiles = findAllRelatedFiles(filePath, name, type);
+  const allRelatedFiles = findAllRelatedFiles(filePath, name);
 
   // Extract dependencies from all files
   const allDependencies = new Set();
@@ -231,14 +204,17 @@ function processRegistryFile(fileInfo, title = null, description = null, categor
       fileDependencies.forEach((dep) => allDependencies.add(dep));
 
       // Add to files array
+      // Convert registry path to target path with src/mui-plus prefix
+      const targetPath = fileData.relativePath.replace(/^/, "src/mui-plus/");
       files.push({
         path: fileData.relativePath,
+        target: targetPath,
         content: content,
-        type: getRegistryType(type),
+        type: "registry:item",
       });
     } catch (error) {
       console.warn(
-        `Warning: Could not read file ${fileData.path}: ${error.message}`
+        `Warning: Could not read file ${fileData.path}: ${error.message}`,
       );
     }
   }
@@ -252,7 +228,7 @@ function processRegistryFile(fileInfo, title = null, description = null, categor
       existingJson = JSON.parse(fs.readFileSync(OUTPUT_PATH, "utf-8"));
     } catch (error) {
       console.warn(
-        `Warning: Could not parse existing JSON file: ${error.message}`
+        `Warning: Could not parse existing JSON file: ${error.message}`,
       );
     }
   }
@@ -276,23 +252,23 @@ function processRegistryFile(fileInfo, title = null, description = null, categor
   } else if (existingJson && existingJson.description) {
     finalDescription = existingJson.description;
   } else {
-    finalDescription = `A ${name} ${type}.`;
+    finalDescription = `A ${name} item.`;
   }
-
-  // Get registry type
-  const registryType = getRegistryType(type);
 
   // Determine category, tags, and previewMode
   let finalCategory, finalTags, finalPreviewMode;
-  
+
   if (category) {
     finalCategory = category;
   } else if (existingJson && existingJson.meta && existingJson.meta.category) {
     finalCategory = existingJson.meta.category;
   }
-  
+
   if (tags) {
-    finalTags = tags.split(',').map(tag => tag.trim()).filter(Boolean);
+    finalTags = tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
   } else if (existingJson && existingJson.meta && existingJson.meta.tags) {
     finalTags = existingJson.meta.tags;
   }
@@ -306,7 +282,7 @@ function processRegistryFile(fileInfo, title = null, description = null, categor
   const registryJson = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: name,
-    type: registryType,
+    type: "registry:item",
     title: finalTitle,
     description: finalDescription,
     dependencies: dependencies,
@@ -338,11 +314,9 @@ function processRegistryFile(fileInfo, title = null, description = null, categor
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(registryJson, null, 2));
 
   console.log(
-    `✓ ${existingJson ? "Updated" : "Created"} registry JSON: ${OUTPUT_PATH}`
+    `✓ ${existingJson ? "Updated" : "Created"} registry JSON: ${OUTPUT_PATH}`,
   );
-  console.log(
-    `  ${type.charAt(0).toUpperCase() + type.slice(1)}: ${registryJson.title}`
-  );
+  console.log(`  Item: ${registryJson.title}`);
   console.log(`  Files: ${files.length} file(s) included`);
   console.log(`  Dependencies: ${dependencies.join(", ")}`);
 
@@ -368,9 +342,11 @@ function createRegistryJson(name, title, description, category, tags) {
 
   matches.forEach((match, index) => {
     console.log(
-      `\n[${index + 1}/${matches.length}] Processing: ${match.relativePath}`
+      `\n[${index + 1}/${matches.length}] Processing: ${match.relativePath}`,
     );
-    results.push(processRegistryFile(match, title, description, category, tags));
+    results.push(
+      processRegistryFile(match, title, description, category, tags),
+    );
   });
 
   return results;
@@ -382,9 +358,7 @@ function processAllRegistries() {
 
   allItems.forEach((itemInfo, index) => {
     console.log(
-      `\n[${index + 1}/${allItems.length}] Processing: ${itemInfo.name} (${
-        itemInfo.type
-      })`
+      `\n[${index + 1}/${allItems.length}] Processing: ${itemInfo.name}`,
     );
     processRegistryFile(itemInfo);
   });
@@ -396,5 +370,11 @@ function processAllRegistries() {
 if (isAllFlag) {
   processAllRegistries();
 } else {
-  createRegistryJson(itemName, itemTitle, itemDescription, itemCategory, itemTags);
+  createRegistryJson(
+    itemName,
+    itemTitle,
+    itemDescription,
+    itemCategory,
+    itemTags,
+  );
 }

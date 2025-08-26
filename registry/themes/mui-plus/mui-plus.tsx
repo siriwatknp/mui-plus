@@ -2,6 +2,7 @@
 import {
   createTheme,
   unstable_createBreakpoints as createBreakpoints,
+  ThemeProvider,
 } from "@mui/material/styles";
 import type {} from "@mui/material/themeCssVarsAugmentation";
 import { buttonTheme } from "./components/button";
@@ -231,15 +232,8 @@ const theme = createTheme({
     ...controlsTheme,
   },
   typography: {
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-    ].join(","),
+    fontFamily:
+      'var(--font-primary, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif)',
     h1: h1Styles,
     h2: h2Styles,
     h3: h3Styles,
@@ -278,5 +272,13 @@ const theme = createTheme({
     "0 58px 82px -11px rgb(0 0 0 / 0.26), 0 21px 40px -11px rgb(0 0 0 / 0.22)",
   ],
 });
+
+export function MuiPlusThemeProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+}
 
 export default theme;

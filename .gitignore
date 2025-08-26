@@ -43,3 +43,5 @@ next-env.d.ts
 # generated at build time
 public/r/registry.json 
 .playwright-mcp
+
+examples/**/pnpm-lock.yaml
