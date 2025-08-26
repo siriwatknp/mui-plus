@@ -205,7 +205,19 @@ function processRegistryFile(
 
       // Add to files array
       // Convert registry path to target path with src/mui-plus prefix
-      const targetPath = fileData.relativePath.replace(/^/, "src/mui-plus/");
+      // Special handling for themes folder - use src/mui-plus/theme instead of src/mui-plus/themes
+      let targetPath = fileData.relativePath;
+      if (targetPath.startsWith("themes/")) {
+        // Remove "themes/[theme-name]/" and replace with "src/mui-plus/theme/"
+        // e.g., "themes/mui-plus/components/alert.ts" -> "src/mui-plus/theme/components/alert.ts"
+        targetPath = targetPath.replace(
+          /^themes\/[^\/]+\//,
+          "src/mui-plus/theme/",
+        );
+      } else {
+        // For non-theme files, just prepend src/mui-plus/
+        targetPath = "src/mui-plus/" + targetPath;
+      }
       files.push({
         path: fileData.relativePath,
         target: targetPath,

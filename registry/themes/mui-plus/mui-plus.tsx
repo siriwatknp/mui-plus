@@ -5,24 +5,24 @@ import {
   ThemeProvider,
 } from "@mui/material/styles";
 import type {} from "@mui/material/themeCssVarsAugmentation";
-import { buttonTheme } from "./components/button";
-import { textFieldTheme } from "./components/text-field";
-import { selectTheme } from "./components/select";
-import { autocompleteTheme } from "./components/autocomplete";
-import { chipTheme } from "./components/chip";
-import { avatarTheme } from "./components/avatar";
-import { menuTheme } from "./components/menu";
-import { tableTheme } from "./components/table";
-import { cardTheme } from "./components/card";
-import { dialogTheme } from "./components/dialog";
-import { datePickerTheme } from "./components/date-picker";
-import { svgIconTheme } from "./components/svg-icon";
-import { dataGridTheme } from "./components/data-grid";
-import { alertTheme } from "./components/alert";
-import { treeViewTheme } from "./components/tree-view";
-import { layoutTheme } from "./components/layout";
-import { linkTheme } from "./components/link";
-import { controlsTheme } from "./components/controls";
+import { buttonTheme } from "./categories/button";
+import { textFieldTheme } from "./categories/text-field";
+import { selectTheme } from "./categories/select";
+import { autocompleteTheme } from "./categories/autocomplete";
+import { chipTheme } from "./categories/chip";
+import { avatarTheme } from "./categories/avatar";
+import { menuTheme } from "./categories/menu";
+import { tableTheme } from "./categories/table";
+import { cardTheme } from "./categories/card";
+import { dialogTheme } from "./categories/dialog";
+import { datePickerTheme } from "./categories/date-picker";
+import { svgIconTheme } from "./categories/svg-icon";
+import { dataGridTheme } from "./categories/data-grid";
+import { alertTheme } from "./categories/alert";
+import { treeViewTheme } from "./categories/tree-view";
+import { layoutTheme } from "./categories/layout";
+import { linkTheme } from "./categories/link";
+import { controlsTheme } from "./categories/controls";
 
 // Augment the palette to include custom 'text' property
 declare module "@mui/material/styles" {
