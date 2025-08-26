@@ -2,9 +2,13 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "preference-settings",
   "type": "registry:block",
-  "title": "sidebar-navigation",
+  "title": "Preference Settings",
   "description": "A clean settings panel with various preference options including selects and toggles",
-  "dependencies": ["@mui/material", "@emotion/react", "@emotion/styled"],
+  "dependencies": [
+    "@mui/material",
+    "@emotion/react",
+    "@emotion/styled"
+  ],
   "registryDependencies": [],
   "files": [
     {
@@ -16,6 +20,8 @@
   "meta": {
     "screenshot": "/screenshots/preference-settings.png",
     "category": "dashboard",
-    "tags": ["form"]
+    "tags": [
+      "form"
+    ]
   }
 }
