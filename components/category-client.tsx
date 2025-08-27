@@ -7,6 +7,7 @@ import { RegistryItem } from "@/lib/registry";
 import TagFilter from "@/components/tag-filter";
 import { OpenInV0Button } from "@/components/open-in-v0-button";
 import { ExternalLinkIcon, Copy, Check, Terminal } from "lucide-react";
+import { useColorScheme } from "@mui/material/styles";
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -108,8 +109,11 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
   const [activeTab, setActiveTab] = useState<string>("preview");
   const [SyntaxHighlighter, setSyntaxHighlighter] = useState<{
     Component: React.ComponentType<SyntaxHighlighterProps>;
+    lightStyle: Record<string, React.CSSProperties>;
+    darkStyle: Record<string, React.CSSProperties>;
   } | null>(null);
   const panelRef = useRef<ImperativePanelHandle | null>(null);
+  const { mode, systemMode } = useColorScheme();
 
   const handleCopy = async (content: string, index: number) => {
     await navigator.clipboard.writeText(content);
@@ -130,11 +134,19 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
     // Dynamically import syntax highlighter when code tab is first accessed
     if (value === "code" && !SyntaxHighlighter) {
       try {
-        const syntaxHighlighterModule = (await import(
-          "react-syntax-highlighter"
-        )) as { Prism: React.ComponentType<SyntaxHighlighterProps> };
+        const [syntaxHighlighterModule, stylesModule] = await Promise.all([
+          import("react-syntax-highlighter") as Promise<{
+            Prism: React.ComponentType<SyntaxHighlighterProps>;
+          }>,
+          import("react-syntax-highlighter/dist/esm/styles/prism") as Promise<{
+            oneLight: Record<string, React.CSSProperties>;
+            oneDark: Record<string, React.CSSProperties>;
+          }>,
+        ]);
         setSyntaxHighlighter({
           Component: syntaxHighlighterModule.Prism,
+          lightStyle: stylesModule.oneLight,
+          darkStyle: stylesModule.oneDark,
         });
       } catch (error) {
         console.error("Failed to load syntax highlighter:", error);
@@ -234,11 +246,15 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
                         ? "tsx"
                         : "jsx"
                     }
+                    style={
+                      (systemMode || mode) === "dark"
+                        ? SyntaxHighlighter.darkStyle
+                        : SyntaxHighlighter.lightStyle
+                    }
                     customStyle={{
                       margin: 0,
                       padding: "16px",
                       fontSize: "12px",
-                      backgroundColor: "var(--background)",
                     }}
                     showLineNumbers
                   >
