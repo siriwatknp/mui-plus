@@ -1,24 +1,31 @@
-"use client";
-
 import * as React from "react";
-import { Box, Typography, Button, Chip, Stack } from "@mui/material";
+import { Suspense } from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  Chip,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
 import { AppHeader } from "@/components/app-header";
+import { GettingStartedContent } from "@/components/getting-started-content";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
       <AppHeader />
-      
+
       {/* Hero Section */}
       <Box
-        component="main"
+        component="section"
         sx={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: "calc(100vh - 73px)",
+          minHeight: "max(calc(60vh - 73px), 560px)",
           px: 3,
           textAlign: "center",
         }}
@@ -64,7 +71,9 @@ export default function Home() {
             maxWidth: "60ch",
           }}
         >
-          Hand-crafted MUI theme that isn&apos;t outdated. Build modern, accessible interfaces with our carefully designed components and thoughtful customizations.
+          Hand-crafted MUI theme that isn&apos;t outdated. Build modern,
+          accessible interfaces with our carefully designed components and
+          thoughtful customizations.
         </Typography>
 
         {/* Action Buttons */}
@@ -109,6 +118,17 @@ export default function Home() {
           </Button>
         </Stack>
       </Box>
+
+      {/* Getting Started Section */}
+      <Suspense
+        fallback={
+          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+            <CircularProgress />
+          </Box>
+        }
+      >
+        <GettingStartedContent />
+      </Suspense>
     </Box>
   );
 }

@@ -17,20 +17,6 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
     notFound();
   }
 
-  // Extract component code from the first file
-  const componentFile = item.files.find(
-    (file) =>
-      file.type === "registry:block" || file.type === "registry:component"
-  );
-
-  if (!componentFile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Component code not found</p>
-      </div>
-    );
-  }
-
   // Extract the component path from the first file
   const componentPath = item.files[0].path.replace(".tsx", "");
 
