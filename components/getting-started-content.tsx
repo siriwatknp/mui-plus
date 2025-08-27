@@ -45,7 +45,7 @@ export async function GettingStartedContent() {
 
   return (
     <section className="py-16 md:py-24 bg-white dark:bg-gray-900">
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="container mx-auto px-4 max-w-4xl">
         <div className="prose dark:prose-invert max-w-none">
           <MDXRemote source={source} components={components} />
         </div>

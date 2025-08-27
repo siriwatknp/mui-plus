@@ -7,7 +7,8 @@ It aims to be goto solution for building your next MUI project.
 ## Quick Start
 
 ```bash
-npx create-next-app@latest mui-plus-starter -e https://github.com/siriwatknp/mui-plus/tree/main/examples/nextjs
+npx create-next-app@latest mui-plus-starter \
+  -e https://github.com/siriwatknp/mui-plus/tree/main/examples/nextjs
 ```
 
 > Replace `mui-plus-starter` with your project name.
