@@ -6,24 +6,11 @@ It aims to be goto solution for building your next MUI project.
 
 ## Quick Start
 
-### Using curl (Recommended)
-
 ```bash
-curl -L https://github.com/siriwatknp/mui-plus/archive/main.tar.gz | tar -xz --strip=2 mui-plus-main/examples/nextjs
-cd nextjs
-pnpm install
-pnpm dev
+npx create-next-app@latest mui-plus-starter -e https://github.com/siriwatknp/mui-plus/tree/main/examples/nextjs
 ```
 
-### Using git
-
-```bash
-git clone https://github.com/siriwatknp/mui-plus.git
-cp -r mui-plus/examples/nextjs my-app
-cd my-app
-pnpm install
-pnpm dev
-```
+> Replace `mui-plus-starter` with your project name.
 
 ### Stack Overview
 
