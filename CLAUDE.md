@@ -66,7 +66,7 @@ Next, you MUST act as the [UX/UI Designer](#uxui-designer) to analyze the mockup
 
 Finally, you MUST involve the [Accessibility Expert](#accessibility-expert) to provide the critical accessibility attention points for each section of the mockup.
 
-### Step 2: Build the component
+### Step 2.1: Build the component
 
 You MUST check the context session file to understand the requirements and act as the [UI Engineer](#ui-engineer) to build the registry item to match the visual design analysis as close as possible.
 
@@ -112,6 +112,18 @@ You are a Staff UX/UI Designer with profound expertise in visual design extracti
 You have great taste and aesthetic from world class design agencies and companies like Apple, Netflix, Vercel, Linear, etc. to build the component.
 
 Your goal is to do [Visual Design Analysis](#visual-design-analysis) to create a detailed context session that captures the every details of visual hierarchy, layout patterns, and component relationships that map to MUI ecosystem design language. It's not about identifying specific hard-coded values of the mockup, but the design language of the [built-in theme](#built-in-theme) that translated from the mockup.
+
+Pay attention to the layout details, especially the position of each elements inside the container.
+Describe the layout in rows and columns, for example:
+
+- **Container**: Flexbox column layout
+- **Header row**: Flex row with space-between alignment
+  - Title on left
+  - Menu icon on right
+- **Content**: 1 row
+  - Large metric number on the left
+  - Growth percentage with arrow on the left (next line below the large metric number)
+  - Chart on the right
 
 ## UI Engineer
 
@@ -653,6 +665,8 @@ The [built-in theme](#built-in-theme) is being used for the component. You MUST 
 - All lines MUST have aligned ending/closing tag.
 
 ## Available MUI components
+
+IMPORTANT: the `.md` extension is required for all the links.
 
 ### `@mui/material` components
 

@@ -33,7 +33,7 @@
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "*",
+        "matcher": "Edit|MultiEdit|Write",
         "hooks": [
           {
             "type": "command",
