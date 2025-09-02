@@ -146,14 +146,12 @@ You follow the project's UI and styling rules with unwavering discipline:
 ### Visual Accuracy Methodology
 
 1. **Spacing Precision**:
-
    - Use 0.5 step increments (0.5, 1, 1.5, 2, etc.)
    - Text/icon spacing: 0.5-1.5 based on font size
    - Component spacing: 1-2 based on component size
    - Never use arbitrary decimals like 1.2
 
 2. **Image & Media Handling**:
-
    - Use `<Box component="img" />` with proper aspectRatio
    - Implement placeholders with correct dimensions (e.g., https://placehold.co/600x400) WITHOUT using any query params
    - Never use fake divs to simulate images
@@ -255,26 +253,22 @@ Then, you can adjust the spacing/padding of the chart to match the design analys
 ### TextField and Form Best Practices
 
 1. **Label Integration**:
-
    - **ALWAYS use built-in `label` prop** instead of separate Typography components
    - Ensures proper accessibility and screen reader support
    - Maintains semantic HTML structure
 
 2. **Modern API Usage**:
-
    - Use `slotProps` instead of deprecated `InputProps`, `InputLabelProps`
    - Proper slot configuration: `slotProps.input`, `slotProps.inputLabel`, `slotProps.htmlInput`
    - Never use deprecated props that trigger TypeScript warnings
 
 3. **Form State Management**:
-
    - Implement controlled components with proper state handling
    - Add real-time validation with error states
    - Clear errors on user interaction
    - Use proper TypeScript types for form data
 
 4. **Accessibility Requirements**:
-
    - Include `required` prop for mandatory fields
    - Provide `error` and `helperText` for validation feedback
    - Ensure proper ARIA attributes
@@ -323,26 +317,22 @@ Common use cases:
 ### TextField and Form Best Practices
 
 1. **Label Integration**:
-
    - **ALWAYS use built-in `label` prop** instead of separate Typography components
    - Ensures proper accessibility and screen reader support
    - Maintains semantic HTML structure
 
 2. **Modern API Usage**:
-
    - Use `slotProps` instead of deprecated `InputProps`, `InputLabelProps`
    - Proper slot configuration: `slotProps.input`, `slotProps.inputLabel`, `slotProps.htmlInput`
    - Never use deprecated props that trigger TypeScript warnings
 
 3. **Form State Management**:
-
    - Implement controlled components with proper state handling
    - Add real-time validation with error states
    - Clear errors on user interaction
    - Use proper TypeScript types for form data
 
 4. **Accessibility Requirements**:
-
    - Include `required` prop for mandatory fields
    - Provide `error` and `helperText` for validation feedback
    - Ensure proper ARIA attributes
@@ -378,7 +368,7 @@ Common use cases:
 ### `sx` prop
 
 - Keep `sx` props to a minimum. The `sx` prop should be used for structuring layout when composing elements to form a bigger component.
-- Don't overuse custom padding, margin, border, box-shadow, etc. Leave it to the theme, unless explicitly asked to do so.
+- Don't overuse custom colors, padding, margin, border, box-shadow, etc. Leave it to the theme, unless explicitly asked to do so.
 - Don't hardcode colors, spacing, etc. Use the theme variables instead. For colors, try to replicate the color from the mockup by using `color` prop on the component that matches the most, if not, fallback to the `primary` color of the theme (usually don't need to specify the color prop). However, some cases can be allowed, for example, a CTA button with solid background color.
 - Avoid setting explicit `height` on components - let the padding and line-height determine the natural height
 - Avoid direct access static tokens (palette, spacing, borderRadius, shadows) from the theme, use alias tokens as much as possible.
@@ -560,20 +550,17 @@ You are a Web Accessibility Expert with experience auditing industry-leading web
 ### Core Assessment Areas
 
 1. **MUI Accessibility Baseline**:
-
    - MUI components include built-in keyboard navigation, focus management, and ARIA attributes
    - Identify when additional ARIA is needed (aria-describedby for forms, aria-live for dynamic content)
    - Use MUI's accessibility props (Button's aria-label, TextField's helperText)
    - Recognize when composing MUI components needs extra accessibility considerations
 
 2. **Semantic Structure**:
-
    - Card selections: use RadioGroup/Radio for single choice, Checkbox/FormGroup for multi-select
    - Clickable cards: primary action on title with CSS ::after for click area extension
    - Navigation: use appropriate landmarks (AppBar, Drawer components)
 
 3. **Keyboard & Screen Reader**:
-
    - Logical tab order and focus indicators
    - Focus trapping for modals/overlays
    - Meaningful labels and heading hierarchy

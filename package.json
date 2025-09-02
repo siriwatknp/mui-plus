@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "dev:screenshot": "npx tsx scripts/screenshot-demos.ts --port=3001",
+    "dev:mastra": "mastra dev --dir ./mastra",
+    "build:mastra": "mastra build",
     "build": "pnpm registry:build && next build",
     "start": "next start",
     "lint": "next lint",
@@ -12,9 +14,19 @@
     "registry:create": "node scripts/create-registry-json.js"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "2.0.9",
+    "@ai-sdk/google": "2.0.11",
+    "@ai-sdk/openai": "2.0.23",
+    "@ai-sdk/react": "2.0.28",
     "@emotion/cache": "11.14.0",
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.0",
+    "@inngest/realtime": "0.3.1",
+    "@mastra/core": "0.15.2",
+    "@mastra/inngest": "0.12.2",
+    "@mastra/libsql": "0.13.7",
+    "@mastra/loggers": "0.10.9",
+    "@mastra/memory": "0.14.2",
     "@mdx-js/loader": "3.1.0",
     "@mdx-js/react": "3.1.0",
     "@mui/icons-material": "^7.2.0",
@@ -33,10 +45,12 @@
     "@radix-ui/react-tabs": "1.1.13",
     "@radix-ui/react-tooltip": "1.2.8",
     "@tailwindcss/typography": "0.5.16",
+    "ai": "5.0.28",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "1.11.13",
     "gray-matter": "4.0.3",
+    "inngest": "3.40.1",
     "lucide-react": "^0.487.0",
     "next": "15.3.1",
     "next-mdx-remote": "5.0.0",
@@ -45,9 +59,10 @@
     "react-resizable-panels": "3.0.4",
     "react-syntax-highlighter": "15.6.3",
     "shadcn": "^2.4.1",
+    "streamdown": "1.1.6",
     "tailwind-merge": "^3.2.0",
     "tw-animate-css": "^1.2.5",
-    "zod": "^3.24.3"
+    "zod": "^3.25.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -61,6 +76,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
     "eslint-plugin-react-hooks": "5.2.0",
+    "mastra": "0.11.2",
     "tailwindcss": "^4",
     "tsx": "4.19.4",
     "typescript": "^5"
