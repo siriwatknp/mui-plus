@@ -22,23 +22,29 @@ export const mastra = new Mastra({
   workflows: { planningWorkflow },
   storage,
   logger,
-  server: {
-    host: "0.0.0.0",
-    apiRoutes: [
-      {
-        path: "/inngest/api",
-        method: "ALL",
-        createHandler: async ({ mastra }) =>
-          serve({
-            mastra,
-            inngest: new Inngest({
-              id: "mastra",
-              baseUrl: "http://localhost:8288",
-              isDev: true,
-              middleware: [realtimeMiddleware()],
-            }),
-          }),
-      },
-    ],
+  server:
+    process.env.NODE_ENV === "production"
+      ? undefined
+      : {
+          host: "0.0.0.0",
+          apiRoutes: [
+            {
+              path: "/inngest/api",
+              method: "ALL",
+              createHandler: async ({ mastra }) =>
+                serve({
+                  mastra,
+                  inngest: new Inngest({
+                    id: "mastra",
+                    baseUrl: "http://localhost:8288",
+                    isDev: true,
+                    middleware: [realtimeMiddleware()],
+                  }),
+                }),
+            },
+          ],
+        },
+  telemetry: {
+    enabled: process.env.NODE_ENV !== "production",
   },
 });
