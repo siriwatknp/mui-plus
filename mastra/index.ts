@@ -18,9 +18,7 @@ const logger = new PinoLogger({
 });
 
 export const mastra = new Mastra({
-  // @ts-expect-error - TODO: fix this
   agents: { muiEngineer, uxuiDesigner },
-  // @ts-expect-error - TODO: fix this
   workflows: { planningWorkflow },
   storage,
   logger,
