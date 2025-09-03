@@ -1,7 +1,7 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { UIMessage, useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, UIDataTypes } from "ai";
 import { useState } from "react";
 import {
   Conversation,
@@ -27,8 +27,8 @@ import {
   ReasoningTrigger,
 } from "@/registry/components/ai-reasoning/ai-reasoning";
 import { Loader } from "@/registry/components/ai-loader/ai-loader";
-import { CodeBlock } from "@/registry/components/ai-code-block/ai-code-block";
-import { CopyIcon, SparklesIcon, XIcon } from "lucide-react";
+import { MuiPreview } from "@/components/ui/mui-preview";
+import { SparklesIcon, XIcon } from "lucide-react";
 import { Suggestion } from "@/registry/components/ai-suggestion/ai-suggestion";
 
 const examplePrompts = [
@@ -40,10 +40,46 @@ const examplePrompts = [
 ];
 
 export default function UIGeneratorPage() {
-  const [copiedCode, setCopiedCode] = useState(false);
   const [inputText, setInputText] = useState("");
 
-  const { messages, sendMessage, status, stop } = useChat({
+  const { messages, sendMessage, status, stop } = useChat<
+    UIMessage<
+      unknown,
+      UIDataTypes,
+      {
+        planningWorkflow: {
+          input: { prompt: string };
+          output:
+            | {
+                status: "success" | "error";
+                steps: {
+                  "design-step": {
+                    output: {
+                      designAnalysis: string;
+                      designSummary: string;
+                      muiUrls: string[];
+                    };
+                  };
+                };
+                result: {
+                  designAnalysis: string;
+                  designSummary: string;
+                  muiUrls: string[];
+                };
+              }
+            | undefined;
+        };
+        getMuiDocTool: {
+          input: {
+            urls: string[];
+          };
+          output: {
+            content: string;
+          };
+        };
+      }
+    >
+  >({
     transport: new DefaultChatTransport({
       api: "/api/ui-completion",
     }),
@@ -85,14 +121,13 @@ export default function UIGeneratorPage() {
     return codeMatch ? codeMatch[1] : null;
   };
 
-  const handleCopyCode = () => {
-    const code = extractCode(completion);
-    if (code) {
-      navigator.clipboard.writeText(code);
-      setCopiedCode(true);
-      setTimeout(() => setCopiedCode(false), 2000);
-    }
-  };
+  const lastMsgPart = messages.slice(-1)[0]?.parts.slice(-1)[0];
+  const previewCode =
+    !!lastMsgPart && lastMsgPart.type === "text" && lastMsgPart.state === "done"
+      ? extractCode(lastMsgPart.text)
+      : "";
+
+  console.log("previewCode", previewCode);
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto p-4">
@@ -131,35 +166,6 @@ export default function UIGeneratorPage() {
               <MessageContent>
                 {message.parts.map((part, i) => {
                   if (part.type === "text") {
-                    // Check if the text contains code blocks
-                    const codeInText = extractCode(part.text);
-                    if (codeInText && message.role === "assistant") {
-                      // Split the text to show non-code parts as Response and code as CodeBlock
-                      const beforeCode = part.text.substring(
-                        0,
-                        part.text.indexOf("```")
-                      );
-                      const afterCode = part.text.substring(
-                        part.text.lastIndexOf("```") + 3
-                      );
-
-                      return (
-                        <div key={`${message.id}-${i}`} className="space-y-4">
-                          {beforeCode && <Response>{beforeCode}</Response>}
-                          <div className="relative">
-                            <CodeBlock language="tsx" code={codeInText} />
-                            <button
-                              onClick={handleCopyCode}
-                              className="absolute top-2 right-2 p-2 rounded-md bg-background/80 hover:bg-background border"
-                              title={copiedCode ? "Copied!" : "Copy code"}
-                            >
-                              <CopyIcon className="h-4 w-4" />
-                            </button>
-                          </div>
-                          {afterCode && <Response>{afterCode}</Response>}
-                        </div>
-                      );
-                    }
                     return (
                       <Response key={`${message.id}-${i}`}>
                         {part.text}
@@ -169,15 +175,8 @@ export default function UIGeneratorPage() {
 
                   if (part.type === "tool-planningWorkflow") {
                     if (part.state === "output-available") {
-                      const {
-                        result: { designSummary, designAnalysis },
-                      } =
-                        (part.output as {
-                          result: {
-                            designSummary: string;
-                            designAnalysis: string;
-                          };
-                        }) || {};
+                      const { designSummary, designAnalysis } =
+                        part.output?.result || {};
 
                       return (
                         <div key={`${message.id}-${i}`} className="space-y-4">
@@ -210,6 +209,7 @@ export default function UIGeneratorPage() {
           ))}
 
           {status === "submitted" && <Loader />}
+          {previewCode && <MuiPreview code={previewCode} />}
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>

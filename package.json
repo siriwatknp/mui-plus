@@ -63,6 +63,7 @@
     "next-mdx-remote": "5.0.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-live": "4.1.8",
     "react-resizable-panels": "3.0.4",
     "react-syntax-highlighter": "15.6.3",
     "shadcn": "^2.4.1",
