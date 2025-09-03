@@ -1,276 +1,246 @@
 "use client";
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import Avatar from "@mui/material/Avatar";
-import Chip from "@mui/material/Chip";
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
-import SearchIcon from "@mui/icons-material/Search";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
-import FolderIcon from "@mui/icons-material/Folder";
-import PeopleIcon from "@mui/icons-material/People";
-import SettingsIcon from "@mui/icons-material/Settings";
-import HistoryIcon from "@mui/icons-material/History";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import DeleteIcon from "@mui/icons-material/Delete";
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Typography,
+  Stack,
+  Divider,
+  Link,
+  IconButton,
+  InputAdornment,
+  Container,
+  Box,
+} from "@mui/material";
+import {
+  Visibility,
+  VisibilityOff,
+  Google as GoogleIcon,
+  GitHub as GitHubIcon,
+} from "@mui/icons-material";
 
-const drawerWidth = 280;
-
-interface NavigationSidebarProps {
-  open?: boolean;
-  onClose?: () => void;
-  variant?: "permanent" | "persistent" | "temporary";
+interface FormData {
+  email: string;
+  password: string;
 }
 
-export default function NavigationSidebar({
-  open = true,
-  onClose,
-  variant = "permanent",
-}: NavigationSidebarProps) {
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+interface FormErrors {
+  email?: string;
+  password?: string;
+}
 
-  const handleListItemClick = (index: number) => {
-    setSelectedIndex(index);
+export default function LoginForm() {
+  const [formData, setFormData] = useState<FormData>({
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validateEmail = (email: string): string | undefined => {
+    if (!email) return "Email is required";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return "Please enter a valid email address";
+    return undefined;
   };
 
-  const mainMenuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, badge: null },
-    { text: "Analytics", icon: <AnalyticsIcon />, badge: 3 },
-    { text: "Projects", icon: <FolderIcon />, badge: null },
-    { text: "Team", icon: <PeopleIcon />, badge: null },
-    { text: "Settings", icon: <SettingsIcon />, badge: null },
-  ];
+  const validatePassword = (password: string): string | undefined => {
+    if (!password) return "Password is required";
+    if (password.length < 6) return "Password must be at least 6 characters";
+    return undefined;
+  };
 
-  const secondaryMenuItems = [
-    { text: "Recent", icon: <HistoryIcon /> },
-    { text: "Bookmarks", icon: <BookmarkIcon /> },
-    { text: "Trash", icon: <DeleteIcon /> },
-  ];
+  const handleInputChange =
+    (field: keyof FormData) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setFormData((prev) => ({ ...prev, [field]: value }));
 
-  const drawerContent = (
-    <Box
-      sx={{
-        width: drawerWidth,
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        p: 1.5,
-      }}
-    >
-      {/* Company Brand */}
-      <Box sx={{ mb: 2 }}>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 600,
-            fontSize: "1.25rem",
-          }}
-        >
-          Company Name
-        </Typography>
-      </Box>
+      // Clear error when user starts typing
+      if (errors[field]) {
+        setErrors((prev) => ({ ...prev, [field]: undefined }));
+      }
+    };
 
-      {/* Search */}
-      <Box sx={{ mb: 2 }}>
-        <TextField
-          fullWidth
-          size="small"
-          placeholder="Search..."
-          variant="outlined"
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: "text.icon" }} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "text.secondary",
-                      fontSize: "0.75rem",
-                      fontFamily: "monospace",
-                    }}
-                  >
-                    ⌘K
-                  </Typography>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-      </Box>
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-      {/* Main Navigation */}
-      <List sx={{ flexGrow: 1 }}>
-        {mainMenuItems.map((item, index) => (
-          <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
-            <ListItemButton
-              selected={selectedIndex === index}
-              onClick={() => handleListItemClick(index)}
-              sx={{
-                borderRadius: 1,
-                "&.Mui-selected": {
-                  bgcolor: "primary.main",
-                  color: "primary.contrastText",
-                  "&:hover": {
-                    bgcolor: "primary.dark",
-                  },
-                  "& .MuiListItemIcon-root": {
-                    color: "primary.contrastText",
-                  },
-                },
-              }}
-            >
-              <ListItemIcon sx={{ color: "text.icon", minWidth: 40 }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                primaryTypographyProps={{
-                  fontSize: "0.875rem",
-                }}
-              />
-              {item.badge && (
-                <Chip
-                  label={item.badge}
-                  size="small"
-                  variant="filled"
-                  color="error"
-                  sx={{
-                    height: 20,
-                    fontSize: "0.75rem",
-                    "& .MuiChip-label": {
-                      px: 0.75,
-                    },
-                  }}
-                />
-              )}
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+    // Validate form
+    const emailError = validateEmail(formData.email);
+    const passwordError = validatePassword(formData.password);
 
-      <Divider sx={{ my: 1 }} />
+    if (emailError || passwordError) {
+      setErrors({
+        email: emailError,
+        password: passwordError,
+      });
+      return;
+    }
 
-      {/* Secondary Navigation */}
-      <List>
-        {secondaryMenuItems.map((item, index) => (
-          <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
-            <ListItemButton
-              selected={selectedIndex === mainMenuItems.length + index}
-              onClick={() => handleListItemClick(mainMenuItems.length + index)}
-              sx={{
-                borderRadius: 1,
-                "&.Mui-selected": {
-                  bgcolor: "primary.main",
-                  color: "primary.contrastText",
-                  "&:hover": {
-                    bgcolor: "primary.dark",
-                  },
-                  "& .MuiListItemIcon-root": {
-                    color: "primary.contrastText",
-                  },
-                },
-              }}
-            >
-              <ListItemIcon sx={{ color: "text.icon", minWidth: 40 }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                primaryTypographyProps={{
-                  fontSize: "0.875rem",
-                }}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+    setIsLoading(true);
 
-      <Divider sx={{ my: 1 }} />
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      console.log("Login successful:", formData);
+    } catch (error) {
+      console.error("Login failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      {/* User Profile */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-          p: 1,
-          borderRadius: 1,
-          "&:hover": {
-            bgcolor: "action.hover",
-          },
-        }}
-      >
-        <Avatar
-          sx={{ width: 32, height: 32 }}
-          src="https://placehold.co/32"
-          alt="John Doe"
-        >
-          JD
-        </Avatar>
-        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: 500,
-              fontSize: "0.875rem",
-              lineHeight: 1.2,
-            }}
-          >
-            John Doe
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{
-              color: "text.secondary",
-              fontSize: "0.75rem",
-              lineHeight: 1.2,
-            }}
-          >
-            john@company.com
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            bgcolor: "success.main",
-          }}
-        />
-      </Box>
-    </Box>
-  );
+  const handleClickShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
 
   return (
-    <Drawer
-      variant={variant}
-      open={open}
-      onClose={onClose}
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: drawerWidth,
-          boxSizing: "border-box",
-          borderRight: (theme) => `1px solid ${theme.palette.divider}`,
-        },
-      }}
-    >
-      {drawerContent}
-    </Drawer>
+    <Container maxWidth="sm">
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          py: 3,
+        }}
+      >
+        <Card
+          sx={{
+            width: "100%",
+            maxWidth: 400,
+            boxShadow: 3,
+          }}
+        >
+          <CardContent sx={{ p: 3 }}>
+            <Stack spacing={3}>
+              {/* Header */}
+              <Box sx={{ textAlign: "center" }}>
+                <Typography variant="h4" component="h1" gutterBottom>
+                  Welcome Back
+                </Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  Sign in to your account to continue
+                </Typography>
+              </Box>
+
+              {/* Form */}
+              <Box component="form" onSubmit={handleSubmit}>
+                <Stack spacing={2}>
+                  <TextField
+                    fullWidth
+                    required
+                    label="Email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={formData.email}
+                    onChange={handleInputChange("email")}
+                    error={!!errors.email}
+                    helperText={errors.email}
+                    autoComplete="email"
+                  />
+
+                  <TextField
+                    fullWidth
+                    required
+                    label="Password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleInputChange("password")}
+                    error={!!errors.password}
+                    helperText={errors.password}
+                    autoComplete="current-password"
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label={
+                                showPassword
+                                  ? "hide the password"
+                                  : "display the password"
+                              }
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+
+                  <Box sx={{ textAlign: "right" }}>
+                    <Link
+                      href="#"
+                      variant="body2"
+                      sx={{ textDecoration: "none" }}
+                    >
+                      Forgot Password?
+                    </Link>
+                  </Box>
+
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    loading={isLoading}
+                  >
+                    Sign In
+                  </Button>
+                </Stack>
+              </Box>
+
+              {/* Divider */}
+              <Divider>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  or
+                </Typography>
+              </Divider>
+
+              {/* Social Login */}
+              <Stack spacing={1}>
+                <Button variant="outlined" fullWidth startIcon={<GoogleIcon />}>
+                  Continue with Google
+                </Button>
+
+                <Button variant="outlined" fullWidth startIcon={<GitHubIcon />}>
+                  Continue with GitHub
+                </Button>
+              </Stack>
+
+              {/* Footer */}
+              <Box sx={{ textAlign: "center" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  Don't have an account?{" "}
+                  <Link
+                    href="#"
+                    sx={{ textDecoration: "none", fontWeight: "medium" }}
+                  >
+                    Sign Up
+                  </Link>
+                </Typography>
+              </Box>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Box>
+    </Container>
   );
 }

@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       format: "aisdk",
     });
 
-    return stream.toUIMessageStreamResponse({});
+    return stream.toUIMessageStreamResponse();
   } catch (error) {
     console.error("Error executing workflow:", error);
 
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   }
 }
