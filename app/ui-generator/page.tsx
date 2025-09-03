@@ -85,8 +85,6 @@ export default function UIGeneratorPage() {
     }),
   });
 
-  console.log("messages", messages);
-
   // Get completion from all assistant messages
   const completion = messages
     .filter((m) => m.role === "assistant")
@@ -126,8 +124,6 @@ export default function UIGeneratorPage() {
     !!lastMsgPart && lastMsgPart.type === "text" && lastMsgPart.state === "done"
       ? extractCode(lastMsgPart.text)
       : "";
-
-  console.log("previewCode", previewCode);
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto p-4">
@@ -196,6 +192,23 @@ export default function UIGeneratorPage() {
                           <ReasoningTrigger />
                           <ReasoningContent>
                             Planning the design...
+                          </ReasoningContent>
+                        </Reasoning>
+                      );
+                    }
+                  }
+
+                  if (part.type === "tool-getMuiDocTool") {
+                    if (part.state !== "output-available") {
+                      return (
+                        <Reasoning
+                          key={`${message.id}-${i}`}
+                          className="w-full"
+                          isStreaming={true}
+                        >
+                          <ReasoningTrigger />
+                          <ReasoningContent>
+                            Fetching MUI documentation...
                           </ReasoningContent>
                         </Reasoning>
                       );

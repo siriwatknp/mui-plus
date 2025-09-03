@@ -166,6 +166,20 @@ import {
   LocationOnOutlined,
   FavoriteBorder,
   ShoppingCart,
+  // Social Media Icons
+  Apple,
+  Facebook,
+  Google,
+  Twitter,
+  X,
+  Instagram,
+  LinkedIn,
+  YouTube,
+  GitHub,
+  WhatsApp,
+  Telegram,
+  Pinterest,
+  Reddit,
 } from "@mui/icons-material";
 
 // MUI X Charts
@@ -355,4 +369,17 @@ export const LIVE_EDITOR_SCOPE = {
   LocationOnOutlined,
   FavoriteBorder,
   ShoppingCart,
+  Apple,
+  Facebook,
+  Google,
+  Twitter,
+  Instagram,
+  X,
+  LinkedIn,
+  YouTube,
+  GitHub,
+  WhatsApp,
+  Telegram,
+  Pinterest,
+  Reddit,
 };

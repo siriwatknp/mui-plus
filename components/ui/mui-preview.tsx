@@ -60,6 +60,13 @@ export const MuiPreview = ({
     cleaned = cleaned.replace(/^export\s+(default\s+)?/gm, "");
     cleaned = cleaned.replace(/^export\s*\{[^}]*\}\s*;?\s*$/gm, "");
 
+    // Normalize icon usage - remove "Icon" suffix from JSX elements
+    // This ensures compatibility with the live editor scope naming convention
+    // Examples: <FavoriteIcon /> → <Favorite />, <ShoppingCartIcon> → <ShoppingCart>
+    // Using word boundary approach to handle multiline JSX safely
+    cleaned = cleaned.replace(/<([A-Z]\w*?)Icon\b/g, "<$1");
+    cleaned = cleaned.replace(/<\/([A-Z]\w*?)Icon>/g, "</$1>");
+
     // Remove extra blank lines
     cleaned = cleaned.replace(/\n\s*\n\s*\n/g, "\n\n");
     cleaned = cleaned.trim();
@@ -88,8 +95,6 @@ export const MuiPreview = ({
 
     return cleaned;
   }, [code]);
-
-  console.log("cleanCode", cleanCode);
 
   return (
     <Box
