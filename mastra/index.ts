@@ -1,7 +1,4 @@
 import { Mastra } from "@mastra/core/mastra";
-import { serve } from "@mastra/inngest";
-import { realtimeMiddleware } from "@inngest/realtime";
-import { Inngest } from "inngest";
 import { PinoLogger } from "@mastra/loggers";
 import { DefaultStorage } from "@mastra/libsql";
 import { planningWorkflow } from "./workflows/planning";
@@ -31,8 +28,15 @@ export const mastra = new Mastra({
             {
               path: "/inngest/api",
               method: "ALL",
-              createHandler: async ({ mastra }) =>
-                serve({
+              createHandler: async ({ mastra }) => {
+                const [{ serve }, { Inngest }, { realtimeMiddleware }] =
+                  await Promise.all([
+                    import("@mastra/inngest"),
+                    import("inngest"),
+                    import("@inngest/realtime"),
+                  ]);
+
+                return serve({
                   mastra,
                   inngest: new Inngest({
                     id: "mastra",
@@ -40,7 +44,8 @@ export const mastra = new Mastra({
                     isDev: true,
                     middleware: [realtimeMiddleware()],
                   }),
-                }),
+                });
+              },
             },
           ],
         },
