@@ -106,20 +106,23 @@ export const buttonTheme: ThemeOptions["components"] = {
           {
             props: { size: "small" },
             style: {
-              padding: "4px 12px",
+              // height of the button will be 34px
+              padding: "7px 12px",
               lineHeight: "20px",
             },
           },
           {
             props: { size: "medium" },
             style: {
-              padding: "8px 16px",
+              // height of the button will be 40px
+              padding: "10px 16px",
               lineHeight: "20px",
             },
           },
           {
             props: { size: "large" },
             style: {
+              // height of the button will be 48px
               "--_fs": "1rem",
               padding: "12px 24px",
               lineHeight: "24px",
@@ -134,12 +137,15 @@ export const buttonTheme: ThemeOptions["components"] = {
             props: { variant: "outlined" },
             style: {
               "&.MuiButton-sizeSmall": {
-                padding: "3px 12px",
+                // height of the button will be 34px
+                padding: "6px 12px",
               },
               "&.MuiButton-sizeMedium": {
-                padding: "7px 16px",
+                // height of the button will be 40px
+                padding: "9px 16px",
               },
               "&.MuiButton-sizeLarge": {
+                // height of the button will be 48px
                 padding: "11px 24px",
               },
               "& .MuiTouchRipple-root": {
