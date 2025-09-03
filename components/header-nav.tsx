@@ -8,6 +8,7 @@ export function HeaderNav() {
 
   const navItems = [
     { href: "/theme-preview", label: "Theme" },
+    { href: "/ai", label: "AI Elements" },
     { href: "/authentication", label: "Authentication" },
     { href: "/dashboard", label: "Dashboard" },
   ];

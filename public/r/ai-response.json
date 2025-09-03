@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ai-response",
+  "type": "registry:item",
+  "title": "Ai Response",
+  "description": "A ai-response item.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ai-response/ai-response.demo.tsx",
+      "target": "src/mui-plus/components/ai-response/ai-response.demo.tsx",
+      "content": "export default function Demo() { return <div>Demo</div>; }\n",
+      "type": "registry:item"
+    },
+    {
+      "path": "components/ai-response/ai-response.tsx",
+      "target": "src/mui-plus/components/ai-response/ai-response.tsx",
+      "content": "\"use client\";\n\nimport { cn } from \"@/lib/utils\";\nimport { type ComponentProps, memo } from \"react\";\nimport { Streamdown } from \"streamdown\";\n\ntype ResponseProps = ComponentProps<typeof Streamdown>;\n\nexport const Response = memo(\n  ({ className, ...props }: ResponseProps) => (\n    <Streamdown\n      className={cn(\n        \"size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0\",\n        className,\n      )}\n      {...props}\n    />\n  ),\n  (prevProps, nextProps) => prevProps.children === nextProps.children,\n);\n\nResponse.displayName = \"Response\";\n",
+      "type": "registry:item"
+    }
+  ],
+  "meta": {
+    "screenshot": "/screenshots/ai-response.png",
+    "category": "ai"
+  }
+}

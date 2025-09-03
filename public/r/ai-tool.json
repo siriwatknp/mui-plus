@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ai-tool",
+  "type": "registry:item",
+  "title": "Ai Tool",
+  "description": "A ai-tool item.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ai-tool/ai-tool.demo.tsx",
+      "target": "src/mui-plus/components/ai-tool/ai-tool.demo.tsx",
+      "content": "export default function Demo() { return <div>Demo</div>; }\n",
+      "type": "registry:item"
+    },
+    {
+      "path": "components/ai-tool/ai-tool.tsx",
+      "target": "src/mui-plus/components/ai-tool/ai-tool.tsx",
+      "content": "\"use client\";\n\nimport { Badge } from \"@/components/ui/badge\";\nimport {\n  Collapsible,\n  CollapsibleContent,\n  CollapsibleTrigger,\n} from \"@/components/ui/collapsible\";\nimport { cn } from \"@/lib/utils\";\nimport type { ToolUIPart } from \"ai\";\nimport {\n  CheckCircleIcon,\n  ChevronDownIcon,\n  CircleIcon,\n  ClockIcon,\n  WrenchIcon,\n  XCircleIcon,\n} from \"lucide-react\";\nimport type { ComponentProps, ReactNode } from \"react\";\nimport { CodeBlock } from \"../ai-code-block/ai-code-block\";\n\nexport type ToolProps = ComponentProps<typeof Collapsible>;\n\nexport const Tool = ({ className, ...props }: ToolProps) => (\n  <Collapsible\n    className={cn(\"not-prose mb-4 w-full rounded-md border\", className)}\n    {...props}\n  />\n);\n\nexport type ToolHeaderProps = {\n  type: ToolUIPart[\"type\"];\n  state: ToolUIPart[\"state\"];\n  className?: string;\n};\n\nconst getStatusBadge = (status: ToolUIPart[\"state\"]) => {\n  const labels = {\n    \"input-streaming\": \"Pending\",\n    \"input-available\": \"Running\",\n    \"output-available\": \"Completed\",\n    \"output-error\": \"Error\",\n  } as const;\n\n  const icons = {\n    \"input-streaming\": <CircleIcon className=\"size-4\" />,\n    \"input-available\": <ClockIcon className=\"size-4 animate-pulse\" />,\n    \"output-available\": <CheckCircleIcon className=\"size-4 text-green-600\" />,\n    \"output-error\": <XCircleIcon className=\"size-4 text-red-600\" />,\n  } as const;\n\n  return (\n    <Badge className=\"gap-1.5 rounded-full text-xs\" variant=\"secondary\">\n      {icons[status]}\n      {labels[status]}\n    </Badge>\n  );\n};\n\nexport const ToolHeader = ({\n  className,\n  type,\n  state,\n  ...props\n}: ToolHeaderProps) => (\n  <CollapsibleTrigger\n    className={cn(\n      \"flex w-full items-center justify-between gap-4 p-3\",\n      className,\n    )}\n    {...props}\n  >\n    <div className=\"flex items-center gap-2\">\n      <WrenchIcon className=\"size-4 text-muted-foreground\" />\n      <span className=\"font-medium text-sm\">{type}</span>\n      {getStatusBadge(state)}\n    </div>\n    <ChevronDownIcon className=\"size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180\" />\n  </CollapsibleTrigger>\n);\n\nexport type ToolContentProps = ComponentProps<typeof CollapsibleContent>;\n\nexport const ToolContent = ({ className, ...props }: ToolContentProps) => (\n  <CollapsibleContent\n    className={cn(\n      \"data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-popover-foreground outline-none data-[state=closed]:animate-out data-[state=open]:animate-in\",\n      className,\n    )}\n    {...props}\n  />\n);\n\nexport type ToolInputProps = ComponentProps<\"div\"> & {\n  input: ToolUIPart[\"input\"];\n};\n\nexport const ToolInput = ({ className, input, ...props }: ToolInputProps) => (\n  <div className={cn(\"space-y-2 overflow-hidden p-4\", className)} {...props}>\n    <h4 className=\"font-medium text-muted-foreground text-xs uppercase tracking-wide\">\n      Parameters\n    </h4>\n    <div className=\"rounded-md bg-muted/50\">\n      <CodeBlock code={JSON.stringify(input, null, 2)} language=\"json\" />\n    </div>\n  </div>\n);\n\nexport type ToolOutputProps = ComponentProps<\"div\"> & {\n  output: ReactNode;\n  errorText: ToolUIPart[\"errorText\"];\n};\n\nexport const ToolOutput = ({\n  className,\n  output,\n  errorText,\n  ...props\n}: ToolOutputProps) => {\n  if (!(output || errorText)) {\n    return null;\n  }\n\n  return (\n    <div className={cn(\"space-y-2 p-4\", className)} {...props}>\n      <h4 className=\"font-medium text-muted-foreground text-xs uppercase tracking-wide\">\n        {errorText ? \"Error\" : \"Result\"}\n      </h4>\n      <div\n        className={cn(\n          \"overflow-x-auto rounded-md text-xs [&_table]:w-full\",\n          errorText\n            ? \"bg-destructive/10 text-destructive\"\n            : \"bg-muted/50 text-foreground\",\n        )}\n      >\n        {errorText && <div>{errorText}</div>}\n        {output && <div>{output}</div>}\n      </div>\n    </div>\n  );\n};\n",
+      "type": "registry:item"
+    }
+  ],
+  "meta": {
+    "screenshot": "/screenshots/ai-tool.png",
+    "category": "ai"
+  }
+}
