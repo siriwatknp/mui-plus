@@ -16,7 +16,7 @@
     {
       "path": "components/ai-image/ai-image.tsx",
       "target": "src/mui-plus/components/ai-image/ai-image.tsx",
-      "content": "import { cn } from \"@/lib/utils\";\nimport type { Experimental_GeneratedImage } from \"ai\";\n\nexport type ImageProps = Experimental_GeneratedImage & {\n  className?: string;\n  alt?: string;\n};\n\nexport const Image = ({\n  base64,\n  uint8Array,\n  mediaType,\n  ...props\n}: ImageProps) => (\n  <img\n    {...props}\n    alt={props.alt}\n    className={cn(\n      \"h-auto max-w-full overflow-hidden rounded-md\",\n      props.className,\n    )}\n    src={`data:${mediaType};base64,${base64}`}\n  />\n);\n",
+      "content": "import { cn } from \"@/lib/utils\";\nimport type { Experimental_GeneratedImage } from \"ai\";\n\nexport type ImageProps = Omit<Experimental_GeneratedImage, \"uint8Array\"> & {\n  className?: string;\n  alt?: string;\n};\n\nexport const Image = ({ base64, mediaType, ...props }: ImageProps) => (\n  <img\n    {...props}\n    alt={props.alt}\n    className={cn(\n      \"h-auto max-w-full overflow-hidden rounded-md\",\n      props.className,\n    )}\n    src={`data:${mediaType};base64,${base64}`}\n  />\n);\n",
       "type": "registry:item"
     }
   ],

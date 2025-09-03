@@ -12,7 +12,7 @@ export default function AIMessageDemo() {
         <div className="space-y-4">
           {/* User Message */}
           <Message from="user">
-            <MessageAvatar name="User" />
+            <MessageAvatar src="" name="User" />
             <MessageContent>
               <p>How do I create a custom hook in React?</p>
             </MessageContent>
@@ -20,11 +20,11 @@ export default function AIMessageDemo() {
 
           {/* Assistant Message */}
           <Message from="assistant">
-            <MessageAvatar name="AI" />
+            <MessageAvatar src="" name="AI" />
             <MessageContent>
               <p>To create a custom hook in React, follow these steps:</p>
               <ol className="list-decimal list-inside mt-2 space-y-1">
-                <li>Start the function name with "use"</li>
+                <li>Start the function name with &quot;use&quot;</li>
                 <li>Call other hooks inside if needed</li>
                 <li>Return necessary values</li>
               </ol>
@@ -33,7 +33,7 @@ export default function AIMessageDemo() {
 
           {/* User Message with longer content */}
           <Message from="user">
-            <MessageAvatar name="User" />
+            <MessageAvatar src="" name="User" />
             <MessageContent>
               <p>Can you show me an example?</p>
             </MessageContent>
@@ -41,9 +41,9 @@ export default function AIMessageDemo() {
 
           {/* Assistant Message with code */}
           <Message from="assistant">
-            <MessageAvatar name="AI" />
+            <MessageAvatar src="" name="AI" />
             <MessageContent>
-              <p>Here's a simple example of a custom hook:</p>
+              <p>Here&apos;s a simple example of a custom hook:</p>
               <pre className="mt-2 p-2 bg-background/50 rounded text-xs overflow-x-auto">
                 <code>{`function useCounter(initialValue = 0) {
   const [count, setCount] = useState(initialValue);
