@@ -58,6 +58,7 @@ export default function UIGeneratorPage() {
                       designAnalysis: string;
                       designSummary: string;
                       muiUrls: string[];
+                      registryItems: string[];
                     };
                   };
                 };
@@ -65,16 +66,25 @@ export default function UIGeneratorPage() {
                   designAnalysis: string;
                   designSummary: string;
                   muiUrls: string[];
+                  registryItems: string[];
                 };
               }
             | undefined;
         };
-        getMuiDocTool: {
+        getMuiDoc: {
           input: {
             urls: string[];
           };
           output: {
             content: string;
+          };
+        };
+        getRegistryItem: {
+          input: {
+            name: string;
+          };
+          output: {
+            files: { content: string }[];
           };
         };
       }
@@ -198,7 +208,7 @@ export default function UIGeneratorPage() {
                     }
                   }
 
-                  if (part.type === "tool-getMuiDocTool") {
+                  if (part.type === "tool-getMuiDoc") {
                     if (part.state !== "output-available") {
                       return (
                         <Reasoning
@@ -213,6 +223,29 @@ export default function UIGeneratorPage() {
                         </Reasoning>
                       );
                     }
+                  }
+
+                  // Handle error states for tool parts
+                  if (
+                    part.type.startsWith("tool-") &&
+                    "state" in part &&
+                    part.state === "output-error"
+                  ) {
+                    return (
+                      <div key={`${message.id}-${i}`} className="space-y-2">
+                        <Response>
+                          An error occurred while processing your request.
+                        </Response>
+                        <PromptInputButton
+                          variant="outline"
+                          onClick={() =>
+                            sendMessage({ text: "Continue the task" })
+                          }
+                        >
+                          Try Again
+                        </PromptInputButton>
+                      </div>
+                    );
                   }
 
                   return null;
