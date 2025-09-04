@@ -1,13 +1,13 @@
 import { Agent } from "@mastra/core/agent";
-import { anthropic } from "@ai-sdk/anthropic";
 import { exploreRegistryTool } from "../tools/exploreRegistry";
+import { getDynamicModel } from "../model";
 
 export const uxuiDesigner = new Agent({
   tools: {
     exploreRegistry: exploreRegistryTool,
   },
   name: "UXUI Designer",
-  model: anthropic("claude-sonnet-4-20250514"),
+  model: getDynamicModel,
   description:
     "Design the UI for the given prompt based on the MUI components and the built-in theme",
   instructions: `

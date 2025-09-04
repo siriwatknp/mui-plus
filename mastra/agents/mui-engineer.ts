@@ -1,11 +1,11 @@
 import { Agent } from "@mastra/core/agent";
-import { model } from "../model";
+import { getDynamicModel } from "../model";
 import { getMuiDocTool } from "../tools/getMuiDoc";
 import { planningWorkflow } from "../workflows/planning";
 import { getRegistryItemTool } from "../tools/getRegistryItem";
 
 export const muiEngineer = new Agent({
-  model,
+  model: getDynamicModel,
   tools: {
     getMuiDoc: getMuiDocTool,
     getRegistryItem: getRegistryItemTool,

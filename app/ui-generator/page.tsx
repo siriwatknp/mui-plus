@@ -39,8 +39,12 @@ const examplePrompts = [
   "A user profile card with avatar and details",
 ];
 
+type ModelProvider = "openai-4o-mini" | "claude-sonnet-4" | "gemini-2.5-flash";
+
 export default function UIGeneratorPage() {
   const [inputText, setInputText] = useState("");
+  const [selectedModel, setSelectedModel] =
+    useState<ModelProvider>("gemini-2.5-flash");
 
   const { messages, sendMessage, status, stop, error } = useChat<
     UIMessage<
@@ -95,31 +99,17 @@ export default function UIGeneratorPage() {
     }),
   });
 
-  // Get completion from all assistant messages
-  const completion = messages
-    .filter((m) => m.role === "assistant")
-    .map((m) => {
-      // Extract text from parts
-      return m.parts
-        .filter((part) => part.type === "text")
-        .map((part) => part.text)
-        .join("");
-    })
-    .join("\n");
-
   const handleExampleClick = (prompt: string) => {
     setInputText(prompt);
-  };
-
-  const handleClear = () => {
-    setInputText("");
-    stop();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputText.trim()) {
-      sendMessage({ text: inputText });
+      sendMessage(
+        { text: inputText },
+        { body: { modelProvider: selectedModel } }
+      );
       setInputText("");
     }
   };
@@ -234,7 +224,12 @@ export default function UIGeneratorPage() {
                         <PromptInputButton
                           variant="outline"
                           onClick={() =>
-                            sendMessage({ text: "Continue the task" })
+                            sendMessage(
+                              {
+                                text: "Continue the task",
+                              },
+                              { body: { modelProvider: selectedModel } }
+                            )
                           }
                         >
                           Try Again
@@ -256,7 +251,14 @@ export default function UIGeneratorPage() {
               <PromptInputButton
                 size="default"
                 variant="outline"
-                onClick={() => sendMessage({ text: "Continue the task" })}
+                onClick={() =>
+                  sendMessage(
+                    {
+                      text: "Continue the task",
+                    },
+                    { body: { modelProvider: selectedModel } }
+                  )
+                }
               >
                 Try Again
               </PromptInputButton>
@@ -275,6 +277,21 @@ export default function UIGeneratorPage() {
           disabled={status === "streaming" || status === "submitted"}
         />
         <PromptInputToolbar>
+          <div className="flex items-center gap-2">
+            <select
+              aria-label="Model Provider"
+              value={selectedModel}
+              onChange={(e) =>
+                setSelectedModel(e.target.value as ModelProvider)
+              }
+              disabled={status === "streaming" || status === "submitted"}
+              className="text-sm bg-background border border-border rounded-md px-2 py-1 min-w-0 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="openai-4o-mini">OpenAI GPT-4o Mini</option>
+              <option value="claude-sonnet-4">Claude Sonnet 4</option>
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+            </select>
+          </div>
           <PromptInputTools>
             {(status === "streaming" || status === "submitted") && (
               <PromptInputButton
@@ -284,12 +301,6 @@ export default function UIGeneratorPage() {
               >
                 <XIcon className="h-4 w-4" />
                 <span>Stop</span>
-              </PromptInputButton>
-            )}
-            {completion && status !== "streaming" && status !== "submitted" && (
-              <PromptInputButton variant="ghost" onClick={handleClear}>
-                <XIcon className="h-4 w-4" />
-                <span>Clear</span>
               </PromptInputButton>
             )}
           </PromptInputTools>
