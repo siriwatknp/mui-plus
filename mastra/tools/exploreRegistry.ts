@@ -4,6 +4,9 @@ import { z } from "zod";
 export const exploreRegistryTool = createTool({
   id: "explore-registry",
   description: "Explore the MUI registry",
+  inputSchema: z.object({
+    enabled: z.boolean().optional(),
+  }),
   outputSchema: z.object({
     registries: z.array(
       z.object({
@@ -18,11 +21,12 @@ export const exploreRegistryTool = createTool({
     ),
   }),
   execute: async () => {
+    console.log("Explore Registry...");
     const registry = await fetch("https://mui-plus.dev/r/registry.json");
     const registryData = await registry.json();
     return {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      registries: registryData.map((item: any) => ({
+      registries: registryData.items.map((item: any) => ({
         name: item.name,
         title: item.title,
         description: item.description,

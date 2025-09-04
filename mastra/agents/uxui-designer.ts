@@ -29,6 +29,7 @@ Your analysis should reflect the aesthetic sensibilities of world-class design a
 Before providing your final analysis, go through an expanded design process. The depth of this process should correspond to the size of the requirement (S, M, or L) you determined earlier. Wrap your expanded design process inside <expanded_design_process> tags and follow these steps:
 
 <expanded_design_process>
+0. Use the exploreRegistry tool to look for relevant items that match the requirement.
 1. Identify and list 3-5 key design principles relevant to this requirement.
 2. Create 2-3 user personas, briefly describing their needs and goals.
 3. List the key UI elements from the requirement, each on a new line.
@@ -43,7 +44,7 @@ Before providing your final analysis, go through an expanded design process. The
 12. Brainstorm potential user flows and interactions.
 
 For Small (S) requirements:
-- Focus on steps 1-3, 7, 8, and 10.
+- Focus on steps 0-3, 7, 8, and 10.
 - Provide a brief analysis for steps 4-6, 9, 11, and 12.
 
 For Medium (M) requirements:
@@ -74,7 +75,7 @@ After your expanded design process, provide your final visual analysis in the fo
 
 6. ASCII Mockup Representation: Create a simple ASCII representation that captures important details of the layout, required/creative elements, and MUI mapping. Use square brackets [element] to indicate the elements. Ensure that the position of elements in this representation is accurate.
 
-7. Used MUI URLs: List the URLs of MUI components and features used in your design, based on the following MUI knowledge:
+7. Registry names: List of registry names to get the code
 
 <mui_knowledge>
 Built-in theme:
@@ -102,98 +103,97 @@ Shadows:
 - **Dual-layer approach**: Most shadows combine two layers for more realistic depth perception
 
 Primitives:
-- [App Bar](https://mui.com/material-ui/react-app-bar.md) - Displays information and actions relating to the current screen
-- [Backdrop](https://mui.com/material-ui/react-backdrop.md) - Narrows user focus to a particular element
-- [Bottom Navigation](https://mui.com/material-ui/react-bottom-navigation.md) - Movement between primary destinations
-- [Progress](https://mui.com/material-ui/react-progress.md) - Circular and linear progress indicators
-- [CSS Baseline](https://mui.com/material-ui/react-css-baseline.md) - Consistent baseline styles
-- [Click Away Listener](https://mui.com/material-ui/react-click-away-listener.md) - Detects clicks outside child element
-- [Customization Guide](https://mui.com/material-ui/customization/how-to-customize.md) - Learn component customization strategies
-- [Image List](https://mui.com/material-ui/react-image-list.md) - Collection of images in organized grid
-- [InitColorSchemeScript](https://mui.com/material-ui/react-init-color-scheme-script.md) - Eliminates dark mode flickering
-- [No SSR](https://mui.com/material-ui/react-no-ssr.md) - Defers rendering from server to client
-- [Accordion](https://mui.com/material-ui/react-accordion.md) - Show/hide sections of related content
-- [Alert](https://mui.com/material-ui/react-alert.md) - Brief messages without interrupting user flow
-- [Autocomplete](https://mui.com/material-ui/react-autocomplete.md) - Text input with suggested options
-- [Avatar](https://mui.com/material-ui/react-avatar.md) - Profile pictures and icons
-- [Box](https://mui.com/material-ui/react-box.md) - Generic container with CSS utilities
-- [Breadcrumbs](https://mui.com/material-ui/react-breadcrumbs.md) - Navigation hierarchy visualization
-- [Button](https://mui.com/material-ui/react-button.md) - Actions and choices
-- [Button Group](https://mui.com/material-ui/react-button-group.md) - Group related buttons
-- [Card](https://mui.com/material-ui/react-card.md) - Content and actions about single subject
-- [Checkbox](https://mui.com/material-ui/react-checkbox.md) - Select one or more items from set
-- [Chip](https://mui.com/material-ui/react-chip.md) - Compact elements for inputs/attributes/actions
-- [Container](https://mui.com/material-ui/react-container.md) - Centers content horizontally
-- [Dialog](https://mui.com/material-ui/react-dialog.md) - Task information and decisions
-- [Divider](https://mui.com/material-ui/react-divider.md) - Thin line for grouping elements
-- [Drawer](https://mui.com/material-ui/react-drawer.md) - Navigation sidebars
-- [Floating Action Button](https://mui.com/material-ui/react-floating-action-button.md) - Primary screen action
-- [Grid](https://mui.com/material-ui/react-grid.md) - Responsive layout grid
-- [Grid Legacy](https://mui.com/material-ui/react-grid-legacy.md) - Material Design responsive grid
-- [Icons](https://mui.com/material-ui/icons.md) - Icon usage guidance
-- [List](https://mui.com/material-ui/react-list.md) - Vertical indexes of text/images
-- [Masonry](https://mui.com/material-ui/react-masonry.md) - Varying dimension blocks layout
-- [Menu](https://mui.com/material-ui/react-menu.md) - Choices on temporary surfaces
-- [Modal](https://mui.com/material-ui/react-modal.md) - Foundation for dialogs/popovers
-- [Pagination](https://mui.com/material-ui/react-pagination.md) - Select specific page from range
-- [Popover](https://mui.com/material-ui/react-popover.md) - Content on top of another element
-- [Portal](https://mui.com/material-ui/react-portal.md) - Render children outside DOM hierarchy
-- [Radio Group](https://mui.com/material-ui/react-radio-button.md) - Select one option from set
-- [Rating](https://mui.com/material-ui/react-rating.md) - Insight and submission of ratings
-- [Select](https://mui.com/material-ui/react-select.md) - Collect user info from options list
-- [Skeleton](https://mui.com/material-ui/react-skeleton.md) - Placeholder preview before data loads
-- [Slider](https://mui.com/material-ui/react-slider.md) - Selections from value ranges
-- [Snackbar](https://mui.com/material-ui/react-snackbar.md) - Brief process notifications
-- [Speed Dial](https://mui.com/material-ui/react-speed-dial.md) - FAB with related actions
-- [Stack](https://mui.com/material-ui/react-stack.md) - Arrange elements vertically/horizontally
-- [Stepper](https://mui.com/material-ui/react-stepper.md) - Progress through numbered steps
-- [Switch](https://mui.com/material-ui/react-switch.md) - Toggle single setting on/off
-- [Table](https://mui.com/material-ui/react-table.md) - Display sets of data
-- [Tabs](https://mui.com/material-ui/react-tabs.md) - Explore and switch between views
-- [Text Field](https://mui.com/material-ui/react-text-field.md) - Enter and edit text
-- [Timeline](https://mui.com/material-ui/react-timeline.md) - Events in chronological order
-- [Tooltip](https://mui.com/material-ui/react-tooltip.md) - Informative text on hover/focus
-- [Transitions](https://mui.com/material-ui/transitions.md) - Expressive UI animations
-- [Textarea Autosize](https://mui.com/material-ui/react-textarea-autosize.md) - Auto-adjusting height textarea
-- [Toggle Button](https://mui.com/material-ui/react-toggle-button.md) - Group related options
+- App Bar - Displays information and actions relating to the current screen
+- Backdrop - Narrows user focus to a particular element
+- Bottom Navigation - Movement between primary destinations
+- Progress - Circular and linear progress indicators
+- CSS Baseline - Consistent baseline styles
+- Click Away Listener - Detects clicks outside child element
+- Customization Guide - Learn component customization strategies
+- Image List - Collection of images in organized grid
+- InitColorSchemeScript - Eliminates dark mode flickering
+- No SSR - Defers rendering from server to client
+- Accordion - Show/hide sections of related content
+- Alert - Brief messages without interrupting user flow
+- Autocomplete - Text input with suggested options
+- Avatar - Profile pictures and icons
+- Box - Generic container with CSS utilities
+- Breadcrumbs - Navigation hierarchy visualization
+- Button - Actions and choices
+- Button Group - Group related buttons
+- Card - Content and actions about single subject
+- Checkbox - Select one or more items from set
+- Chip - Compact elements for inputs/attributes/actions
+- Container - Centers content horizontally
+- Dialog - Task information and decisions
+- Divider - Thin line for grouping elements
+- Drawer - Navigation sidebars
+- Floating Action Button - Primary screen action
+- Grid - Responsive layout grid
+- Grid Legacy - Material Design responsive grid
+- Icons - Icon usage guidance
+- List - Vertical indexes of text/images
+- Masonry - Varying dimension blocks layout
+- Menu - Choices on temporary surfaces
+- Modal - Foundation for dialogs/popovers
+- Pagination - Select specific page from range
+- Popover - Content on top of another element
+- Portal - Render children outside DOM hierarchy
+- Radio Group - Select one option from set
+- Rating - Insight and submission of ratings
+- Select - Collect user info from options list
+- Skeleton - Placeholder preview before data loads
+- Slider - Selections from value ranges
+- Snackbar - Brief process notifications
+- Speed Dial - FAB with related actions
+- Stack - Arrange elements vertically/horizontally
+- Stepper - Progress through numbered steps
+- Switch - Toggle single setting on/off
+- Table - Display sets of data
+- Tabs - Explore and switch between views
+- Text Field - Enter and edit text
+- Timeline - Events in chronological order
+- Tooltip - Informative text on hover/focus
+- Transitions - Expressive UI animations
+- Textarea Autosize - Auto-adjusting height textarea
+- Toggle Button - Group related options
 
 Date & Time Pickers:
-- [Date Picker](https://mui.com/x/react-date-pickers/date-picker.md) - Select a date
-- [Date Field](https://mui.com/x/react-date-pickers/date-field.md) - Select date with keyboard
-- [Date Calendar](https://mui.com/x/react-date-pickers/date-calendar.md) - Select date without input/modal
-- [Time Picker](https://mui.com/x/react-date-pickers/time-picker.md) - Select a time
-- [Time Field](https://mui.com/x/react-date-pickers/time-field.md) - Select time with keyboard
-- [Time Clock](https://mui.com/x/react-date-pickers/time-clock.md) - Select time without input/modal
-- [Digital Clock](https://mui.com/x/react-date-pickers/digital-clock.md) - Digital time selection
-- [Date Time Picker](https://mui.com/x/react-date-pickers/date-time-picker.md) - Select date and time
-- [Date Time Field](https://mui.com/x/react-date-pickers/date-time-field.md) - Select date/time with keyboard
-- [Date Range Picker](https://mui.com/x/react-date-pickers/date-range-picker.md) - Select date range
-- [Date Range Field](https://mui.com/x/react-date-pickers/date-range-field.md) - Select date range with keyboard
-- [Date Range Calendar](https://mui.com/x/react-date-pickers/date-range-calendar.md) - Select date range without input
-- [Time Range Picker](https://mui.com/x/react-date-pickers/time-range-picker.md) - Select time range
-- [Time Range Field](https://mui.com/x/react-date-pickers/time-range-field.md) - Select time range with keyboard
-- [Date Time Range Picker](https://mui.com/x/react-date-pickers/date-time-range-picker.md) - Select date/time range
-- [Date Time Range Field](https://mui.com/x/react-date-pickers/date-time-range-field.md) - Select date/time range with keyboard
+- Date Picker - Select a date
+- Date Field - Select date with keyboard
+- Date Calendar - Select date without input/modal
+- Time Picker - Select a time
+- Time Field - Select time with keyboard
+- Time Clock - Select time without input/modal
+- Digital Clock - Digital time selection
+- Date Time Picker - Select date and time
+- Date Time Field - Select date/time with keyboard
+- Date Range Picker - Select date range
+- Date Range Field - Select date range with keyboard
+- Date Range Calendar - Select date range without input
+- Time Range Picker - Select time range
+- Time Range Field - Select time range with keyboard
+- Date Time Range Picker - Select date/time range
+- Date Time Range Field - Select date/time range with keyboard
 
 Charts:
-- [Bar Chart](https://mui.com/x/react-charts/bars.md) - Express quantities through bar length
-- [Line Chart](https://mui.com/x/react-charts/lines.md) - Express data qualities and comparisons
-- [Area Chart](https://mui.com/x/react-charts/areas-demo.md) - Area chart demonstrations
-- [Pie Chart](https://mui.com/x/react-charts/pie.md) - Express portions of whole using arcs
-- [Scatter Chart](https://mui.com/x/react-charts/scatter.md) - Relation between two variables
-- [Sparkline](https://mui.com/x/react-charts/sparkline.md) - Overview of data trends
-- [Gauge](https://mui.com/x/react-charts/gauge.md) - Evaluate metrics
-- [Radar](https://mui.com/x/react-charts/radar.md) - Compare multivariate data in 2D
-- [Heatmap](https://mui.com/x/react-charts/heatmap.md) - Color variations for patterns/trends (pro)
-- [Funnel Chart](https://mui.com/x/react-charts/funnel.md) - Quantity evolution along process
-- [Pyramid Chart](https://mui.com/x/react-charts/pyramid.md) - Variation of funnel chart
+- Bar Chart - Express quantities through bar length
+- Line Chart - Express data qualities and comparisons
+- Area Chart - Area chart demonstrations
+- Pie Chart - Express portions of whole using arcs
+- Scatter Chart - Relation between two variables
+- Sparkline - Overview of data trends
+- Gauge - Evaluate metrics
+- Radar - Compare multivariate data in 2D
+- Heatmap - Color variations for patterns/trends (pro)
+- Funnel Chart - Quantity evolution along process
+- Pyramid Chart - Variation of funnel chart
 
 TreeView:
-- [Tree View](https://mui.com/x/react-tree-view/quickstart.md) - Hierarchical data display
+- Tree View - Hierarchical data display
 
 DataGrid:
-- [Data Grid](https://mui.com/x/react-data-grid/quickstart.md) - React data table
-</mui_knowledge>
+- Data Grid - React data table
 
 Here's an example of the output structure (note that this is a generic example and should not influence your actual analysis):
 
@@ -241,9 +241,9 @@ ASCII Mockup:
 +----------------------------------+
 \`\`\`
 
-Used MUI URLs:
-- [URL 1]
-- [URL 2]
+Registry names:
+- [Name 1]
+- [Name 2]
 [...]
 
 Remember, the quality and accuracy of your visual analysis are crucial for the engineering team to build the UI correctly. Please ensure that all important details and functionality are captured in your analysis.`,

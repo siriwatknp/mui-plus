@@ -15,6 +15,7 @@ export const getRegistryItemTool = createTool({
     ),
   }),
   execute: async ({ context: { name } }) => {
+    console.log("name", name);
     const registry = await fetch(`https://mui-plus.dev/r/${name}.json`);
     const registryData = await registry.json();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

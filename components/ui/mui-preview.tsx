@@ -53,8 +53,8 @@ export const MuiPreview = ({
     // Remove markdown code block syntax if present
     let cleaned = code.replace(/^```tsx?\n?/, "").replace(/```$/, "");
 
-    // Remove all import statements
-    cleaned = cleaned.replace(/^import\s+[^;]+;\s*$/gm, "");
+    // Remove all import statements (including multiline imports with comments)
+    cleaned = cleaned.replace(/^import\s+[\s\S]*?;.*$/gm, "");
 
     // Remove all export statements (including export default, export {}, etc.)
     // But preserve const/let/var declarations by only removing the export keyword
@@ -63,9 +63,9 @@ export const MuiPreview = ({
     cleaned = cleaned.replace(/^export\s+(function|class)\s+/gm, "$1 ");
     cleaned = cleaned.replace(/^export\s*\{[^}]*\}\s*;?\s*$/gm, "");
 
-    // Normalize icon usage - remove "Icon" suffix from JSX elements
+    // Normalize icon usage - remove "Icon" suffix from both JSX elements and variables
     // This ensures compatibility with the live editor scope naming convention
-    // Examples: <FavoriteIcon /> → <Favorite />, <ShoppingCartIcon> → <ShoppingCart>
+    // Examples: <FavoriteIcon /> → <Favorite />, ArrowUpwardIcon → ArrowUpward
     // Skip certain components that naturally end with these names
     const skipIcons = [
       "Badge",
@@ -79,6 +79,8 @@ export const MuiPreview = ({
       "PieChart",
     ];
     const skipPattern = `(?!${skipIcons.join("|")})`;
+
+    // Handle JSX tags: <FavoriteIcon /> → <Favorite />
     cleaned = cleaned.replace(
       new RegExp(`<(${skipPattern}[A-Z]\\w*?)Icon\\b`, "g"),
       "<$1",
@@ -88,24 +90,32 @@ export const MuiPreview = ({
       "</$1>",
     );
 
+    // Handle icon variables/identifiers: ArrowUpwardIcon → ArrowUpward
+    cleaned = cleaned.replace(
+      new RegExp(`\\b(${skipPattern}[A-Z]\\w*?)Icon\\b`, "g"),
+      "$1",
+    );
+
     // Remove extra blank lines
     cleaned = cleaned.replace(/\n\s*\n\s*\n/g, "\n\n");
     cleaned = cleaned.trim();
 
     if (!cleaned) return "";
 
-    // Extract component name - try different patterns
+    // Extract component name - find the LAST component (main component)
     let componentName = "";
 
-    // Try to find function ComponentName (now without export) - must start with uppercase
-    let match = cleaned.match(/function\s+([A-Z]\w*)/);
-    if (match) {
-      componentName = match[1];
+    // Find all function components (must start with uppercase)
+    const functionMatches = [...cleaned.matchAll(/function\s+([A-Z]\w*)/g)];
+    if (functionMatches.length > 0) {
+      componentName = functionMatches[functionMatches.length - 1][1];
     } else {
-      // Try to find const ComponentName = - must start with uppercase
-      match = cleaned.match(/(?:const|let|var)\s+([A-Z]\w*)\s*=/);
-      if (match) {
-        componentName = match[1];
+      // Find all const/let/var components (must start with uppercase)
+      const constMatches = [
+        ...cleaned.matchAll(/(?:const|let|var)\s+([A-Z]\w*)\s*=/g),
+      ];
+      if (constMatches.length > 0) {
+        componentName = constMatches[constMatches.length - 1][1];
       }
     }
 
@@ -185,6 +195,7 @@ export const MuiPreview = ({
 
     return cleaned;
   }, [code]);
+  console.log("cleanCode", cleanCode);
 
   const handleFullscreenToggle = () => {
     setIsFullscreen(!isFullscreen);
@@ -200,12 +211,14 @@ export const MuiPreview = ({
         border: "1px solid",
         borderColor: "divider",
         bgcolor: "background.paper",
+        p: 2,
         ...(isFullscreen && {
           position: "fixed",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
+          p: 0,
           zIndex: (theme.vars || theme).zIndex.modal,
           borderRadius: 0,
           border: "none",

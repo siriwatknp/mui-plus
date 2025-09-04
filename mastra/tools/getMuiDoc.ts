@@ -44,6 +44,7 @@ export const getMuiDocTool = createTool({
     content: z.string(),
   }),
   execute: async ({ context: { urls } }) => {
+    console.log("urls", urls);
     const content = await Promise.all(
       urls.map(async (url) => {
         const response = await fetch(
