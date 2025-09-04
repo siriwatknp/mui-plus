@@ -18,10 +18,13 @@ const designStep = createStep({
         designAnalysis: z.string(),
         designSummary: z.string(),
         muiUrls: z.array(z.string()),
+        registries: z.array(z.string()),
       }),
-      onFinish: ({ text }) => {
-        console.log(text);
-      },
+      format: "aisdk",
+    });
+
+    result.object.then(async (object) => {
+      console.log(object.designAnalysis);
     });
 
     return result.object;

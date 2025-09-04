@@ -66,9 +66,27 @@ export const MuiPreview = ({
     // Normalize icon usage - remove "Icon" suffix from JSX elements
     // This ensures compatibility with the live editor scope naming convention
     // Examples: <FavoriteIcon /> → <Favorite />, <ShoppingCartIcon> → <ShoppingCart>
-    // Using word boundary approach to handle multiline JSX safely
-    cleaned = cleaned.replace(/<([A-Z]\w*?)Icon\b/g, "<$1");
-    cleaned = cleaned.replace(/<\/([A-Z]\w*?)Icon>/g, "</$1>");
+    // Skip certain components that naturally end with these names
+    const skipIcons = [
+      "Badge",
+      "Input",
+      "Link",
+      "List",
+      "Menu",
+      "Radio",
+      "Tab",
+      "BarChart",
+      "PieChart",
+    ];
+    const skipPattern = `(?!${skipIcons.join("|")})`;
+    cleaned = cleaned.replace(
+      new RegExp(`<(${skipPattern}[A-Z]\\w*?)Icon\\b`, "g"),
+      "<$1",
+    );
+    cleaned = cleaned.replace(
+      new RegExp(`</(${skipPattern}[A-Z]\\w*?)Icon>`, "g"),
+      "</$1>",
+    );
 
     // Remove extra blank lines
     cleaned = cleaned.replace(/\n\s*\n\s*\n/g, "\n\n");
@@ -79,13 +97,13 @@ export const MuiPreview = ({
     // Extract component name - try different patterns
     let componentName = "";
 
-    // Try to find function ComponentName (now without export)
-    let match = cleaned.match(/function\s+(\w+)/);
+    // Try to find function ComponentName (now without export) - must start with uppercase
+    let match = cleaned.match(/function\s+([A-Z]\w*)/);
     if (match) {
       componentName = match[1];
     } else {
-      // Try to find const ComponentName =
-      match = cleaned.match(/(?:const|let|var)\s+(\w+)\s*=/);
+      // Try to find const ComponentName = - must start with uppercase
+      match = cleaned.match(/(?:const|let|var)\s+([A-Z]\w*)\s*=/);
       if (match) {
         componentName = match[1];
       }
@@ -94,12 +112,79 @@ export const MuiPreview = ({
     // Add render call if component name is found
     if (componentName) {
       cleaned += `\n\nrender(<${componentName} />);`;
+    } else {
+      // Check if we have JSX but no component definition
+      // Look for JSX patterns like <Component, <div, etc.
+      const hasJSX = /<[A-Z][A-Za-z0-9]*|<[a-z][a-z0-9]*/.test(cleaned);
+
+      if (hasJSX) {
+        // Check if the code already has a return statement (might be a fragment)
+        const hasReturn = /return\s*\(?\s*</.test(cleaned);
+
+        if (hasReturn) {
+          // Wrap existing return statement in App function
+          cleaned = `function App() {\n  ${cleaned.replace(
+            /\n/g,
+            "\n  ",
+          )}\n}\n\nrender(<App />);`;
+        } else {
+          // Split code into non-JSX parts and JSX parts
+          const lines = cleaned.split("\n");
+          const nonJSXLines = [];
+          const jsxLines = [];
+          let inJSX = false;
+
+          for (const line of lines) {
+            const trimmedLine = line.trim();
+
+            // Check if line starts JSX (opening tag)
+            if (
+              /<[A-Z][A-Za-z0-9]*|<[a-z][a-z0-9]*/.test(trimmedLine) &&
+              !inJSX
+            ) {
+              inJSX = true;
+            }
+
+            if (inJSX) {
+              jsxLines.push(line);
+              // Check if line ends JSX (closing tag without opening)
+              if (/^\s*<\/[^>]+>\s*$/.test(line) || /\/>\s*$/.test(line)) {
+                inJSX = false;
+              }
+            } else {
+              // Only add non-empty, non-JSX lines
+              if (trimmedLine && !trimmedLine.startsWith("//")) {
+                nonJSXLines.push(line);
+              }
+            }
+          }
+
+          // Construct the App function
+          let appFunction = "function App() {\n";
+
+          // Add non-JSX code inside the function but outside return
+          if (nonJSXLines.length > 0) {
+            appFunction +=
+              nonJSXLines.map((line) => `  ${line}`).join("\n") + "\n\n";
+          }
+
+          // Add return statement with JSX
+          if (jsxLines.length > 0) {
+            appFunction += "  return (\n";
+            appFunction +=
+              jsxLines.map((line) => `    ${line}`).join("\n") + "\n";
+            appFunction += "  );\n";
+          }
+
+          appFunction += "}\n\nrender(<App />);";
+
+          cleaned = appFunction;
+        }
+      }
     }
 
     return cleaned;
   }, [code]);
-
-  console.log("cleanCode", cleanCode);
 
   const handleFullscreenToggle = () => {
     setIsFullscreen(!isFullscreen);

@@ -27,9 +27,9 @@ import {
   ReasoningTrigger,
 } from "@/registry/components/ai-reasoning/ai-reasoning";
 import { Loader } from "@/registry/components/ai-loader/ai-loader";
-import { MuiPreview } from "@/components/ui/mui-preview";
 import { SparklesIcon, XIcon } from "lucide-react";
 import { Suggestion } from "@/registry/components/ai-suggestion/ai-suggestion";
+import { CodePreview } from "@/components/ui/code-preview";
 
 const examplePrompts = [
   "A login form with email and password fields",
@@ -42,7 +42,7 @@ const examplePrompts = [
 export default function UIGeneratorPage() {
   const [inputText, setInputText] = useState("");
 
-  const { messages, sendMessage, status, stop } = useChat<
+  const { messages, sendMessage, status, stop, error } = useChat<
     UIMessage<
       unknown,
       UIDataTypes,
@@ -124,15 +124,10 @@ export default function UIGeneratorPage() {
     }
   };
 
-  const extractCode = (text: string) => {
-    const codeMatch = text.match(/```tsx?\n([\s\S]*?)```/);
-    return codeMatch ? codeMatch[1] : null;
-  };
-
   const lastMsgPart = messages.slice(-1)[0]?.parts.slice(-1)[0];
-  const previewCode =
+  const previewText =
     !!lastMsgPart && lastMsgPart.type === "text" && lastMsgPart.state === "done"
-      ? extractCode(lastMsgPart.text)
+      ? lastMsgPart.text
       : "";
 
   return (
@@ -255,7 +250,19 @@ export default function UIGeneratorPage() {
           ))}
 
           {status === "submitted" && <Loader />}
-          {previewCode && <MuiPreview code={previewCode} />}
+          {status === "error" && (
+            <div className="space-y-2">
+              <Response>{error?.message}</Response>
+              <PromptInputButton
+                size="default"
+                variant="outline"
+                onClick={() => sendMessage({ text: "Continue the task" })}
+              >
+                Try Again
+              </PromptInputButton>
+            </div>
+          )}
+          {previewText && <CodePreview text={previewText} />}
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>

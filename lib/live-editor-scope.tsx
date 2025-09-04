@@ -141,6 +141,15 @@ import {
 export const LIVE_EDITOR_SCOPE = {
   // Common MUI Icons
   ...MuiIcons,
+  BadgeIcon: MuiIcons.Badge,
+  InputIcon: MuiIcons.Input,
+  LinkIcon: MuiIcons.Link,
+  ListIcon: MuiIcons.List,
+  MenuIcon: MuiIcons.Menu,
+  RadioIcon: MuiIcons.Radio,
+  TabIcon: MuiIcons.Tab,
+  BarChartIcon: MuiIcons.BarChart,
+  PieChartIcon: MuiIcons.PieChart,
 
   React,
   useState: React.useState,
