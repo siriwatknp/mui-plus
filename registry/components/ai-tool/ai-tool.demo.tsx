@@ -14,7 +14,7 @@ export default function AIToolDemo() {
 
   const toggleTool = (index: number) => {
     setOpenTools((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
     );
   };
 
@@ -67,7 +67,10 @@ export default function AIToolDemo() {
                 open !== openTools.includes(index) && toggleTool(index)
               }
             >
-              <ToolHeader type={tool.type} state={tool.state} />
+              <ToolHeader
+                type={tool.type as `tool-${string}`}
+                state={tool.state}
+              />
               <ToolContent>
                 <ToolInput input={tool.input} />
                 {(tool.output || tool.errorText) && (
