@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ai-sources",
+  "type": "registry:item",
+  "title": "Ai Sources",
+  "description": "A ai-sources item.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ai-sources/ai-sources.demo.tsx",
+      "target": "src/mui-plus/components/ai-sources/ai-sources.demo.tsx",
+      "content": "\"use client\";\n\nimport { Sources, SourcesTrigger, SourcesContent, Source } from \"./ai-sources\";\nimport { BookIcon } from \"lucide-react\";\n\nexport default function AISourcesDemo() {\n  const sources = [\n    {\n      title: \"React Documentation\",\n      href: \"https://react.dev/learn\",\n    },\n    {\n      title: \"MDN Web Docs\",\n      href: \"https://developer.mozilla.org\",\n    },\n    {\n      title: \"TypeScript Handbook\",\n      href: \"https://www.typescriptlang.org/docs/\",\n    },\n    {\n      title: \"Next.js Documentation\",\n      href: \"https://nextjs.org/docs\",\n    },\n  ];\n\n  return (\n    <div className=\"w-full max-w-2xl mx-auto space-y-8 p-8\">\n      <div className=\"space-y-2\">\n        <h3 className=\"text-sm font-medium text-muted-foreground\">\n          Sources Component\n        </h3>\n        <p className=\"text-sm text-muted-foreground\">\n          Display sources used in AI responses with collapsible list.\n        </p>\n\n        <div className=\"space-y-4\">\n          <Sources>\n            <SourcesTrigger count={sources.length} />\n            <SourcesContent>\n              {sources.map((source, index) => (\n                <Source key={index} href={source.href} title={source.title}>\n                  <BookIcon className=\"h-3 w-3\" />\n                  <span className=\"text-xs underline\">{source.title}</span>\n                </Source>\n              ))}\n            </SourcesContent>\n          </Sources>\n        </div>\n      </div>\n\n      <div className=\"space-y-2\">\n        <h3 className=\"text-sm font-medium text-muted-foreground\">\n          Custom Trigger Text\n        </h3>\n\n        <Sources>\n          <SourcesTrigger count={3}>\n            <p className=\"font-medium\">View {3} references</p>\n          </SourcesTrigger>\n          <SourcesContent>\n            <Source href=\"#\" title=\"Reference 1\">\n              <BookIcon className=\"h-3 w-3\" />\n              <span className=\"text-xs underline\">Reference 1</span>\n            </Source>\n            <Source href=\"#\" title=\"Reference 2\">\n              <BookIcon className=\"h-3 w-3\" />\n              <span className=\"text-xs underline\">Reference 2</span>\n            </Source>\n            <Source href=\"#\" title=\"Reference 3\">\n              <BookIcon className=\"h-3 w-3\" />\n              <span className=\"text-xs underline\">Reference 3</span>\n            </Source>\n          </SourcesContent>\n        </Sources>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:item"
+    },
+    {
+      "path": "components/ai-sources/ai-sources.tsx",
+      "target": "src/mui-plus/components/ai-sources/ai-sources.tsx",
+      "content": "\"use client\";\n\nimport {\n  Collapsible,\n  CollapsibleContent,\n  CollapsibleTrigger,\n} from \"@/components/ui/collapsible\";\nimport { cn } from \"@/lib/utils\";\nimport { BookIcon, ChevronDownIcon } from \"lucide-react\";\nimport type { ComponentProps } from \"react\";\n\nexport type SourcesProps = ComponentProps<\"div\">;\n\nexport const Sources = ({ className, ...props }: SourcesProps) => (\n  <Collapsible\n    className={cn(\"not-prose mb-4 text-primary text-xs\", className)}\n    {...props}\n  />\n);\n\nexport type SourcesTriggerProps = ComponentProps<typeof CollapsibleTrigger> & {\n  count: number;\n};\n\nexport const SourcesTrigger = ({\n  className,\n  count,\n  children,\n  ...props\n}: SourcesTriggerProps) => (\n  <CollapsibleTrigger\n    className={cn(\"flex items-center gap-2\", className)}\n    {...props}\n  >\n    {children ?? (\n      <>\n        <p className=\"font-medium\">Used {count} sources</p>\n        <ChevronDownIcon className=\"h-4 w-4\" />\n      </>\n    )}\n  </CollapsibleTrigger>\n);\n\nexport type SourcesContentProps = ComponentProps<typeof CollapsibleContent>;\n\nexport const SourcesContent = ({\n  className,\n  ...props\n}: SourcesContentProps) => (\n  <CollapsibleContent\n    className={cn(\n      \"mt-3 flex w-fit flex-col gap-2\",\n      \"data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 outline-none data-[state=closed]:animate-out data-[state=open]:animate-in\",\n      className,\n    )}\n    {...props}\n  />\n);\n\nexport type SourceProps = ComponentProps<\"a\">;\n\nexport const Source = ({ href, title, children, ...props }: SourceProps) => (\n  <a\n    className=\"flex items-center gap-2\"\n    href={href}\n    rel=\"noreferrer\"\n    target=\"_blank\"\n    {...props}\n  >\n    {children ?? (\n      <>\n        <BookIcon className=\"h-4 w-4\" />\n        <span className=\"block font-medium\">{title}</span>\n      </>\n    )}\n  </a>\n);\n",
+      "type": "registry:item"
+    }
+  ],
+  "meta": {
+    "screenshot": "/screenshots/ai-sources.png",
+    "category": "ai"
+  }
+}

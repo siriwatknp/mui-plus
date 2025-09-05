@@ -24,7 +24,10 @@
       "mcp__playwright__browser_drag",
       "mcp__playwright__browser_click",
       "mcp__playwright__browser_wait_for",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "mcp__context7__get-library-docs",
+      "WebFetch(domain:github.com)",
+      "mcp__context7__resolve-library-id"
     ],
     "deny": []
   },

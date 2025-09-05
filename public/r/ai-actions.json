@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ai-actions",
+  "type": "registry:item",
+  "title": "Ai Actions",
+  "description": "A ai-actions item.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ai-actions/ai-actions.demo.tsx",
+      "target": "src/mui-plus/components/ai-actions/ai-actions.demo.tsx",
+      "content": "\"use client\";\n\nimport { Actions, Action } from \"./ai-actions\";\nimport { CopyIcon, ShareIcon, MoreVerticalIcon } from \"lucide-react\";\n\nexport default function AIActionsDemo() {\n  return (\n    <div className=\"flex flex-col gap-8 p-8\">\n      <div className=\"space-y-2\">\n        <h3 className=\"text-sm font-medium text-muted-foreground\">\n          Basic Actions\n        </h3>\n        <Actions>\n          <Action label=\"Copy\" onClick={() => console.log(\"Copy clicked\")}>\n            <CopyIcon className=\"size-4\" />\n          </Action>\n          <Action label=\"Share\" onClick={() => console.log(\"Share clicked\")}>\n            <ShareIcon className=\"size-4\" />\n          </Action>\n          <Action label=\"More\" onClick={() => console.log(\"More clicked\")}>\n            <MoreVerticalIcon className=\"size-4\" />\n          </Action>\n        </Actions>\n      </div>\n\n      <div className=\"space-y-2\">\n        <h3 className=\"text-sm font-medium text-muted-foreground\">\n          Actions with Tooltips\n        </h3>\n        <Actions>\n          <Action\n            tooltip=\"Copy to clipboard\"\n            onClick={() => console.log(\"Copy clicked\")}\n          >\n            <CopyIcon className=\"size-4\" />\n          </Action>\n          <Action\n            tooltip=\"Share this content\"\n            onClick={() => console.log(\"Share clicked\")}\n          >\n            <ShareIcon className=\"size-4\" />\n          </Action>\n          <Action\n            tooltip=\"More options\"\n            onClick={() => console.log(\"More clicked\")}\n          >\n            <MoreVerticalIcon className=\"size-4\" />\n          </Action>\n        </Actions>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:item"
+    },
+    {
+      "path": "components/ai-actions/ai-actions.tsx",
+      "target": "src/mui-plus/components/ai-actions/ai-actions.tsx",
+      "content": "\"use client\";\n\nimport { Button } from \"@/components/ui/button\";\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n} from \"@/components/ui/tooltip\";\nimport { cn } from \"@/lib/utils\";\nimport type { ComponentProps } from \"react\";\n\nexport type ActionsProps = ComponentProps<\"div\">;\n\nexport const Actions = ({ className, children, ...props }: ActionsProps) => (\n  <div className={cn(\"flex items-center gap-1\", className)} {...props}>\n    {children}\n  </div>\n);\n\nexport type ActionProps = ComponentProps<typeof Button> & {\n  tooltip?: string;\n  label?: string;\n};\n\nexport const Action = ({\n  tooltip,\n  children,\n  label,\n  className,\n  variant = \"ghost\",\n  size = \"sm\",\n  ...props\n}: ActionProps) => {\n  const button = (\n    <Button\n      className={cn(\n        \"size-9 p-1.5 text-muted-foreground hover:text-foreground relative\",\n        className,\n      )}\n      size={size}\n      type=\"button\"\n      variant={variant}\n      {...props}\n    >\n      {children}\n      <span className=\"sr-only\">{label || tooltip}</span>\n    </Button>\n  );\n\n  if (tooltip) {\n    return (\n      <TooltipProvider>\n        <Tooltip>\n          <TooltipTrigger asChild>{button}</TooltipTrigger>\n          <TooltipContent>\n            <p>{tooltip}</p>\n          </TooltipContent>\n        </Tooltip>\n      </TooltipProvider>\n    );\n  }\n\n  return button;\n};\n",
+      "type": "registry:item"
+    }
+  ],
+  "meta": {
+    "screenshot": "/screenshots/ai-actions.png",
+    "category": "ai"
+  }
+}

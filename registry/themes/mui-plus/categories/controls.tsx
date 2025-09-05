@@ -2,13 +2,16 @@ import React from "react";
 import type { ThemeOptions } from "@mui/material/styles";
 import { switchClasses } from "@mui/material/Switch";
 import { styled } from "@mui/material/styles";
+import { checkboxClasses } from "@mui/material/Checkbox";
+import { formControlLabelClasses } from "@mui/material/FormControlLabel";
+import { radioClasses } from "@mui/material/Radio";
 
 const borderWidth = 1;
 
 const Uncheckbox = styled("span")(({ theme }) => ({
   display: "inline-block",
-  width: "1.5rem",
-  height: "1.5rem",
+  width: "1.5em",
+  height: "1.5em",
   padding: 3,
   borderRadius: 4,
   color: (theme.vars || theme).palette.text.icon,
@@ -28,8 +31,8 @@ const Uncheckbox = styled("span")(({ theme }) => ({
 
 const Unradio = styled("span")(({ theme }) => ({
   display: "inline-block",
-  width: "1.5rem",
-  height: "1.5rem",
+  width: "1.5em",
+  height: "1.5em",
   padding: 2,
   borderRadius: "50%",
   color: (theme.vars || theme).palette.text.icon,
@@ -52,10 +55,48 @@ export const controlsTheme: ThemeOptions["components"] = {
     defaultProps: {
       icon: <Uncheckbox />,
     },
+    styleOverrides: {
+      root: {
+        variants: [
+          {
+            props: { size: "small" },
+            style: {
+              padding: 6.5, // height of the checkbox will be 34px
+              fontSize: "0.875rem",
+            },
+          },
+          {
+            props: { size: "medium" },
+            style: {
+              padding: 8, // height of the checkbox will be 40px
+            },
+          },
+        ],
+      },
+    },
   },
   MuiRadio: {
     defaultProps: {
       icon: <Unradio />,
+    },
+    styleOverrides: {
+      root: {
+        variants: [
+          {
+            props: { size: "small" },
+            style: {
+              padding: 6.5, // height of the radio will be 34px
+              fontSize: "0.875rem",
+            },
+          },
+          {
+            props: { size: "medium" },
+            style: {
+              padding: 8, // height of the radio will be 40px
+            },
+          },
+        ],
+      },
     },
   },
   MuiSwitch: {
@@ -156,7 +197,29 @@ export const controlsTheme: ThemeOptions["components"] = {
           "--_gap": theme.spacing(1),
           margin: 0,
         },
+        [`&:has(.${switchClasses.sizeSmall}) .${formControlLabelClasses.label}`]:
+          {
+            "--_fs": "0.875rem",
+          },
+        [`&:has(.${checkboxClasses.root})`]: {
+          marginLeft: -8,
+        },
+        [`&:has(.${checkboxClasses.sizeSmall}) .${formControlLabelClasses.label}`]:
+          {
+            "--_fs": "0.875rem",
+          },
+        [`&:has(.${radioClasses.root})`]: {
+          marginLeft: -8,
+        },
+        [`&:has(.${radioClasses.sizeSmall}) .${formControlLabelClasses.label}`]:
+          {
+            "--_fs": "0.875rem",
+          },
       }),
+      label: {
+        "--_fs": "1rem",
+        fontSize: "var(--_fs)",
+      },
     },
   },
 };

@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   devIndicators: false,
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  serverExternalPackages: ["@mastra/*"],
 };
 
 const withMDX = createMDX({

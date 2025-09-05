@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ai-message",
+  "type": "registry:item",
+  "title": "Ai Message",
+  "description": "A ai-message item.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ai-message/ai-message.demo.tsx",
+      "target": "src/mui-plus/components/ai-message/ai-message.demo.tsx",
+      "content": "\"use client\";\n\nimport { Message, MessageContent, MessageAvatar } from \"./ai-message\";\n\nexport default function AIMessageDemo() {\n  return (\n    <div className=\"w-full max-w-3xl mx-auto space-y-8 p-8\">\n      <div className=\"space-y-2\">\n        <h3 className=\"text-sm font-medium text-muted-foreground\">\n          Message Types\n        </h3>\n        <div className=\"space-y-4\">\n          {/* User Message */}\n          <Message from=\"user\">\n            <MessageAvatar src=\"\" name=\"User\" />\n            <MessageContent>\n              <p>How do I create a custom hook in React?</p>\n            </MessageContent>\n          </Message>\n\n          {/* Assistant Message */}\n          <Message from=\"assistant\">\n            <MessageAvatar src=\"\" name=\"AI\" />\n            <MessageContent>\n              <p>To create a custom hook in React, follow these steps:</p>\n              <ol className=\"list-decimal list-inside mt-2 space-y-1\">\n                <li>Start the function name with &quot;use&quot;</li>\n                <li>Call other hooks inside if needed</li>\n                <li>Return necessary values</li>\n              </ol>\n            </MessageContent>\n          </Message>\n\n          {/* User Message with longer content */}\n          <Message from=\"user\">\n            <MessageAvatar src=\"\" name=\"User\" />\n            <MessageContent>\n              <p>Can you show me an example?</p>\n            </MessageContent>\n          </Message>\n\n          {/* Assistant Message with code */}\n          <Message from=\"assistant\">\n            <MessageAvatar src=\"\" name=\"AI\" />\n            <MessageContent>\n              <p>Here&apos;s a simple example of a custom hook:</p>\n              <pre className=\"mt-2 p-2 bg-background/50 rounded text-xs overflow-x-auto\">\n                <code>{`function useCounter(initialValue = 0) {\n  const [count, setCount] = useState(initialValue);\n  \n  const increment = () => setCount(prev => prev + 1);\n  const decrement = () => setCount(prev => prev - 1);\n  \n  return { count, increment, decrement };\n}`}</code>\n              </pre>\n            </MessageContent>\n          </Message>\n        </div>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:item"
+    },
+    {
+      "path": "components/ai-message/ai-message.tsx",
+      "target": "src/mui-plus/components/ai-message/ai-message.tsx",
+      "content": "import { Avatar, AvatarFallback, AvatarImage } from \"@/components/ui/avatar\";\nimport { cn } from \"@/lib/utils\";\nimport type { UIMessage } from \"ai\";\nimport type { ComponentProps, HTMLAttributes } from \"react\";\n\nexport type MessageProps = HTMLAttributes<HTMLDivElement> & {\n  from: UIMessage[\"role\"];\n};\n\nexport const Message = ({ className, from, ...props }: MessageProps) => (\n  <div\n    className={cn(\n      \"group flex w-full items-end justify-end gap-2 py-4\",\n      from === \"user\" ? \"is-user\" : \"is-assistant flex-row-reverse justify-end\",\n      \"[&>div]:max-w-[80%]\",\n      className,\n    )}\n    {...props}\n  />\n);\n\nexport type MessageContentProps = HTMLAttributes<HTMLDivElement>;\n\nexport const MessageContent = ({\n  children,\n  className,\n  ...props\n}: MessageContentProps) => (\n  <div\n    className={cn(\n      \"flex flex-col gap-2 overflow-hidden rounded-lg px-4 py-3 text-foreground text-sm\",\n      \"group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground\",\n      \"group-[.is-assistant]:bg-secondary group-[.is-assistant]:text-foreground\",\n      \"is-user:dark\",\n      className,\n    )}\n    {...props}\n  >\n    {children}\n  </div>\n);\n\nexport type MessageAvatarProps = ComponentProps<typeof Avatar> & {\n  src: string;\n  name?: string;\n};\n\nexport const MessageAvatar = ({\n  src,\n  name,\n  className,\n  ...props\n}: MessageAvatarProps) => (\n  <Avatar className={cn(\"size-8 ring-1 ring-border\", className)} {...props}>\n    <AvatarImage alt=\"\" className=\"mt-0 mb-0\" src={src} />\n    <AvatarFallback>{name?.slice(0, 2) || \"ME\"}</AvatarFallback>\n  </Avatar>\n);\n",
+      "type": "registry:item"
+    }
+  ],
+  "meta": {
+    "screenshot": "/screenshots/ai-message.png",
+    "category": "ai"
+  }
+}
