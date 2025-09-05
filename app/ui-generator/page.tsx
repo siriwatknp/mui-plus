@@ -39,12 +39,12 @@ const examplePrompts = [
   "A user profile card with avatar and details",
 ];
 
-type ModelProvider = "openai-4o-mini" | "claude-sonnet-4" | "gemini-2.5-flash";
+type ModelProvider = "openai-4o-mini" | "claude-sonnet-4";
 
 export default function UIGeneratorPage() {
   const [inputText, setInputText] = useState("");
   const [selectedModel, setSelectedModel] =
-    useState<ModelProvider>("gemini-2.5-flash");
+    useState<ModelProvider>("claude-sonnet-4");
 
   const { messages, sendMessage, status, stop, error } = useChat<
     UIMessage<
@@ -108,7 +108,7 @@ export default function UIGeneratorPage() {
     if (inputText.trim()) {
       sendMessage(
         { text: inputText },
-        { body: { modelProvider: selectedModel } }
+        { body: { modelProvider: selectedModel } },
       );
       setInputText("");
     }
@@ -228,7 +228,7 @@ export default function UIGeneratorPage() {
                               {
                                 text: "Continue the task",
                               },
-                              { body: { modelProvider: selectedModel } }
+                              { body: { modelProvider: selectedModel } },
                             )
                           }
                         >
@@ -256,7 +256,7 @@ export default function UIGeneratorPage() {
                     {
                       text: "Continue the task",
                     },
-                    { body: { modelProvider: selectedModel } }
+                    { body: { modelProvider: selectedModel } },
                   )
                 }
               >
@@ -289,7 +289,6 @@ export default function UIGeneratorPage() {
             >
               <option value="openai-4o-mini">OpenAI GPT-4o Mini</option>
               <option value="claude-sonnet-4">Claude Sonnet 4</option>
-              <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
             </select>
           </div>
           <PromptInputTools>

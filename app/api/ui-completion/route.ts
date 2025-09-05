@@ -8,10 +8,10 @@ export const maxDuration = 30;
 export async function POST(req: Request) {
   const {
     messages,
-    modelProvider = "gemini-2.5-flash",
+    modelProvider = "claude-sonnet-4",
   }: {
     messages: UIMessage[];
-    modelProvider?: "openai-4o-mini" | "claude-sonnet-4" | "gemini-2.5-flash";
+    modelProvider?: "openai-4o-mini" | "claude-sonnet-4";
   } = await req.json();
 
   try {
