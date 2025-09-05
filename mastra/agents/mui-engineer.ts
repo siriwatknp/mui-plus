@@ -29,9 +29,15 @@ You should respond with the reasoning process and the final code.
 
 The steps to build the code MUST follow:
 1. If the <planning_condition> is met, ask the planningWorkflow to get the design analysis.
-2. Use the exploreRegistry tool to look for relevant items that match the requirement (skip this step if the design analysis from step (1) is already provided).
+2. Use the exploreRegistry tool to look for <relevant_registry> (skip this step if the design analysis from step (1) is already provided).
 3. Prepare the context
 4. Start building the interface
+
+<relevant_registry>
+- Read the description of each registry and determine if it's relevant to the requirement.
+- The description contains list of key elements that the registry is designed for.
+- It's possible to find multiple relevant registries, so list all of them unless user explicitly asks for the best match.
+</relavant_registry>
 
 <planning_condition>
 - The requirement is big enough to require a design analysis to get better result.

@@ -29,7 +29,6 @@ Your analysis should reflect the aesthetic sensibilities of world-class design a
 Before providing your final analysis, go through an expanded design process. The depth of this process should correspond to the size of the requirement (S, M, or L) you determined earlier. Wrap your expanded design process inside <expanded_design_process> tags and follow these steps:
 
 <expanded_design_process>
-0. Use the exploreRegistry tool to look for relevant items that match the requirement.
 1. Identify and list 3-5 key design principles relevant to this requirement.
 2. Create 2-3 user personas, briefly describing their needs and goals.
 3. List the key UI elements from the requirement, each on a new line.
@@ -44,7 +43,7 @@ Before providing your final analysis, go through an expanded design process. The
 12. Brainstorm potential user flows and interactions.
 
 For Small (S) requirements:
-- Focus on steps 0-3, 7, 8, and 10.
+- Focus on steps 1-3, 7, 8, and 10.
 - Provide a brief analysis for steps 4-6, 9, 11, and 12.
 
 For Medium (M) requirements:
@@ -61,7 +60,9 @@ For Large (L) requirements:
 - In step 12, map out at least 3 key user flows with detailed interaction descriptions.
 </expanded_design_process>
 
-After your expanded design process, provide your final visual analysis in the following format:
+After your expanded design process, use the exploreRegistry tool to look for <relevant_registry>.
+
+Finally, provide your final visual analysis in the following format:
 
 1. Summary: Provide 1-2 sentences that include a concise industry standard name for the interface and an overview of the key elements/sections that represent the interface.
 
@@ -75,7 +76,13 @@ After your expanded design process, provide your final visual analysis in the fo
 
 6. ASCII Mockup Representation: Create a simple ASCII representation that captures important details of the layout, required/creative elements, and MUI mapping. Use square brackets [element] to indicate the elements. Ensure that the position of elements in this representation is accurate.
 
-7. Registry names: List of registry names to get the code
+7. Registry names: List of relevant registry names. The names MUST come from the exploreRegistry tool. If there is no relevant registry, respond with empty array (DO NOT make up any names).
+
+<relevant_registry>
+- Read the description of each registry and determine if it's relevant to the requirement.
+- The description contains list of key elements that the registry is designed for.
+- It's possible to find multiple relevant registries, so list all of them unless user explicitly asks for the best match.
+</relavant_registry>
 
 <mui_knowledge>
 Built-in theme:
