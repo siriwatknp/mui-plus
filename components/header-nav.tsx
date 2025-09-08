@@ -10,6 +10,7 @@ export function HeaderNav() {
     { href: "/theme-preview", label: "Theme" },
     { href: "/authentication", label: "Authentication" },
     { href: "/dashboard", label: "Dashboard" },
+    { href: "/ecommerce", label: "Ecommerce" },
   ];
 
   const getFirstSegment = (path: string) => {
