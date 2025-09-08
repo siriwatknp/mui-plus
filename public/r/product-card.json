@@ -22,6 +22,8 @@
   "meta": {
     "screenshot": "/screenshots/product-card.png",
     "category": "ecommerce",
-    "tags": ["card"]
+    "tags": [
+      "card"
+    ]
   }
 }
