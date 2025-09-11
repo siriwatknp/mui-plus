@@ -101,16 +101,22 @@ function findMatchingFiles(name) {
 
   for (const filePath of allFiles) {
     const fileName = path.basename(filePath, path.extname(filePath));
+    const registryPath = path.join(process.cwd(), "registry");
+    const relativePath = path.relative(registryPath, filePath);
+    const pathSegments = relativePath.split(path.sep);
 
     // Check if this file matches the name we're looking for
-    if (fileName === name) {
-      const registryPath = path.join(process.cwd(), "registry");
-      const relativePath = path.relative(registryPath, filePath);
-
+    // Also check for index files in a directory matching the name
+    if (
+      fileName === name ||
+      (fileName === "index" &&
+        pathSegments.length >= 2 &&
+        pathSegments[pathSegments.length - 2] === name)
+    ) {
       matches.push({
         path: filePath,
         relativePath: relativePath,
-        name: fileName,
+        name: name,
       });
     }
   }

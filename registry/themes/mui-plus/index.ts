@@ -1,2 +1,2 @@
-export { default } from "./mui-plus";
-export * from "./mui-plus";
+export { default } from "./theme";
+export * from "./theme";
