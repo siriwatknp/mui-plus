@@ -9,36 +9,46 @@ import { LineChart } from "@mui/x-charts/LineChart";
 
 // Generate mock data for the chart
 const generateData = () => {
-  const dates = [];
-  const etfData = [];
-  const vitainvestData = [];
-  const ishareData = [];
-  
-  // Generate dates from Aug 25 to Sep 26
-  const startDate = new Date(2024, 7, 25); // August 25
-  const endDate = new Date(2024, 8, 26); // September 26
-  
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    dates.push(d.getDate());
-    
-    // Generate realistic portfolio values with more variation
-    const dayIndex = dates.length - 1;
-    const baseETF = 95000 + Math.sin(dayIndex * 0.3) * 8000 + Math.random() * 3000;
-    const baseVita = 85000 + Math.sin(dayIndex * 0.2) * 7000 + dayIndex * 800 + Math.random() * 2500;
-    const baseIshare = 115000 - dayIndex * 500 + Math.sin(dayIndex * 0.25) * 10000 + Math.random() * 4000;
-    
-    etfData.push(baseETF);
-    vitainvestData.push(baseVita);
-    ishareData.push(baseIshare);
-  }
-  
-  return { dates, etfData, vitainvestData, ishareData };
+  // Simple x-axis points (0-32 for days)
+  const xData = Array.from({ length: 33 }, (_, i) => i);
+
+  // Generate EKG-like portfolio values with more dramatic variations
+  const etfData = xData.map((day) => {
+    // ETF: Multiple frequency waves for EKG-like pattern
+    const base = 95000;
+    const wave1 = Math.sin(day * 0.8) * 3000;
+    const wave2 = Math.sin(day * 1.5) * 2000;
+    const wave3 = Math.cos(day * 0.3) * 1500;
+    const noise = Math.sin(day * 3) * 500;
+    return base + wave1 + wave2 + wave3 + noise + day * 50;
+  });
+
+  const vitainvestData = xData.map((day) => {
+    // Vitainvest: Strong upward trend with oscillations
+    const base = 85000;
+    const wave1 = Math.sin(day * 0.6) * 2500;
+    const wave2 = Math.cos(day * 1.2) * 1500;
+    const spike = day % 5 === 0 ? Math.random() * 1000 : 0;
+    return base + wave1 + wave2 + spike + day * 600;
+  });
+
+  const ishareData = xData.map((day) => {
+    // iShares: Volatile pattern with sharp movements
+    const base = 115000;
+    const wave1 = Math.sin(day * 0.4) * 5000;
+    const wave2 = Math.cos(day * 0.9) * 3000;
+    const wave3 = Math.sin(day * 2) * 2000;
+    const trend = day < 16 ? -day * 400 : (day - 16) * 300;
+    return base + wave1 + wave2 + wave3 + trend;
+  });
+
+  return { xData, etfData, vitainvestData, ishareData };
 };
 
-const { dates, etfData, vitainvestData, ishareData } = generateData();
+const { xData, etfData, vitainvestData, ishareData } = generateData();
 
 // Format x-axis labels
-const xAxisData = dates.map((_, index) => {
+const xAxisData = xData.map((_: number, index: number) => {
   if (index === 0) return "Aug 25";
   if (index === 4) return "Aug 29";
   if (index === 8) return "Sep 02";
@@ -54,7 +64,7 @@ const xAxisData = dates.map((_, index) => {
 export default function PortfolioValueChart() {
   return (
     <Card
-      sx={theme => ({
+      sx={(theme) => ({
         p: 3,
         borderRadius: 2,
         border: `1px solid`,
@@ -89,14 +99,19 @@ export default function PortfolioValueChart() {
           </Typography>
         </Box>
 
-        <Stack 
-          direction="row" 
-          spacing={2.5} 
+        <Stack
+          direction="row"
+          spacing={2.5}
           sx={{ px: 1 }}
           role="list"
           aria-label="Portfolio legend"
         >
-          <Stack direction="row" spacing={1} alignItems="center" role="listitem">
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            role="listitem"
+          >
             <Box
               sx={{
                 width: 24,
@@ -110,7 +125,12 @@ export default function PortfolioValueChart() {
               ETF Shares Vital
             </Typography>
           </Stack>
-          <Stack direction="row" spacing={1} alignItems="center" role="listitem">
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            role="listitem"
+          >
             <Box
               sx={{
                 width: 24,
@@ -124,7 +144,12 @@ export default function PortfolioValueChart() {
               Vitainvest Core
             </Typography>
           </Stack>
-          <Stack direction="row" spacing={1} alignItems="center" role="listitem">
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            role="listitem"
+          >
             <Box
               sx={{
                 width: 24,
@@ -140,7 +165,7 @@ export default function PortfolioValueChart() {
           </Stack>
         </Stack>
 
-        <Box 
+        <Box
           sx={{ width: "100%", height: 350 }}
           role="img"
           aria-label="Portfolio performance chart showing ETF Shares Vital, Vitainvest Core, and iShares Tech Growth from August 25 to September 26"
@@ -168,7 +193,7 @@ export default function PortfolioValueChart() {
             ]}
             xAxis={[
               {
-                data: dates,
+                data: xData,
                 scaleType: "point",
                 tickLabelStyle: {
                   fontSize: 12,
@@ -176,7 +201,7 @@ export default function PortfolioValueChart() {
                 },
                 tickNumber: 9,
                 valueFormatter: (value) => {
-                  const index = dates.indexOf(value);
+                  const index = xData.indexOf(value);
                   return xAxisData[index] || "";
                 },
               },
@@ -198,7 +223,7 @@ export default function PortfolioValueChart() {
               horizontal: true,
               vertical: false,
             }}
-            sx={theme => ({
+            sx={(theme) => ({
               "& .MuiChartsAxis-line": {
                 stroke: "var(--mui-palette-divider)",
                 strokeOpacity: 0.3,
