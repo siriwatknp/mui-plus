@@ -22,6 +22,7 @@
   "meta": {
     "screenshot": "/screenshots/command-search-ui.png",
     "category": "dashboard",
-    "previewMode": "iframe"
+    "previewMode": "iframe",
+    "tags": []
   }
 }

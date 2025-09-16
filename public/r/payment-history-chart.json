@@ -21,6 +21,7 @@
   ],
   "meta": {
     "screenshot": "/screenshots/payment-history-chart.png",
-    "category": "dashboard"
+    "category": "dashboard",
+    "tags": []
   }
 }

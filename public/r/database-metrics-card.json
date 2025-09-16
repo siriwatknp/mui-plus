@@ -21,6 +21,7 @@
   ],
   "meta": {
     "screenshot": "/screenshots/database-metrics-card.png",
-    "category": "dashboard"
+    "category": "dashboard",
+    "tags": []
   }
 }

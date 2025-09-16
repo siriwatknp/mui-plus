@@ -21,6 +21,7 @@
   ],
   "meta": {
     "screenshot": "/screenshots/data-metrics.png",
-    "category": "dashboard"
+    "category": "dashboard",
+    "tags": []
   }
 }

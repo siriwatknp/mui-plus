@@ -21,6 +21,7 @@
   ],
   "meta": {
     "screenshot": "/screenshots/call-volume-trends.png",
-    "category": "dashboard"
+    "category": "dashboard",
+    "tags": []
   }
 }

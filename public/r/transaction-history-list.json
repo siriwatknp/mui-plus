@@ -20,6 +20,7 @@
   ],
   "meta": {
     "screenshot": "/screenshots/transaction-history-list.png",
-    "category": "dashboard"
+    "category": "dashboard",
+    "tags": []
   }
 }

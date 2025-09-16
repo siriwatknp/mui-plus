@@ -21,9 +21,6 @@
   "meta": {
     "screenshot": "/screenshots/login-form.png",
     "category": "authentication",
-    "tags": [
-      "form",
-      "login"
-    ]
+    "tags": []
   }
 }

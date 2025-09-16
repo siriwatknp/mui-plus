@@ -22,10 +22,7 @@
   "meta": {
     "screenshot": "/screenshots/login-form-split.png",
     "category": "authentication",
-    "tags": [
-      "form",
-      "login"
-    ],
+    "tags": [],
     "previewMode": "iframe"
   }
 }
