@@ -19,17 +19,16 @@ export default function AIMessageDemo() {
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {/* User Message */}
             <Message from="user">
-              <MessageAvatar name="User" src="" />
               <MessageContent>
                 <Typography variant="body2">
                   How do I create a custom hook in React?
                 </Typography>
               </MessageContent>
+              <MessageAvatar name="User" src="" />
             </Message>
 
             {/* Assistant Message */}
             <Message from="assistant">
-              <MessageAvatar name="AI" src="" />
               <MessageContent>
                 <Typography variant="body2">
                   To create a custom hook in React, follow these steps:
@@ -54,6 +53,7 @@ export default function AIMessageDemo() {
                   </Typography>
                 </Box>
               </MessageContent>
+              <MessageAvatar name="AI" src="" />
             </Message>
 
             {/* User Message with longer content */}

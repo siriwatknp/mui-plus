@@ -16,10 +16,19 @@ export const Message = ({ from, sx, ...props }: MessageProps) => (
       display: "flex",
       width: "100%",
       alignItems: "flex-end",
-      justifyContent: from === "user" ? "flex-end" : "flex-start",
       gap: 1,
       py: 2,
-      flexDirection: from === "user" ? "row-reverse" : "row",
+      '&[data-from="user"]': {
+        flexDirection: "row-reverse",
+        "&:has(.MuiAvatar-root:last-child)": {
+          flexDirection: "row",
+          justifyContent: "flex-end",
+        },
+      },
+      '&:not([data-from="user"]):has(.MuiAvatar-root:last-child)': {
+        flexDirection: "row-reverse",
+        justifyContent: "flex-end",
+      },
       ...sx,
     }}
     {...props}
@@ -73,6 +82,7 @@ export const MessageContent = ({
         },
         // Assistant message with flat variant
         "[data-from='assistant'] > &, [data-from='system'] > &": {
+          borderRadius: 0,
           color: "text.primary",
         },
       }),

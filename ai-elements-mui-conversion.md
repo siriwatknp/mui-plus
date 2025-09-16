@@ -93,7 +93,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-loader/ai-loader.tsx`
 
-### 11. [ ] ai-message
+### 11. [x] ai-message
 
 **Current:** Uses Tailwind classes
 **Target:** MUI Box, Avatar, Typography
