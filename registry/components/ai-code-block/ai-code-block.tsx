@@ -1,9 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import { useTheme } from "@mui/material/styles";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import type { ComponentProps, HTMLAttributes, ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
@@ -19,7 +21,7 @@ const CodeBlockContext = createContext<CodeBlockContextType>({
   code: "",
 });
 
-export type CodeBlockProps = HTMLAttributes<HTMLDivElement> & {
+export type CodeBlockProps = ComponentProps<typeof Paper> & {
   code: string;
   language: string;
   showLineNumbers?: boolean;
@@ -30,76 +32,74 @@ export const CodeBlock = ({
   code,
   language,
   showLineNumbers = false,
-  className,
   children,
+  sx,
   ...props
-}: CodeBlockProps) => (
-  <CodeBlockContext.Provider value={{ code }}>
-    <div
-      className={cn(
-        "relative w-full overflow-hidden rounded-md border bg-background text-foreground",
-        className,
-      )}
-      {...props}
-    >
-      <div className="relative">
-        <SyntaxHighlighter
-          className="overflow-hidden dark:hidden"
-          codeTagProps={{
-            className: "font-mono text-sm",
-          }}
-          customStyle={{
-            margin: 0,
-            padding: "1rem",
-            fontSize: "0.875rem",
-            background: "hsl(var(--background))",
-            color: "hsl(var(--foreground))",
-          }}
-          language={language}
-          lineNumberStyle={{
-            color: "hsl(var(--muted-foreground))",
-            paddingRight: "1rem",
-            minWidth: "2.5rem",
-          }}
-          showLineNumbers={showLineNumbers}
-          style={oneLight}
-        >
-          {code}
-        </SyntaxHighlighter>
-        <SyntaxHighlighter
-          className="hidden overflow-hidden dark:block"
-          codeTagProps={{
-            className: "font-mono text-sm",
-          }}
-          customStyle={{
-            margin: 0,
-            padding: "1rem",
-            fontSize: "0.875rem",
-            background: "hsl(var(--background))",
-            color: "hsl(var(--foreground))",
-          }}
-          language={language}
-          lineNumberStyle={{
-            color: "hsl(var(--muted-foreground))",
-            paddingRight: "1rem",
-            minWidth: "2.5rem",
-          }}
-          showLineNumbers={showLineNumbers}
-          style={oneDark}
-        >
-          {code}
-        </SyntaxHighlighter>
-        {children && (
-          <div className="absolute top-2 right-2 flex items-center gap-2">
-            {children}
-          </div>
-        )}
-      </div>
-    </div>
-  </CodeBlockContext.Provider>
-);
+}: CodeBlockProps) => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
 
-export type CodeBlockCopyButtonProps = ComponentProps<typeof Button> & {
+  return (
+    <CodeBlockContext.Provider value={{ code }}>
+      <Paper
+        variant="outlined"
+        sx={{
+          position: "relative",
+          width: "100%",
+          overflow: "hidden",
+          ...sx,
+        }}
+        {...props}
+      >
+        <Box sx={{ position: "relative" }}>
+          <SyntaxHighlighter
+            codeTagProps={{
+              style: {
+                fontFamily: "monospace",
+                fontSize: "0.875rem",
+              },
+            }}
+            customStyle={{
+              margin: 0,
+              padding: "16px",
+              fontSize: "0.875rem",
+              background: isDarkMode
+                ? theme.palette.background.paper
+                : theme.palette.background.default,
+              color: theme.palette.text.primary,
+            }}
+            language={language}
+            lineNumberStyle={{
+              color: theme.palette.text.secondary,
+              paddingRight: "1rem",
+              minWidth: "2.5rem",
+            }}
+            showLineNumbers={showLineNumbers}
+            style={isDarkMode ? oneDark : oneLight}
+          >
+            {code}
+          </SyntaxHighlighter>
+          {children && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 1,
+                right: 1,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              {children}
+            </Box>
+          )}
+        </Box>
+      </Paper>
+    </CodeBlockContext.Provider>
+  );
+};
+
+export type CodeBlockCopyButtonProps = ComponentProps<typeof IconButton> & {
   onCopy?: () => void;
   onError?: (error: Error) => void;
   timeout?: number;
@@ -110,7 +110,8 @@ export const CodeBlockCopyButton = ({
   onError,
   timeout = 2000,
   children,
-  className,
+  size = "small",
+  sx,
   ...props
 }: CodeBlockCopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -135,14 +136,20 @@ export const CodeBlockCopyButton = ({
   const Icon = isCopied ? CheckIcon : CopyIcon;
 
   return (
-    <Button
-      className={cn("shrink-0", className)}
+    <IconButton
       onClick={copyToClipboard}
-      size="icon"
-      variant="ghost"
+      size={size}
+      sx={{
+        color: "text.secondary",
+        "&:hover": {
+          color: "text.primary",
+        },
+        ...sx,
+      }}
+      aria-label={isCopied ? "Copied!" : "Copy code"}
       {...props}
     >
       {children ?? <Icon size={14} />}
-    </Button>
+    </IconButton>
   );
 };

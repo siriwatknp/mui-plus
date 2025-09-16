@@ -45,7 +45,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-chain-of-thought/ai-chain-of-thought.tsx`
 
-### 5. [ ] ai-code-block
+### 5. [x] ai-code-block
 
 **Current:** Uses Tailwind classes, custom Button
 **Target:** MUI Paper, IconButton, Box
