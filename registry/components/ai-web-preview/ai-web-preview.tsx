@@ -1,21 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import TextField from "@mui/material/TextField";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import Collapse from "@mui/material/Collapse";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { ChevronDownIcon } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
 export type WebPreviewContextValue = {
@@ -35,17 +29,18 @@ const useWebPreview = () => {
   return context;
 };
 
-export type WebPreviewProps = ComponentProps<"div"> & {
+export type WebPreviewProps = {
   defaultUrl?: string;
   onUrlChange?: (url: string) => void;
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
 };
 
 export const WebPreview = ({
-  className,
   children,
   defaultUrl = "",
   onUrlChange,
-  ...props
+  sx,
 }: WebPreviewProps) => {
   const [url, setUrl] = useState(defaultUrl);
   const [consoleOpen, setConsoleOpen] = useState(false);
@@ -64,36 +59,55 @@ export const WebPreview = ({
 
   return (
     <WebPreviewContext.Provider value={contextValue}>
-      <div
-        className={cn(
-          "flex size-full flex-col rounded-lg border bg-card",
-          className,
-        )}
-        {...props}
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          flexDirection: "column",
+          borderRadius: 2,
+          border: 1,
+          borderColor: "divider",
+          bgcolor: "background.paper",
+          ...sx,
+        }}
       >
         {children}
-      </div>
+      </Box>
     </WebPreviewContext.Provider>
   );
 };
 
-export type WebPreviewNavigationProps = ComponentProps<"div">;
+export type WebPreviewNavigationProps = {
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+};
 
 export const WebPreviewNavigation = ({
-  className,
   children,
-  ...props
+  sx,
 }: WebPreviewNavigationProps) => (
-  <div
-    className={cn("flex items-center gap-1 border-b p-2", className)}
-    {...props}
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 0.5,
+      borderBottom: 1,
+      borderColor: "divider",
+      p: 1,
+      ...sx,
+    }}
   >
     {children}
-  </div>
+  </Box>
 );
 
-export type WebPreviewNavigationButtonProps = ComponentProps<typeof Button> & {
+export type WebPreviewNavigationButtonProps = {
+  onClick?: () => void;
+  disabled?: boolean;
   tooltip?: string;
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
 };
 
 export const WebPreviewNavigationButton = ({
@@ -101,36 +115,41 @@ export const WebPreviewNavigationButton = ({
   disabled,
   tooltip,
   children,
-  ...props
-}: WebPreviewNavigationButtonProps) => (
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          className="h-8 w-8 p-0 hover:text-foreground"
-          disabled={disabled}
-          onClick={onClick}
-          size="sm"
-          variant="ghost"
-          {...props}
-        >
-          {children}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>{tooltip}</p>
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-);
+  sx,
+}: WebPreviewNavigationButtonProps) => {
+  const button = (
+    <IconButton
+      disabled={disabled}
+      onClick={onClick}
+      size="small"
+      sx={{
+        width: 32,
+        height: 32,
+        "&:hover": {
+          color: "text.primary",
+        },
+        ...sx,
+      }}
+    >
+      {children}
+    </IconButton>
+  );
 
-export type WebPreviewUrlProps = ComponentProps<typeof Input>;
+  return tooltip ? <Tooltip title={tooltip}>{button}</Tooltip> : button;
+};
+
+export type WebPreviewUrlProps = {
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  sx?: SxProps<Theme>;
+};
 
 export const WebPreviewUrl = ({
   value,
   onChange,
   onKeyDown,
-  ...props
+  sx,
 }: WebPreviewUrlProps) => {
   const { url, setUrl } = useWebPreview();
 
@@ -143,110 +162,151 @@ export const WebPreviewUrl = ({
   };
 
   return (
-    <Input
-      className="h-8 flex-1 text-sm"
-      onChange={onChange}
-      onKeyDown={handleKeyDown}
+    <TextField
+      size="small"
+      variant="outlined"
       placeholder="Enter URL..."
       value={value ?? url}
-      {...props}
+      onChange={onChange}
+      onKeyDown={handleKeyDown}
+      sx={{
+        flex: 1,
+        "& .MuiInputBase-root": {
+          height: 32,
+          fontSize: "0.875rem",
+        },
+        ...sx,
+      }}
     />
   );
 };
 
-export type WebPreviewBodyProps = ComponentProps<"iframe"> & {
+export type WebPreviewBodyProps = {
   loading?: ReactNode;
+  src?: string;
+  sx?: SxProps<Theme>;
 };
 
-export const WebPreviewBody = ({
-  className,
-  loading,
-  src,
-  ...props
-}: WebPreviewBodyProps) => {
+export const WebPreviewBody = ({ loading, src, sx }: WebPreviewBodyProps) => {
   const { url } = useWebPreview();
 
   return (
-    <div className="flex-1">
-      <iframe
-        className={cn("size-full", className)}
+    <Box sx={{ flex: 1, ...sx }}>
+      <Box
+        component="iframe"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
         src={(src ?? url) || undefined}
         title="Preview"
-        {...props}
+        sx={{
+          width: "100%",
+          height: "100%",
+          border: "none",
+        }}
       />
       {loading}
-    </div>
+    </Box>
   );
 };
 
-export type WebPreviewConsoleProps = ComponentProps<"div"> & {
+export type WebPreviewConsoleProps = {
   logs?: Array<{
     level: "log" | "warn" | "error";
     message: string;
     timestamp: Date;
   }>;
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
 };
 
 export const WebPreviewConsole = ({
-  className,
   logs = [],
   children,
-  ...props
+  sx,
 }: WebPreviewConsoleProps) => {
   const { consoleOpen, setConsoleOpen } = useWebPreview();
 
   return (
-    <Collapsible
-      className={cn("border-t bg-muted/50 font-mono text-sm", className)}
-      onOpenChange={setConsoleOpen}
-      open={consoleOpen}
-      {...props}
+    <Box
+      sx={{
+        borderTop: 1,
+        borderColor: "divider",
+        fontFamily: "monospace",
+        fontSize: "0.875rem",
+        ...sx,
+      }}
     >
-      <CollapsibleTrigger asChild>
-        <Button
-          className="flex w-full items-center justify-between p-4 text-left font-medium hover:bg-muted/50"
-          variant="ghost"
-        >
-          Console
-          <ChevronDownIcon
-            className={cn(
-              "h-4 w-4 transition-transform duration-200",
-              consoleOpen && "rotate-180",
-            )}
+      <Button
+        fullWidth
+        disableRipple
+        variant="text"
+        onClick={() => setConsoleOpen(!consoleOpen)}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          textAlign: "left",
+          fontWeight: 500,
+          borderRadius: 0,
+          px: 2,
+          "&:hover, &:active": {
+            bgcolor: "transparent",
+          },
+          "&:active": {
+            transform: "none",
+          },
+        }}
+        endIcon={
+          <Box
+            component={ChevronDownIcon}
+            size={16}
+            sx={{
+              transition: "transform 0.2s",
+              transform: consoleOpen ? "rotate(180deg)" : "rotate(0deg)",
+            }}
           />
-        </Button>
-      </CollapsibleTrigger>
-      <CollapsibleContent
-        className={cn(
-          "px-4 pb-4",
-          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 outline-none data-[state=closed]:animate-out data-[state=open]:animate-in",
-        )}
+        }
       >
-        <div className="max-h-48 space-y-1 overflow-y-auto">
-          {logs.length === 0 ? (
-            <p className="text-muted-foreground">No console output</p>
-          ) : (
-            logs.map((log, index) => (
-              <div
-                className={cn(
-                  "text-xs",
-                  log.level === "error" && "text-destructive",
-                  log.level === "warn" && "text-yellow-600",
-                  log.level === "log" && "text-foreground",
-                )}
-                key={`${log.timestamp.getTime()}-${index}`}
-              >
-                <span className="text-muted-foreground">
-                  {log.timestamp.toLocaleTimeString()}
-                </span>{" "}
-                {log.message}
-              </div>
-            ))
-          )}
-          {children}
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
+        Console
+      </Button>
+      <Collapse in={consoleOpen}>
+        <Box sx={{ px: 2, pb: 2 }}>
+          <Box
+            sx={{
+              maxHeight: 192,
+              overflowY: "auto",
+              "& > *:not(:last-child)": {
+                mb: 0.5,
+              },
+            }}
+          >
+            {logs.length === 0 ? (
+              <Typography sx={{ color: "text.secondary" }}>
+                No console output
+              </Typography>
+            ) : (
+              logs.map((log, index) => (
+                <Box
+                  key={`${log.timestamp.getTime()}-${index}`}
+                  sx={{
+                    fontSize: "0.75rem",
+                    color:
+                      log.level === "error"
+                        ? "error.main"
+                        : log.level === "warn"
+                          ? "warning.main"
+                          : "text.primary",
+                  }}
+                >
+                  <Box component="span" sx={{ color: "text.secondary" }}>
+                    {log.timestamp.toLocaleTimeString()}
+                  </Box>{" "}
+                  {log.message}
+                </Box>
+              ))
+            )}
+            {children}
+          </Box>
+        </Box>
+      </Collapse>
+    </Box>
   );
 };

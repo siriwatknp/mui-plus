@@ -1,12 +1,10 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import Collapse from "@mui/material/Collapse";
+import Typography from "@mui/material/Typography";
+import type { SxProps, Theme } from "@mui/material/styles";
 import type { ToolUIPart } from "ai";
 import {
   CheckCircleIcon,
@@ -16,22 +14,47 @@ import {
   WrenchIcon,
   XCircleIcon,
 } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
+import React, { useState, type ReactNode } from "react";
 import { CodeBlock } from "../ai-code-block/ai-code-block";
 
-export type ToolProps = ComponentProps<typeof Collapsible>;
+export type ToolProps = {
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+  defaultOpen?: boolean;
+};
 
-export const Tool = ({ className, ...props }: ToolProps) => (
-  <Collapsible
-    className={cn("not-prose mb-4 w-full rounded-md border", className)}
-    {...props}
-  />
-);
+export const Tool = ({ children, sx, defaultOpen = false }: ToolProps) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <Box
+      sx={{
+        mb: 2,
+        width: "100%",
+        borderRadius: 1,
+        border: 1,
+        borderColor: "divider",
+        ...sx,
+      }}
+    >
+      {React.Children.map(children, (child) =>
+        React.isValidElement(child)
+          ? React.cloneElement(child as React.ReactElement<any>, {
+              isOpen,
+              onToggle: () => setIsOpen(!isOpen),
+            })
+          : child,
+      )}
+    </Box>
+  );
+};
 
 export type ToolHeaderProps = {
   type: ToolUIPart["type"];
   state: ToolUIPart["state"];
-  className?: string;
+  sx?: SxProps<Theme>;
+  isOpen?: boolean;
+  onToggle?: () => void;
 };
 
 const getStatusBadge = (status: ToolUIPart["state"]) => {
@@ -42,86 +65,168 @@ const getStatusBadge = (status: ToolUIPart["state"]) => {
     "output-error": "Error",
   } as const;
 
-  const icons = {
-    "input-streaming": <CircleIcon className="size-4" />,
-    "input-available": <ClockIcon className="size-4 animate-pulse" />,
-    "output-available": <CheckCircleIcon className="size-4 text-green-600" />,
-    "output-error": <XCircleIcon className="size-4 text-red-600" />,
-  } as const;
+  const getIcon = () => {
+    switch (status) {
+      case "input-streaming":
+        return <CircleIcon size={14} />;
+      case "input-available":
+        return <ClockIcon size={14} />;
+      case "output-available":
+        return <CheckCircleIcon size={14} />;
+      case "output-error":
+        return <XCircleIcon size={14} />;
+    }
+  };
+
+  const getChipColor = (): "default" | "success" | "error" | "warning" => {
+    switch (status) {
+      case "output-available":
+        return "success";
+      case "output-error":
+        return "error";
+      case "input-available":
+        return "warning";
+      default:
+        return "default";
+    }
+  };
 
   return (
-    <Badge className="gap-1.5 rounded-full text-xs" variant="secondary">
-      {icons[status]}
-      {labels[status]}
-    </Badge>
+    <Chip
+      icon={getIcon()}
+      label={labels[status]}
+      size="small"
+      variant="filled"
+      color={getChipColor()}
+      sx={{
+        borderRadius: 99,
+        fontSize: "0.75rem",
+        "& .MuiChip-icon": {
+          fontSize: 14,
+          ml: 0.5,
+          ...(status === "input-available" && {
+            animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+          }),
+        },
+        "@keyframes pulse": {
+          "0%, 100%": { opacity: 1 },
+          "50%": { opacity: 0.5 },
+        },
+      }}
+    />
   );
 };
 
 export const ToolHeader = ({
-  className,
+  sx,
   type,
   state,
-  ...props
+  isOpen = false,
+  onToggle,
 }: ToolHeaderProps) => (
-  <CollapsibleTrigger
-    className={cn(
-      "flex w-full items-center justify-between gap-4 p-3",
-      className,
-    )}
-    {...props}
+  <Box
+    component="button"
+    onClick={onToggle}
+    sx={{
+      display: "flex",
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 2,
+      p: 1.5,
+      border: "none",
+      background: "transparent",
+      cursor: "pointer",
+      ...sx,
+    }}
   >
-    <div className="flex items-center gap-2">
-      <WrenchIcon className="size-4 text-muted-foreground" />
-      <span className="font-medium text-sm">{type}</span>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <Box component={WrenchIcon} size={16} sx={{ color: "text.secondary" }} />
+      <Typography
+        component="span"
+        sx={{ fontWeight: 500, fontSize: "0.875rem" }}
+      >
+        {type}
+      </Typography>
       {getStatusBadge(state)}
-    </div>
-    <ChevronDownIcon className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-  </CollapsibleTrigger>
+    </Box>
+    <Box
+      component={ChevronDownIcon}
+      size={16}
+      sx={{
+        color: "text.secondary",
+        transition: "transform 0.2s",
+        transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+      }}
+    />
+  </Box>
 );
 
-export type ToolContentProps = ComponentProps<typeof CollapsibleContent>;
-
-export const ToolContent = ({ className, ...props }: ToolContentProps) => (
-  <CollapsibleContent
-    className={cn(
-      "data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-popover-foreground outline-none data-[state=closed]:animate-out data-[state=open]:animate-in",
-      className,
-    )}
-    {...props}
-  />
-);
-
-export type ToolInputProps = ComponentProps<"div"> & {
-  input: ToolUIPart["input"];
+export type ToolContentProps = {
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+  isOpen?: boolean;
 };
 
-export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
-  <div className={cn("space-y-2 overflow-hidden p-4", className)} {...props}>
-    <h4 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-      Parameters
-    </h4>
-    <div className="rounded-md bg-muted/50">
-      <CodeBlock code={JSON.stringify(input, null, 2)} language="json" />
-    </div>
-  </div>
+export const ToolContent = ({
+  children,
+  sx,
+  isOpen = false,
+}: ToolContentProps) => (
+  <Collapse in={isOpen}>
+    <Box sx={sx}>{children}</Box>
+  </Collapse>
 );
 
-export type ToolOutputProps = ComponentProps<"div"> & {
+export type ToolInputProps = {
+  input: ToolUIPart["input"];
+  sx?: SxProps<Theme>;
+};
+
+export const ToolInput = ({ input, sx }: ToolInputProps) => (
+  <Box
+    sx={{
+      overflow: "hidden",
+      p: 2,
+      pt: 0,
+      ...sx,
+    }}
+  >
+    <Typography
+      variant="overline"
+      sx={{
+        fontWeight: 500,
+        color: "text.secondary",
+        letterSpacing: 1,
+        mb: 1,
+        display: "block",
+      }}
+    >
+      Parameters
+    </Typography>
+    <Box
+      sx={{
+        borderRadius: 1,
+        bgcolor: "action.hover",
+      }}
+    >
+      <CodeBlock code={JSON.stringify(input, null, 2)} language="json" />
+    </Box>
+  </Box>
+);
+
+export type ToolOutputProps = {
   output: ToolUIPart["output"];
   errorText: ToolUIPart["errorText"];
+  sx?: SxProps<Theme>;
 };
 
-export const ToolOutput = ({
-  className,
-  output,
-  errorText,
-  ...props
-}: ToolOutputProps) => {
+export const ToolOutput = ({ output, errorText, sx }: ToolOutputProps) => {
   if (!(output || errorText)) {
     return null;
   }
 
-  let Output = <div>{output as ReactNode}</div>;
+  let Output = <Box>{output as ReactNode}</Box>;
 
   if (typeof output === "object") {
     Output = (
@@ -132,21 +237,40 @@ export const ToolOutput = ({
   }
 
   return (
-    <div className={cn("space-y-2 p-4", className)} {...props}>
-      <h4 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-        {errorText ? "Error" : "Result"}
-      </h4>
-      <div
-        className={cn(
-          "overflow-x-auto rounded-md text-xs [&_table]:w-full",
-          errorText
-            ? "bg-destructive/10 text-destructive"
-            : "bg-muted/50 text-foreground",
-        )}
+    <Box sx={{ p: 2, pt: 0, ...sx }}>
+      <Typography
+        variant="overline"
+        sx={{
+          fontWeight: 500,
+          color: "text.secondary",
+          letterSpacing: 1,
+          mb: 1,
+          display: "block",
+        }}
       >
-        {errorText && <div>{errorText}</div>}
+        {errorText ? "Error" : "Result"}
+      </Typography>
+      <Box
+        sx={{
+          overflowX: "auto",
+          borderRadius: 1,
+          fontSize: "0.75rem",
+          "& table": { width: "100%" },
+          ...(errorText
+            ? {
+                bgcolor: "error.light",
+                color: "error.main",
+                opacity: 0.1,
+              }
+            : {
+                bgcolor: "action.hover",
+                color: "text.primary",
+              }),
+        }}
+      >
+        {errorText && <Box>{errorText}</Box>}
         {Output}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };

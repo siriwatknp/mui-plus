@@ -1,5 +1,7 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import {
   WebPreview,
   WebPreviewNavigation,
@@ -30,42 +32,37 @@ export default function AIWebPreviewDemo() {
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-8 p-8">
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium text-muted-foreground">
+    <Box sx={{ width: "100%", maxWidth: 896, mx: "auto", p: 4 }}>
+      <Box>
+        <Typography
+          variant="body2"
+          sx={{ fontWeight: 500, color: "text.secondary", mb: 1 }}
+        >
           Web Preview Component
-        </h3>
-        <p className="text-sm text-muted-foreground">
+        </Typography>
+        <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
           Embed and preview web content with navigation controls.
-        </p>
+        </Typography>
 
-        <div className="h-[500px]">
+        <Box sx={{ height: 500 }}>
           <WebPreview defaultUrl="https://example.com">
             <WebPreviewNavigation>
               <WebPreviewNavigationButton tooltip="Back">
-                <ArrowLeftIcon className="size-4" />
+                <ArrowLeftIcon size={16} />
               </WebPreviewNavigationButton>
               <WebPreviewNavigationButton tooltip="Forward">
-                <ArrowRightIcon className="size-4" />
+                <ArrowRightIcon size={16} />
               </WebPreviewNavigationButton>
               <WebPreviewNavigationButton tooltip="Refresh">
-                <RefreshCwIcon className="size-4" />
+                <RefreshCwIcon size={16} />
               </WebPreviewNavigationButton>
-              <WebPreviewUrl className="flex-1" />
+              <WebPreviewUrl sx={{ flex: 1 }} />
             </WebPreviewNavigation>
-            <WebPreviewBody>
-              <div className="p-8 text-center">
-                <h2 className="text-2xl font-bold mb-4">Preview Content</h2>
-                <p className="text-muted-foreground">
-                  This is where the iframe content would be displayed. In a real
-                  implementation, this would load the actual URL.
-                </p>
-              </div>
-            </WebPreviewBody>
+            <WebPreviewBody />
             <WebPreviewConsole logs={consoleLogs} />
           </WebPreview>
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }

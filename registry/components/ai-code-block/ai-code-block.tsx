@@ -3,7 +3,7 @@
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
-import { useTheme } from "@mui/material/styles";
+import { useColorScheme, useTheme } from "@mui/material/styles";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
@@ -37,7 +37,8 @@ export const CodeBlock = ({
   ...props
 }: CodeBlockProps) => {
   const theme = useTheme();
-  const isDarkMode = theme.palette.mode === "dark";
+  const { mode, systemMode } = useColorScheme();
+  const isDarkMode = (systemMode || mode) === "dark";
 
   return (
     <CodeBlockContext.Provider value={{ code }}>
@@ -64,13 +65,13 @@ export const CodeBlock = ({
               padding: "16px",
               fontSize: "0.75rem",
               background: isDarkMode
-                ? theme.palette.background.paper
-                : theme.palette.background.default,
-              color: theme.palette.text.primary,
+                ? (theme.vars || theme).palette.background.paper
+                : (theme.vars || theme).palette.background.default,
+              color: (theme.vars || theme).palette.text.primary,
             }}
             language={language}
             lineNumberStyle={{
-              color: theme.palette.text.secondary,
+              color: (theme.vars || theme).palette.text.secondary,
               paddingRight: "1rem",
               minWidth: "2.5rem",
             }}
