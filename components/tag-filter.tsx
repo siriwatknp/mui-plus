@@ -44,34 +44,36 @@ export default function TagFilter({
   }
 
   return (
-    <div className="flex flex-wrap gap-3 justify-center">
-      {availableTags.map((tag) => {
-        const isSelected = selectedTags.includes(tag);
-        return (
-          <button
-            key={tag}
-            onClick={() => toggleTag(tag)}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-full border-1 text-sm font-medium transition-all duration-200 capitalize",
-              isSelected
-                ? "border-black bg-black text-white"
-                : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-            )}
-          >
-            {isSelected && <Check className="w-4 h-4" />}
-            {tag}
-          </button>
-        );
-      })}
+    <div className="sticky top-[57px] bg-background/80 backdrop-blur-sm py-4 mb-8 z-20">
+      <div className="flex flex-wrap gap-3 justify-center">
+        {availableTags.map((tag) => {
+          const isSelected = selectedTags.includes(tag);
+          return (
+            <button
+              key={tag}
+              onClick={() => toggleTag(tag)}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-full border-1 text-sm font-medium transition-all duration-200 capitalize",
+                isSelected
+                  ? "border-black bg-black text-white"
+                  : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+              )}
+            >
+              {isSelected && <Check className="w-4 h-4" />}
+              {tag}
+            </button>
+          );
+        })}
 
-      {selectedTags.length > 0 && (
-        <button
-          onClick={clearAllTags}
-          className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Clear all
-        </button>
-      )}
+        {selectedTags.length > 0 && (
+          <button
+            onClick={clearAllTags}
+            className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Clear all
+          </button>
+        )}
+      </div>
     </div>
   );
 }

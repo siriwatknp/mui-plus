@@ -307,13 +307,11 @@ export default function CategoryClient({
       </div>
 
       {/* Sticky Tag Filter */}
-      <div className="sticky top-[57px] bg-background/80 backdrop-blur-sm py-4 mb-8 z-20">
-        <TagFilter
-          availableTags={availableTags}
-          selectedTags={selectedTags}
-          category={categoryInfo.name}
-        />
-      </div>
+      <TagFilter
+        availableTags={availableTags}
+        selectedTags={selectedTags}
+        category={categoryInfo.name}
+      />
 
       {/* Registry Grid */}
       {filteredItems.length > 0 ? (
