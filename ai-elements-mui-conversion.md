@@ -21,7 +21,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-actions/ai-actions.tsx`
 
-### 2. [ ] ai-artifact
+### 2. [x] ai-artifact
 
 **Current:** Uses Tailwind classes
 **Target:** MUI Box, Typography, Paper components
