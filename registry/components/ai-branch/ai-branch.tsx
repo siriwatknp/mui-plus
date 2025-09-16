@@ -1,10 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
 import type { UIMessage } from "ai";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
+import type { ComponentProps, ReactElement } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type BranchContextType = {
@@ -28,7 +29,7 @@ const useBranch = () => {
   return context;
 };
 
-export type BranchProps = HTMLAttributes<HTMLDivElement> & {
+export type BranchProps = ComponentProps<typeof Box> & {
   defaultBranch?: number;
   onBranchChange?: (branchIndex: number) => void;
 };
@@ -36,7 +37,8 @@ export type BranchProps = HTMLAttributes<HTMLDivElement> & {
 export const Branch = ({
   defaultBranch = 0,
   onBranchChange,
-  className,
+  children,
+  sx,
   ...props
 }: BranchProps) => {
   const [currentBranch, setCurrentBranch] = useState(defaultBranch);
@@ -70,17 +72,31 @@ export const Branch = ({
 
   return (
     <BranchContext.Provider value={contextValue}>
-      <div
-        className={cn("grid w-full gap-2 [&>div]:pb-0", className)}
+      <Box
+        sx={{
+          display: "grid",
+          width: "100%",
+          gap: 1,
+          "& > div": {
+            pb: 0,
+          },
+          ...sx,
+        }}
         {...props}
-      />
+      >
+        {children}
+      </Box>
     </BranchContext.Provider>
   );
 };
 
-export type BranchMessagesProps = HTMLAttributes<HTMLDivElement>;
+export type BranchMessagesProps = ComponentProps<typeof Box>;
 
-export const BranchMessages = ({ children, ...props }: BranchMessagesProps) => {
+export const BranchMessages = ({
+  children,
+  sx,
+  ...props
+}: BranchMessagesProps) => {
   const { currentBranch, setBranches, branches } = useBranch();
   const childrenArray = Array.isArray(children) ? children : [children];
 
@@ -92,26 +108,32 @@ export const BranchMessages = ({ children, ...props }: BranchMessagesProps) => {
   }, [childrenArray, branches, setBranches]);
 
   return childrenArray.map((branch, index) => (
-    <div
-      className={cn(
-        "grid gap-2 overflow-hidden [&>div]:pb-0",
-        index === currentBranch ? "block" : "hidden",
-      )}
+    <Box
+      sx={{
+        display: index === currentBranch ? "grid" : "none",
+        gap: 1,
+        overflow: "hidden",
+        "& > div": {
+          pb: 0,
+        },
+        ...sx,
+      }}
       key={branch.key}
       {...props}
     >
       {branch}
-    </div>
+    </Box>
   ));
 };
 
-export type BranchSelectorProps = HTMLAttributes<HTMLDivElement> & {
+export type BranchSelectorProps = ComponentProps<typeof Box> & {
   from: UIMessage["role"];
 };
 
 export const BranchSelector = ({
-  className,
   from,
+  sx,
+  children,
   ...props
 }: BranchSelectorProps) => {
   const { totalBranches } = useBranch();
@@ -122,91 +144,115 @@ export const BranchSelector = ({
   }
 
   return (
-    <div
-      className={cn(
-        "flex items-center gap-2 self-end px-10",
-        from === "assistant" ? "justify-start" : "justify-end",
-        className,
-      )}
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+        alignSelf: "end",
+        px: 5,
+        justifyContent: from === "assistant" ? "flex-start" : "flex-end",
+        ...sx,
+      }}
       {...props}
-    />
+    >
+      {children}
+    </Box>
   );
 };
 
-export type BranchPreviousProps = ComponentProps<typeof Button>;
+export type BranchPreviousProps = ComponentProps<typeof IconButton>;
 
 export const BranchPrevious = ({
-  className,
   children,
+  sx,
   ...props
 }: BranchPreviousProps) => {
   const { goToPrevious, totalBranches } = useBranch();
 
   return (
-    <Button
+    <IconButton
       aria-label="Previous branch"
-      className={cn(
-        "size-7 shrink-0 rounded-full text-muted-foreground transition-colors",
-        "hover:bg-accent hover:text-foreground",
-        "disabled:pointer-events-none disabled:opacity-50",
-        className,
-      )}
+      sx={{
+        width: 28,
+        height: 28,
+        borderRadius: "50%",
+        color: "text.secondary",
+        transition: "all 0.2s",
+        "&:hover": {
+          bgcolor: "action.hover",
+          color: "text.primary",
+        },
+        "&:disabled": {
+          opacity: 0.5,
+          pointerEvents: "none",
+        },
+        ...sx,
+      }}
       disabled={totalBranches <= 1}
       onClick={goToPrevious}
-      size="icon"
+      size="small"
       type="button"
-      variant="ghost"
       {...props}
     >
       {children ?? <ChevronLeftIcon size={14} />}
-    </Button>
+    </IconButton>
   );
 };
 
-export type BranchNextProps = ComponentProps<typeof Button>;
+export type BranchNextProps = ComponentProps<typeof IconButton>;
 
-export const BranchNext = ({
-  className,
-  children,
-  ...props
-}: BranchNextProps) => {
+export const BranchNext = ({ children, sx, ...props }: BranchNextProps) => {
   const { goToNext, totalBranches } = useBranch();
 
   return (
-    <Button
+    <IconButton
       aria-label="Next branch"
-      className={cn(
-        "size-7 shrink-0 rounded-full text-muted-foreground transition-colors",
-        "hover:bg-accent hover:text-foreground",
-        "disabled:pointer-events-none disabled:opacity-50",
-        className,
-      )}
+      sx={{
+        width: 28,
+        height: 28,
+        borderRadius: "50%",
+        color: "text.secondary",
+        transition: "all 0.2s",
+        "&:hover": {
+          bgcolor: "action.hover",
+          color: "text.primary",
+        },
+        "&:disabled": {
+          opacity: 0.5,
+          pointerEvents: "none",
+        },
+        ...sx,
+      }}
       disabled={totalBranches <= 1}
       onClick={goToNext}
-      size="icon"
+      size="small"
       type="button"
-      variant="ghost"
       {...props}
     >
       {children ?? <ChevronRightIcon size={14} />}
-    </Button>
+    </IconButton>
   );
 };
 
-export type BranchPageProps = HTMLAttributes<HTMLSpanElement>;
+export type BranchPageProps = ComponentProps<typeof Typography>;
 
-export const BranchPage = ({ className, ...props }: BranchPageProps) => {
+export const BranchPage = ({ sx, ...props }: BranchPageProps) => {
   const { currentBranch, totalBranches } = useBranch();
 
   return (
-    <span
-      className={cn(
-        "font-medium text-muted-foreground text-xs tabular-nums",
-        className,
-      )}
+    <Typography
+      component="span"
+      variant="caption"
+      sx={{
+        fontWeight: 500,
+        color: "text.secondary",
+        fontVariantNumeric: "tabular-nums",
+        ...sx,
+      }}
       {...props}
     >
       {currentBranch + 1} of {totalBranches}
-    </span>
+    </Typography>
   );
 };

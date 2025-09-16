@@ -29,7 +29,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-artifact/ai-artifact.tsx`
 
-### 3. [ ] ai-branch
+### 3. [x] ai-branch
 
 **Current:** Uses Tailwind classes, custom components
 **Target:** MUI components with sx prop
