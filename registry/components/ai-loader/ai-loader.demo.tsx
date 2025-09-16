@@ -39,7 +39,7 @@ export default function AILoaderDemo() {
                 gap: 1,
               }}
             >
-              <Loader size={16} />
+              <Loader />
               <Typography variant="caption" sx={{ color: "text.secondary" }}>
                 16px (default)
               </Typography>
@@ -68,6 +68,82 @@ export default function AILoaderDemo() {
               <Loader size={32} />
               <Typography variant="caption" sx={{ color: "text.secondary" }}>
                 32px
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              <Loader size={40} />
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                40px
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+
+        <Box>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: 500, color: "text.secondary", mb: 1 }}
+          >
+            Loader Variants
+          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              <Loader color="primary" />
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                Primary
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              <Loader color="secondary" />
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                Secondary
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              <Loader color="success" />
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                Success
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              <Loader color="error" />
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                Error
               </Typography>
             </Box>
           </Box>
@@ -100,9 +176,21 @@ export default function AILoaderDemo() {
                 alignSelf: "flex-start",
                 textTransform: "none",
               }}
-              startIcon={<Loader size={14} />}
+              startIcon={<Loader size={14} sx={{ color: "inherit" }} />}
             >
               Processing
+            </Button>
+
+            <Button
+              variant="outlined"
+              sx={{
+                alignSelf: "flex-start",
+                textTransform: "none",
+              }}
+              disabled
+              startIcon={<Loader size={14} />}
+            >
+              Saving...
             </Button>
           </Box>
         </Box>

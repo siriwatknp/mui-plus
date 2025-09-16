@@ -85,7 +85,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-inline-citation/ai-inline-citation.tsx`
 
-### 10. [ ] ai-loader
+### 10. [x] ai-loader
 
 **Current:** Uses Tailwind classes
 **Target:** MUI Box, CircularProgress or custom animation
