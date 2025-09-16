@@ -1,76 +1,113 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import type { UIMessage } from "ai";
-import { cva, type VariantProps } from "class-variance-authority";
-import type { ComponentProps, HTMLAttributes } from "react";
+"use client";
 
-export type MessageProps = HTMLAttributes<HTMLDivElement> & {
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import type { UIMessage } from "ai";
+import type { ComponentProps } from "react";
+
+export type MessageProps = ComponentProps<typeof Box> & {
   from: UIMessage["role"];
 };
 
-export const Message = ({ className, from, ...props }: MessageProps) => (
-  <div
-    className={cn(
-      "group flex w-full items-end justify-end gap-2 py-4",
-      from === "user" ? "is-user" : "is-assistant flex-row-reverse justify-end",
-      className,
-    )}
+export const Message = ({ from, sx, ...props }: MessageProps) => (
+  <Box
+    data-from={from}
+    sx={{
+      display: "flex",
+      width: "100%",
+      alignItems: "flex-end",
+      justifyContent: from === "user" ? "flex-end" : "flex-start",
+      gap: 1,
+      py: 2,
+      flexDirection: from === "user" ? "row-reverse" : "row",
+      ...sx,
+    }}
     {...props}
   />
 );
 
-const messageContentVariants = cva(
-  "is-user:dark flex flex-col gap-2 overflow-hidden rounded-lg text-sm",
-  {
-    variants: {
-      variant: {
-        contained: [
-          "max-w-[80%] px-4 py-3",
-          "group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground",
-          "group-[.is-assistant]:bg-secondary group-[.is-assistant]:text-foreground",
-        ],
-        flat: [
-          "group-[.is-user]:max-w-[80%] group-[.is-user]:bg-secondary group-[.is-user]:px-4 group-[.is-user]:py-3 group-[.is-user]:text-foreground",
-          "group-[.is-assistant]:text-foreground",
-        ],
-      },
-    },
-    defaultVariants: {
-      variant: "contained",
-    },
-  },
-);
-
-export type MessageContentProps = HTMLAttributes<HTMLDivElement> &
-  VariantProps<typeof messageContentVariants>;
+export type MessageContentProps = ComponentProps<typeof Box> & {
+  variant?: "contained" | "flat";
+};
 
 export const MessageContent = ({
   children,
-  className,
-  variant,
+  variant = "contained",
+  sx,
   ...props
 }: MessageContentProps) => (
-  <div
-    className={cn(messageContentVariants({ variant, className }))}
+  <Box
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 1,
+      overflow: "hidden",
+      borderRadius: 2,
+      fontSize: "0.875rem",
+      lineHeight: 1.6,
+
+      ...(variant === "contained" && {
+        maxWidth: "80%",
+        px: 2,
+        py: 1.5,
+        // User message styles
+        "[data-from='user'] > &": {
+          bgcolor: "primary.main",
+          color: "primary.contrastText",
+        },
+        // Assistant message styles
+        "[data-from='assistant'] > &, [data-from='system'] > &": {
+          bgcolor: "action.hover",
+          color: "text.primary",
+        },
+      }),
+
+      ...(variant === "flat" && {
+        // User message with flat variant
+        "[data-from='user'] > &": {
+          maxWidth: "80%",
+          bgcolor: "action.hover",
+          px: 2,
+          py: 1.5,
+          color: "text.primary",
+        },
+        // Assistant message with flat variant
+        "[data-from='assistant'] > &, [data-from='system'] > &": {
+          color: "text.primary",
+        },
+      }),
+
+      ...sx,
+    }}
     {...props}
   >
     {children}
-  </div>
+  </Box>
 );
 
 export type MessageAvatarProps = ComponentProps<typeof Avatar> & {
-  src: string;
+  src?: string;
   name?: string;
 };
 
 export const MessageAvatar = ({
   src,
   name,
-  className,
+  sx,
   ...props
 }: MessageAvatarProps) => (
-  <Avatar className={cn("size-8 ring-1 ring-border", className)} {...props}>
-    <AvatarImage alt="" className="mt-0 mb-0" src={src} />
-    <AvatarFallback>{name?.slice(0, 2) || "ME"}</AvatarFallback>
+  <Avatar
+    src={src}
+    sx={{
+      width: 32,
+      height: 32,
+      border: 1,
+      borderColor: "divider",
+      fontSize: "0.75rem",
+      ...sx,
+    }}
+    {...props}
+  >
+    {!src && (name?.slice(0, 2).toUpperCase() || "ME")}
   </Avatar>
 );
