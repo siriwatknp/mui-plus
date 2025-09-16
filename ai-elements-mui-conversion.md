@@ -61,7 +61,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-context/ai-context.tsx`
 
-### 7. [ ] ai-conversation
+### 7. [x] ai-conversation
 
 **Current:** Uses Tailwind classes
 **Target:** MUI Stack, Box components
