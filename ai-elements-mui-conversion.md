@@ -69,7 +69,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-conversation/ai-conversation.tsx`
 
-### 8. [ ] ai-image
+### 8. [x] ai-image
 
 **Current:** Uses Tailwind classes
 **Target:** MUI Box component

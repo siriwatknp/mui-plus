@@ -1,11 +1,10 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import {
   InlineCitation,
-  InlineCitationText,
   InlineCitationCard,
-  InlineCitationCardTrigger,
-  InlineCitationCardBody,
   InlineCitationCarousel,
   InlineCitationCarouselContent,
   InlineCitationCarouselItem,
@@ -43,74 +42,68 @@ export default function AIInlineCitationDemo() {
   ];
 
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-8 p-8">
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          Inline Citation
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          Display inline citations with hoverable source cards.
-        </p>
+    <Box sx={{ width: "100%", maxWidth: 768, mx: "auto", p: 4 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box>
+          <Typography variant="h6" sx={{ mb: 0.5 }}>
+            Inline Citation Demo
+          </Typography>
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            Hover over the citation badges to see source cards.
+          </Typography>
+        </Box>
 
-        <div className="space-y-4">
-          <p className="text-sm leading-relaxed">
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Typography variant="body1" sx={{ lineHeight: 1.8 }}>
+            React makes it painless to create interactive UIs by using a
+            declarative approach
             <InlineCitation>
-              <InlineCitationText>
-                React makes it painless to create interactive UIs by using a
-                declarative approach
-              </InlineCitationText>
-              <InlineCitationCard>
-                <InlineCitationCardTrigger sources={sources} />
-                <InlineCitationCardBody>
-                  <InlineCitationCarousel>
-                    <InlineCitationCarouselHeader>
-                      <InlineCitationCarouselPrev />
-                      <InlineCitationCarouselIndex />
-                      <InlineCitationCarouselNext />
-                    </InlineCitationCarouselHeader>
-                    <InlineCitationCarouselContent>
-                      {detailedSources.map((source, index) => (
-                        <InlineCitationCarouselItem key={index}>
-                          <InlineCitationSource
-                            title={source.title}
-                            url={source.url}
-                            description={source.description}
-                          />
+              <InlineCitationCard sources={sources}>
+                <InlineCitationCarousel>
+                  <InlineCitationCarouselHeader>
+                    <InlineCitationCarouselPrev />
+                    <InlineCitationCarouselIndex />
+                    <InlineCitationCarouselNext />
+                  </InlineCitationCarouselHeader>
+                  <InlineCitationCarouselContent>
+                    {detailedSources.map((source, index) => (
+                      <InlineCitationCarouselItem key={index}>
+                        <InlineCitationSource
+                          title={source.title}
+                          url={source.url}
+                          description={source.description}
+                        />
+                        {source.quote && (
                           <InlineCitationQuote>
                             {source.quote}
                           </InlineCitationQuote>
-                        </InlineCitationCarouselItem>
-                      ))}
-                    </InlineCitationCarouselContent>
-                  </InlineCitationCarousel>
-                </InlineCitationCardBody>
+                        )}
+                      </InlineCitationCarouselItem>
+                    ))}
+                  </InlineCitationCarouselContent>
+                </InlineCitationCarousel>
               </InlineCitationCard>
             </InlineCitation>
             . This design philosophy helps developers build maintainable
             applications.
-          </p>
+          </Typography>
 
-          <p className="text-sm leading-relaxed">
-            Components are the building blocks of React applications.
+          <Typography variant="body1" sx={{ lineHeight: 1.8 }}>
+            Components are the building blocks of React applications. They let
+            you split the UI into independent, reusable pieces
             <InlineCitation>
-              <InlineCitationText>
-                They let you split the UI into independent, reusable pieces
-              </InlineCitationText>
-              <InlineCitationCard>
-                <InlineCitationCardTrigger sources={[sources[0]]} />
-                <InlineCitationCardBody>
-                  <InlineCitationSource
-                    title="React Components"
-                    url="https://react.dev/learn/your-first-component"
-                    description="Components are one of the core concepts of React."
-                  />
-                </InlineCitationCardBody>
+              <InlineCitationCard sources={[sources[0]]}>
+                <InlineCitationSource
+                  title="React Components"
+                  url="https://react.dev/learn/your-first-component"
+                  description="Components are one of the core concepts of React. They are the foundation of every React application."
+                />
               </InlineCitationCard>
             </InlineCitation>
             , and think about each piece in isolation.
-          </p>
-        </div>
-      </div>
-    </div>
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
   );
 }
