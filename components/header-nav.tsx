@@ -8,6 +8,7 @@ export function HeaderNav() {
 
   const navItems = [
     { href: "/theme-preview", label: "Theme" },
+    { href: "/primitive", label: "Primitive" },
     { href: "/authentication", label: "Authentication" },
     { href: "/dashboard", label: "Dashboard" },
     { href: "/ecommerce", label: "Ecommerce" },
