@@ -43,7 +43,7 @@ export const Tool = ({ children, sx, defaultOpen = false }: ToolProps) => {
               isOpen,
               onToggle: () => setIsOpen(!isOpen),
             })
-          : child,
+          : child
       )}
     </Box>
   );
@@ -99,6 +99,7 @@ const getStatusBadge = (status: ToolUIPart["state"]) => {
       variant="filled"
       color={getChipColor()}
       sx={{
+        height: "21px",
         borderRadius: 99,
         fontSize: "0.75rem",
         "& .MuiChip-icon": {
