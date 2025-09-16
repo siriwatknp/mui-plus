@@ -41,18 +41,24 @@ const ComponentPreviewContent = React.memo(
         const componentPath = item.files[0].path.replace(".tsx", "");
         return dynamic(
           () =>
-            import(`@/registry/${componentPath}`).catch(() => {
-              // Return a fallback component for failed imports
-              return {
-                default: function FallbackComponent() {
-                  return (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <span className="text-sm">Preview unavailable</span>
-                    </div>
-                  );
-                },
-              };
-            }),
+            // First try to import .demo version
+            import(`@/registry/${componentPath}.demo`)
+              .catch(() => {
+                // If .demo doesn't exist, try the original path
+                return import(`@/registry/${componentPath}`);
+              })
+              .catch(() => {
+                // Return a fallback component for failed imports
+                return {
+                  default: function FallbackComponent() {
+                    return (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                        <span className="text-sm">Preview unavailable</span>
+                      </div>
+                    );
+                  },
+                };
+              }),
           {
             loading: () => (
               <div className="w-full h-full flex items-center justify-center">
@@ -60,7 +66,7 @@ const ComponentPreviewContent = React.memo(
               </div>
             ),
             ssr: false,
-          }
+          },
         );
       } catch {
         return function ErrorFallback() {
@@ -97,7 +103,7 @@ const ComponentPreviewContent = React.memo(
         <DynamicComponent />
       </div>
     );
-  }
+  },
 );
 
 ComponentPreviewContent.displayName = "ComponentPreviewContent";

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ai-message",
+  "type": "registry:item",
+  "title": "Ai Message",
+  "description": "A ai-message item.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ai-message/ai-message.demo.tsx",
+      "target": "src/mui-plus/components/ai-message/ai-message.demo.tsx",
+      "content": "export default function Demo() { return <div>Demo</div>; }\n",
+      "type": "registry:item"
+    },
+    {
+      "path": "components/ai-message/ai-message.tsx",
+      "target": "src/mui-plus/components/ai-message/ai-message.tsx",
+      "content": "import { Avatar, AvatarFallback, AvatarImage } from \"@/components/ui/avatar\";\nimport { cn } from \"@/lib/utils\";\nimport type { UIMessage } from \"ai\";\nimport type { ComponentProps, HTMLAttributes } from \"react\";\n\nexport type MessageProps = HTMLAttributes<HTMLDivElement> & {\n  from: UIMessage[\"role\"];\n};\n\nexport const Message = ({ className, from, ...props }: MessageProps) => (\n  <div\n    className={cn(\n      \"group flex w-full items-end justify-end gap-2 py-4\",\n      from === \"user\" ? \"is-user\" : \"is-assistant flex-row-reverse justify-end\",\n      \"[&>div]:max-w-[80%]\",\n      className,\n    )}\n    {...props}\n  />\n);\n\nexport type MessageContentProps = HTMLAttributes<HTMLDivElement>;\n\nexport const MessageContent = ({\n  children,\n  className,\n  ...props\n}: MessageContentProps) => (\n  <div\n    className={cn(\n      \"flex flex-col gap-2 overflow-hidden rounded-lg px-4 py-3 text-foreground text-sm\",\n      \"group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground\",\n      \"group-[.is-assistant]:bg-secondary group-[.is-assistant]:text-foreground\",\n      \"is-user:dark\",\n      className,\n    )}\n    {...props}\n  >\n    {children}\n  </div>\n);\n\nexport type MessageAvatarProps = ComponentProps<typeof Avatar> & {\n  src: string;\n  name?: string;\n};\n\nexport const MessageAvatar = ({\n  src,\n  name,\n  className,\n  ...props\n}: MessageAvatarProps) => (\n  <Avatar className={cn(\"size-8 ring-1 ring-border\", className)} {...props}>\n    <AvatarImage alt=\"\" className=\"mt-0 mb-0\" src={src} />\n    <AvatarFallback>{name?.slice(0, 2) || \"ME\"}</AvatarFallback>\n  </Avatar>\n);\n",
+      "type": "registry:item"
+    }
+  ],
+  "meta": {
+    "screenshot": "/screenshots/ai-message.png",
+    "category": "ai"
+  }
+}
