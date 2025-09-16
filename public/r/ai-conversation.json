@@ -4,7 +4,7 @@
   "type": "registry:item",
   "title": "Ai Conversation",
   "description": "A ai-conversation item.",
-  "dependencies": [],
+  "dependencies": ["lucide-react", "use-stick-to-bottom"],
   "registryDependencies": [],
   "files": [
     {

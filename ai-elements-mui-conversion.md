@@ -53,7 +53,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-code-block/ai-code-block.tsx`
 
-### 6. [ ] ai-context
+### 6. [x] ai-context
 
 **Current:** Uses Tailwind classes
 **Target:** MUI components

@@ -1,5 +1,8 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import {
   Conversation,
   ConversationContent,
@@ -8,62 +11,116 @@ import {
 
 export default function AIConversationDemo() {
   return (
-    <div className="w-full h-[400px] border rounded-lg overflow-hidden">
+    <Paper
+      variant="outlined"
+      sx={{
+        width: "100%",
+        height: 400,
+        overflow: "hidden",
+        display: "flex",
+      }}
+    >
       <Conversation>
         <ConversationContent>
-          <div className="space-y-4">
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {/* Simulated conversation messages */}
-            <div className="p-3 bg-secondary rounded-lg max-w-[80%]">
-              <p className="text-sm">Hello! How can I help you today?</p>
-            </div>
+            <Paper
+              sx={{
+                p: 1.5,
+                bgcolor: "action.hover",
+                maxWidth: "80%",
+              }}
+            >
+              <Typography variant="body2">
+                Hello! How can I help you today?
+              </Typography>
+            </Paper>
 
-            <div className="p-3 bg-primary text-primary-foreground rounded-lg max-w-[80%] ml-auto">
-              <p className="text-sm">I need help with React components.</p>
-            </div>
+            <Paper
+              sx={{
+                p: 1.5,
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
+                maxWidth: "80%",
+                ml: "auto",
+              }}
+            >
+              <Typography variant="body2">
+                I need help with React components.
+              </Typography>
+            </Paper>
 
-            <div className="p-3 bg-secondary rounded-lg max-w-[80%]">
-              <p className="text-sm">
+            <Paper
+              sx={{
+                p: 1.5,
+                bgcolor: "action.hover",
+                maxWidth: "80%",
+              }}
+            >
+              <Typography variant="body2">
                 I'd be happy to help you with React components! What specific
                 aspect would you like to explore?
-              </p>
-            </div>
+              </Typography>
+            </Paper>
 
-            <div className="p-3 bg-primary text-primary-foreground rounded-lg max-w-[80%] ml-auto">
-              <p className="text-sm">
+            <Paper
+              sx={{
+                p: 1.5,
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
+                maxWidth: "80%",
+                ml: "auto",
+              }}
+            >
+              <Typography variant="body2">
                 How do I manage state in functional components?
-              </p>
-            </div>
+              </Typography>
+            </Paper>
 
-            <div className="p-3 bg-secondary rounded-lg max-w-[80%]">
-              <p className="text-sm mb-2">
+            <Paper
+              sx={{
+                p: 1.5,
+                bgcolor: "action.hover",
+                maxWidth: "80%",
+              }}
+            >
+              <Typography variant="body2" sx={{ mb: 1 }}>
                 In functional React components, you can manage state using
                 hooks:
-              </p>
-              <ul className="list-disc list-inside text-sm space-y-1">
-                <li>useState for local component state</li>
-                <li>useReducer for complex state logic</li>
-                <li>useContext for global state sharing</li>
-              </ul>
-            </div>
+              </Typography>
+              <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
+                  useState for local component state
+                </Typography>
+                <Typography component="li" variant="body2" sx={{ mb: 0.5 }}>
+                  useReducer for complex state logic
+                </Typography>
+                <Typography component="li" variant="body2">
+                  useContext for global state sharing
+                </Typography>
+              </Box>
+            </Paper>
 
             {/* Add more messages to demonstrate scrolling */}
             {Array.from({ length: 10 }, (_, i) => (
-              <div
+              <Paper
                 key={i}
-                className={`p-3 rounded-lg max-w-[80%] ${
-                  i % 2 === 0
-                    ? "bg-secondary"
-                    : "bg-primary text-primary-foreground ml-auto"
-                }`}
+                sx={{
+                  p: 1.5,
+                  bgcolor: i % 2 === 0 ? "action.hover" : "primary.main",
+                  color: i % 2 === 0 ? "text.primary" : "primary.contrastText",
+                  maxWidth: "80%",
+                  ...(i % 2 !== 0 && { ml: "auto" }),
+                }}
               >
-                <p className="text-sm">Message {i + 6}</p>
-              </div>
+                <Typography variant="body2">Message {i + 6}</Typography>
+              </Paper>
             ))}
-          </div>
+          </Box>
         </ConversationContent>
 
         <ConversationScrollButton />
       </Conversation>
-    </div>
+    </Paper>
   );
 }
