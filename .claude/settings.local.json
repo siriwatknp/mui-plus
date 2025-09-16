@@ -36,7 +36,8 @@
       "Bash(__NEW_LINE__ cp src/components/ai-elements/sources.tsx registry/components/ai-sources/ai-sources.tsx)",
       "Bash(__NEW_LINE__ cp src/components/ai-elements/suggestion.tsx registry/components/ai-suggestion/ai-suggestion.tsx)",
       "Bash(__NEW_LINE__ cp src/components/ai-elements/tool.tsx registry/components/ai-tool/ai-tool.tsx)",
-      "Bash(__NEW_LINE__ cp src/components/ai-elements/web-preview.tsx registry/components/ai-web-preview/ai-web-preview.tsx)"
+      "Bash(__NEW_LINE__ cp src/components/ai-elements/web-preview.tsx registry/components/ai-web-preview/ai-web-preview.tsx)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   },
