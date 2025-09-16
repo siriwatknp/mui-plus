@@ -12,11 +12,13 @@ export type ArtifactProps = ComponentProps<typeof Paper>;
 
 export const Artifact = ({ children, sx, ...props }: ArtifactProps) => (
   <Paper
-    elevation={1}
+    elevation={4}
     sx={{
       display: "flex",
       flexDirection: "column",
       overflow: "hidden",
+      border: 1,
+      borderColor: "divider",
       ...sx,
     }}
     {...props}
