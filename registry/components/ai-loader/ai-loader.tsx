@@ -1,5 +1,8 @@
-import { cn } from "@/lib/utils";
-import type { HTMLAttributes } from "react";
+"use client";
+
+import Box from "@mui/material/Box";
+import { keyframes } from "@mui/material/styles";
+import type { ComponentProps } from "react";
 
 type LoaderIconProps = {
   size?: number;
@@ -79,18 +82,30 @@ const LoaderIcon = ({ size = 16 }: LoaderIconProps) => (
   </svg>
 );
 
-export type LoaderProps = HTMLAttributes<HTMLDivElement> & {
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+export type LoaderProps = ComponentProps<typeof Box> & {
   size?: number;
 };
 
-export const Loader = ({ className, size = 16, ...props }: LoaderProps) => (
-  <div
-    className={cn(
-      "inline-flex animate-spin items-center justify-center",
-      className,
-    )}
+export const Loader = ({ size = 16, sx, ...props }: LoaderProps) => (
+  <Box
+    sx={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      animation: `${spin} 1s linear infinite`,
+      ...sx,
+    }}
     {...props}
   >
     <LoaderIcon size={size} />
-  </div>
+  </Box>
 );

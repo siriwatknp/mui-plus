@@ -77,7 +77,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-image/ai-image.tsx`
 
-### 9. [ ] ai-inline-citation
+### 9. [x] ai-inline-citation
 
 **Current:** Uses Radix Popover, Tailwind classes
 **Target:** MUI Popover/Popper, Typography
