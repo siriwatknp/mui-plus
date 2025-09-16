@@ -56,13 +56,13 @@ export const CodeBlock = ({
             codeTagProps={{
               style: {
                 fontFamily: "monospace",
-                fontSize: "0.875rem",
+                fontSize: "0.75rem",
               },
             }}
             customStyle={{
               margin: 0,
               padding: "16px",
-              fontSize: "0.875rem",
+              fontSize: "0.75rem",
               background: isDarkMode
                 ? theme.palette.background.paper
                 : theme.palette.background.default,
@@ -83,8 +83,8 @@ export const CodeBlock = ({
             <Box
               sx={{
                 position: "absolute",
-                top: 1,
-                right: 1,
+                top: "8px",
+                right: "8px",
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
@@ -110,8 +110,6 @@ export const CodeBlockCopyButton = ({
   onError,
   timeout = 2000,
   children,
-  size = "small",
-  sx,
   ...props
 }: CodeBlockCopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -138,14 +136,6 @@ export const CodeBlockCopyButton = ({
   return (
     <IconButton
       onClick={copyToClipboard}
-      size={size}
-      sx={{
-        color: "text.secondary",
-        "&:hover": {
-          color: "text.primary",
-        },
-        ...sx,
-      }}
       aria-label={isCopied ? "Copied!" : "Copy code"}
       {...props}
     >
