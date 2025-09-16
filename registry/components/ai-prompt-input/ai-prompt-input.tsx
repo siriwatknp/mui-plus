@@ -1,25 +1,17 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import InputBase from "@mui/material/InputBase";
+import CircularProgress from "@mui/material/CircularProgress";
+import type { SxProps, Theme } from "@mui/material/styles";
 import type { ChatStatus, FileUIPart } from "ai";
 import {
   ImageIcon,
-  Loader2Icon,
   PaperclipIcon,
   PlusIcon,
   SendIcon,
@@ -27,7 +19,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import {
+import React, {
   type ChangeEventHandler,
   Children,
   type ComponentProps,
@@ -35,7 +27,6 @@ import {
   type FormEvent,
   type FormEventHandler,
   Fragment,
-  type HTMLAttributes,
   type KeyboardEventHandler,
   type RefObject,
   useCallback,
@@ -45,6 +36,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type MouseEvent,
 } from "react";
 
 type AttachmentsContext = {
@@ -70,62 +62,94 @@ export const usePromptInputAttachments = () => {
   return context;
 };
 
-export type PromptInputAttachmentProps = HTMLAttributes<HTMLDivElement> & {
+export type PromptInputAttachmentProps = {
   data: FileUIPart & { id: string };
-  className?: string;
+  sx?: SxProps<Theme>;
 };
 
 export function PromptInputAttachment({
   data,
-  className,
-  ...props
+  sx,
 }: PromptInputAttachmentProps) {
   const attachments = usePromptInputAttachments();
 
   return (
-    <div
-      className={cn("group relative h-14 w-14 rounded-md border", className)}
+    <Box
       key={data.id}
-      {...props}
+      sx={{
+        position: "relative",
+        width: 56,
+        height: 56,
+        borderRadius: 1,
+        border: 1,
+        borderColor: "divider",
+        "&:hover .remove-button": {
+          opacity: 1,
+        },
+        ...sx,
+      }}
     >
       {data.mediaType?.startsWith("image/") && data.url ? (
-        <img
+        <Box
+          component="img"
           alt={data.filename || "attachment"}
-          className="size-full rounded-md object-cover"
-          height={56}
           src={data.url}
-          width={56}
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            borderRadius: 1,
+          }}
         />
       ) : (
-        <div className="flex size-full items-center justify-center text-muted-foreground">
-          <PaperclipIcon className="size-4" />
-        </div>
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "text.secondary",
+          }}
+        >
+          <PaperclipIcon size={16} />
+        </Box>
       )}
-      <Button
+      <IconButton
+        className="remove-button"
         aria-label="Remove attachment"
-        className="-right-1.5 -top-1.5 absolute h-6 w-6 rounded-full opacity-0 group-hover:opacity-100"
         onClick={() => attachments.remove(data.id)}
-        size="icon"
-        type="button"
-        variant="outline"
+        size="small"
+        sx={{
+          position: "absolute",
+          top: -6,
+          right: -6,
+          width: 24,
+          height: 24,
+          bgcolor: "background.paper",
+          border: 1,
+          borderColor: "divider",
+          opacity: 0,
+          transition: "opacity 0.2s",
+          "&:hover": {
+            bgcolor: "action.hover",
+          },
+        }}
       >
-        <XIcon className="h-3 w-3" />
-      </Button>
-    </div>
+        <XIcon size={12} />
+      </IconButton>
+    </Box>
   );
 }
 
-export type PromptInputAttachmentsProps = Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "children"
-> & {
+export type PromptInputAttachmentsProps = {
   children: (attachment: FileUIPart & { id: string }) => React.ReactNode;
+  sx?: SxProps<Theme>;
 };
 
 export function PromptInputAttachments({
-  className,
   children,
-  ...props
+  sx,
 }: PromptInputAttachmentsProps) {
   const attachments = usePromptInputAttachments();
   const [height, setHeight] = useState(0);
@@ -145,46 +169,60 @@ export function PromptInputAttachments({
   }, []);
 
   return (
-    <div
+    <Box
       aria-live="polite"
-      className={cn(
-        "overflow-hidden transition-[height] duration-200 ease-out",
-        className,
-      )}
-      style={{ height: attachments.files.length ? height : 0 }}
-      {...props}
+      sx={{
+        overflow: "hidden",
+        transition: "height 200ms ease-out",
+        height: attachments.files.length ? height : 0,
+        ...sx,
+      }}
     >
-      <div className="flex flex-wrap gap-2 p-3 pt-3" ref={contentRef}>
+      <Box
+        ref={contentRef}
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 1,
+          p: 1.5,
+          pt: 1.5,
+        }}
+      >
         {attachments.files.map((file) => (
           <Fragment key={file.id}>{children(file)}</Fragment>
         ))}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
 export type PromptInputActionAddAttachmentsProps = ComponentProps<
-  typeof DropdownMenuItem
+  typeof MenuItem
 > & {
   label?: string;
 };
 
 export const PromptInputActionAddAttachments = ({
   label = "Add photos or files",
+  onClick,
   ...props
 }: PromptInputActionAddAttachmentsProps) => {
   const attachments = usePromptInputAttachments();
 
   return (
-    <DropdownMenuItem
+    <MenuItem
       {...props}
-      onSelect={(e) => {
+      onClick={(e) => {
         e.preventDefault();
         attachments.openFileDialog();
+        onClick?.(e);
       }}
     >
-      <ImageIcon className="mr-2 size-4" /> {label}
-    </DropdownMenuItem>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <ImageIcon size={16} />
+        {label}
+      </Box>
+    </MenuItem>
   );
 };
 
@@ -193,10 +231,8 @@ export type PromptInputMessage = {
   files?: FileUIPart[];
 };
 
-export type PromptInputProps = Omit<
-  HTMLAttributes<HTMLFormElement>,
-  "onSubmit"
-> & {
+export type PromptInputProps = {
+  sx?: SxProps<Theme>;
   accept?: string; // e.g., "image/*" or leave undefined for any
   multiple?: boolean;
   // When true, accepts drops anywhere on document. Default false (opt-in).
@@ -217,7 +253,7 @@ export type PromptInputProps = Omit<
 };
 
 export const PromptInput = ({
-  className,
+  sx,
   accept,
   multiple,
   globalDrop,
@@ -226,8 +262,8 @@ export const PromptInput = ({
   maxFileSize,
   onError,
   onSubmit,
-  ...props
-}: PromptInputProps) => {
+  children,
+}: React.PropsWithChildren<PromptInputProps>) => {
   const [items, setItems] = useState<(FileUIPart & { id: string })[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const anchorRef = useRef<HTMLSpanElement>(null);
@@ -423,42 +459,62 @@ export const PromptInput = ({
 
   return (
     <AttachmentsContext.Provider value={ctx}>
-      <span aria-hidden="true" className="hidden" ref={anchorRef} />
-      <input
+      <Box
+        component="span"
+        aria-hidden="true"
+        ref={anchorRef}
+        sx={{ display: "none" }}
+      />
+      <Box
+        component="input"
         accept={accept}
-        className="hidden"
         multiple={multiple}
         onChange={handleChange}
         ref={inputRef}
         type="file"
+        sx={{ display: "none" }}
       />
-      <form
-        className={cn(
-          "w-full divide-y overflow-hidden rounded-xl border bg-background shadow-sm",
-          className,
-        )}
+      <Box
+        component="form"
         onSubmit={handleSubmit}
-        {...props}
-      />
+        sx={{
+          width: "100%",
+          overflow: "hidden",
+          borderRadius: 2,
+          border: 1,
+          borderColor: "divider",
+          bgcolor: "background.paper",
+          boxShadow: 1,
+          "& > *:not(:last-child)": {
+            borderBottom: 1,
+            borderColor: "divider",
+          },
+          ...sx,
+        }}
+      >
+        {children}
+      </Box>
     </AttachmentsContext.Provider>
   );
 };
 
-export type PromptInputBodyProps = HTMLAttributes<HTMLDivElement>;
+export type PromptInputBodyProps = {
+  children?: React.ReactNode;
+  sx?: SxProps<Theme>;
+};
 
-export const PromptInputBody = ({
-  className,
-  ...props
-}: PromptInputBodyProps) => (
-  <div className={cn(className, "flex flex-col")} {...props} />
+export const PromptInputBody = ({ children, sx }: PromptInputBodyProps) => (
+  <Box sx={{ display: "flex", flexDirection: "column", ...sx }}>{children}</Box>
 );
 
-export type PromptInputTextareaProps = ComponentProps<typeof Textarea>;
+export type PromptInputTextareaProps = ComponentProps<typeof InputBase> & {
+  placeholder?: string;
+};
 
 export const PromptInputTextarea = ({
   onChange,
-  className,
   placeholder = "What would you like to know?",
+  sx,
   ...props
 }: PromptInputTextareaProps) => {
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
@@ -483,119 +539,204 @@ export const PromptInputTextarea = ({
   };
 
   return (
-    <Textarea
-      className={cn(
-        "w-full resize-none rounded-none border-none p-3 shadow-none outline-none ring-0",
-        "field-sizing-content bg-transparent dark:bg-transparent",
-        "max-h-48 min-h-16",
-        "focus-visible:ring-0",
-        className,
-      )}
+    <InputBase
+      multiline
       name="message"
-      onChange={(e) => {
-        onChange?.(e);
-      }}
+      onChange={onChange}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
+      maxRows={3}
+      sx={{
+        width: "100%",
+        p: 1.5,
+        "& .MuiInputBase-input": {
+          resize: "none",
+          overflow: "auto",
+          fieldSizing: "content",
+        },
+        ...sx,
+      }}
       {...props}
     />
   );
 };
 
-export type PromptInputToolbarProps = HTMLAttributes<HTMLDivElement>;
+export type PromptInputToolbarProps = {
+  children?: React.ReactNode;
+  sx?: SxProps<Theme>;
+};
 
 export const PromptInputToolbar = ({
-  className,
-  ...props
+  children,
+  sx,
 }: PromptInputToolbarProps) => (
-  <div
-    className={cn("flex items-center justify-between p-1", className)}
-    {...props}
-  />
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      p: 0.5,
+      ...sx,
+    }}
+  >
+    {children}
+  </Box>
 );
 
-export type PromptInputToolsProps = HTMLAttributes<HTMLDivElement>;
+export type PromptInputToolsProps = {
+  children?: React.ReactNode;
+  sx?: SxProps<Theme>;
+};
 
-export const PromptInputTools = ({
-  className,
-  ...props
-}: PromptInputToolsProps) => (
-  <div
-    className={cn(
-      "flex items-center gap-1",
-      "[&_button:first-child]:rounded-bl-xl",
-      className,
-    )}
-    {...props}
-  />
+export const PromptInputTools = ({ children, sx }: PromptInputToolsProps) => (
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 0.5,
+      "& > button:first-of-type": {
+        borderBottomLeftRadius: 12,
+      },
+      ...sx,
+    }}
+  >
+    {children}
+  </Box>
 );
 
-export type PromptInputButtonProps = ComponentProps<typeof Button>;
+export type PromptInputButtonProps = ComponentProps<typeof Button> & {
+  variant?: "text" | "contained" | "outlined";
+};
 
 export const PromptInputButton = ({
-  variant = "ghost",
-  className,
+  variant = "text",
   size,
+  children,
+  sx,
   ...props
 }: PromptInputButtonProps) => {
-  const newSize =
-    (size ?? Children.count(props.children) > 1) ? "default" : "icon";
+  const isIconButton = Children.count(children) === 1;
+
+  if (isIconButton) {
+    return (
+      <IconButton
+        size={size || "medium"}
+        sx={{
+          borderRadius: 2,
+          color: variant === "text" ? "text.secondary" : undefined,
+          ...sx,
+        }}
+        {...props}
+      >
+        {children}
+      </IconButton>
+    );
+  }
 
   return (
     <Button
-      className={cn(
-        "shrink-0 gap-1.5 rounded-lg",
-        variant === "ghost" && "text-muted-foreground",
-        newSize === "default" && "px-3",
-        className,
-      )}
-      size={newSize}
-      type="button"
       variant={variant}
+      size={size || "medium"}
+      sx={{
+        minWidth: "auto",
+        px: 1.5,
+        gap: 0.75,
+        borderRadius: 2,
+        flexShrink: 0,
+        color: variant === "text" ? "text.secondary" : undefined,
+        ...sx,
+      }}
       {...props}
-    />
+    >
+      {children}
+    </Button>
   );
 };
 
-export type PromptInputActionMenuProps = ComponentProps<typeof DropdownMenu>;
-export const PromptInputActionMenu = (props: PromptInputActionMenuProps) => (
-  <DropdownMenu {...props} />
-);
+export type PromptInputActionMenuProps = {
+  children?: React.ReactNode;
+};
+
+export const PromptInputActionMenu = ({
+  children,
+}: PromptInputActionMenuProps) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const childrenArray = Children.toArray(children);
+  const trigger = childrenArray.find(
+    (child): child is React.ReactElement<PromptInputActionMenuTriggerProps> =>
+      React.isValidElement(child) &&
+      child.type === PromptInputActionMenuTrigger,
+  );
+  const content = childrenArray.find(
+    (child): child is React.ReactElement<PromptInputActionMenuContentProps> =>
+      React.isValidElement(child) &&
+      child.type === PromptInputActionMenuContent,
+  );
+
+  return (
+    <>
+      {trigger &&
+        React.cloneElement(trigger, {
+          onClick: (e: MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget),
+        })}
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        {content &&
+          React.cloneElement(content, {
+            onClose: () => setAnchorEl(null),
+          })}
+      </Menu>
+    </>
+  );
+};
 
 export type PromptInputActionMenuTriggerProps = ComponentProps<
   typeof Button
-> & {};
+> & {
+  onClick?: (e: MouseEvent<HTMLElement>) => void;
+};
+
 export const PromptInputActionMenuTrigger = ({
-  className,
   children,
+  onClick,
+  sx,
   ...props
 }: PromptInputActionMenuTriggerProps) => (
-  <DropdownMenuTrigger asChild>
-    <PromptInputButton className={className} {...props}>
-      {children ?? <PlusIcon className="size-4" />}
-    </PromptInputButton>
-  </DropdownMenuTrigger>
+  <PromptInputButton onClick={onClick} sx={sx} {...props}>
+    {children ?? <PlusIcon size={16} />}
+  </PromptInputButton>
 );
 
-export type PromptInputActionMenuContentProps = ComponentProps<
-  typeof DropdownMenuContent
->;
+export type PromptInputActionMenuContentProps = {
+  children?: React.ReactNode;
+  onClose?: () => void;
+};
+
 export const PromptInputActionMenuContent = ({
-  className,
-  ...props
+  children,
+  onClose,
 }: PromptInputActionMenuContentProps) => (
-  <DropdownMenuContent align="start" className={cn(className)} {...props} />
+  <Box onClick={onClose}>{children}</Box>
 );
 
-export type PromptInputActionMenuItemProps = ComponentProps<
-  typeof DropdownMenuItem
->;
-export const PromptInputActionMenuItem = ({
-  className,
-  ...props
-}: PromptInputActionMenuItemProps) => (
-  <DropdownMenuItem className={cn(className)} {...props} />
-);
+export type PromptInputActionMenuItemProps = ComponentProps<typeof MenuItem>;
+
+export const PromptInputActionMenuItem = (
+  props: PromptInputActionMenuItemProps,
+) => <MenuItem {...props} />;
 
 // Note: Actions that perform side-effects (like opening a file dialog)
 // are provided in opt-in modules (e.g., prompt-input-attachments).
@@ -605,32 +746,54 @@ export type PromptInputSubmitProps = ComponentProps<typeof Button> & {
 };
 
 export const PromptInputSubmit = ({
-  className,
-  variant = "default",
-  size = "icon",
+  variant = "contained",
+  size = "medium",
   status,
   children,
+  sx,
   ...props
 }: PromptInputSubmitProps) => {
-  let Icon = <SendIcon className="size-4" />;
+  let Icon = <SendIcon size={16} />;
 
   if (status === "submitted") {
-    Icon = <Loader2Icon className="size-4 animate-spin" />;
+    Icon = <CircularProgress size={16} />;
   } else if (status === "streaming") {
-    Icon = <SquareIcon className="size-4" />;
+    Icon = <SquareIcon size={16} />;
   } else if (status === "error") {
-    Icon = <XIcon className="size-4" />;
+    Icon = <XIcon size={16} />;
+  }
+
+  const isIconOnly = !children;
+
+  if (isIconOnly) {
+    return (
+      <IconButton
+        type="submit"
+        size={size}
+        sx={{
+          borderRadius: 2,
+          ...sx,
+        }}
+        {...props}
+      >
+        {Icon}
+      </IconButton>
+    );
   }
 
   return (
     <Button
-      className={cn("gap-1.5 rounded-lg", className)}
-      size={size}
       type="submit"
       variant={variant}
+      size={size}
+      sx={{
+        gap: 0.75,
+        borderRadius: 2,
+        ...sx,
+      }}
       {...props}
     >
-      {children ?? Icon}
+      {children}
     </Button>
   );
 };
@@ -638,54 +801,34 @@ export const PromptInputSubmit = ({
 export type PromptInputModelSelectProps = ComponentProps<typeof Select>;
 
 export const PromptInputModelSelect = (props: PromptInputModelSelectProps) => (
-  <Select {...props} />
-);
-
-export type PromptInputModelSelectTriggerProps = ComponentProps<
-  typeof SelectTrigger
->;
-
-export const PromptInputModelSelectTrigger = ({
-  className,
-  ...props
-}: PromptInputModelSelectTriggerProps) => (
-  <SelectTrigger
-    className={cn(
-      "border-none bg-transparent font-medium text-muted-foreground shadow-none transition-colors",
-      'hover:bg-accent hover:text-foreground [&[aria-expanded="true"]]:bg-accent [&[aria-expanded="true"]]:text-foreground',
-      className,
-    )}
+  <Select
+    variant="standard"
+    sx={{
+      minWidth: 120,
+      "& .MuiInput-root": {
+        border: "none",
+        bgcolor: "transparent",
+        fontWeight: 500,
+        color: "text.secondary",
+        transition: "all 0.2s",
+        "&:hover": {
+          bgcolor: "action.hover",
+          color: "text.primary",
+        },
+        "&.Mui-focused": {
+          bgcolor: "action.hover",
+          color: "text.primary",
+        },
+        "&:before, &:after": {
+          display: "none",
+        },
+      },
+      "& .MuiSelect-select": {
+        px: 1,
+        py: 0.5,
+        borderRadius: 1,
+      },
+    }}
     {...props}
   />
-);
-
-export type PromptInputModelSelectContentProps = ComponentProps<
-  typeof SelectContent
->;
-
-export const PromptInputModelSelectContent = ({
-  className,
-  ...props
-}: PromptInputModelSelectContentProps) => (
-  <SelectContent className={cn(className)} {...props} />
-);
-
-export type PromptInputModelSelectItemProps = ComponentProps<typeof SelectItem>;
-
-export const PromptInputModelSelectItem = ({
-  className,
-  ...props
-}: PromptInputModelSelectItemProps) => (
-  <SelectItem className={cn(className)} {...props} />
-);
-
-export type PromptInputModelSelectValueProps = ComponentProps<
-  typeof SelectValue
->;
-
-export const PromptInputModelSelectValue = ({
-  className,
-  ...props
-}: PromptInputModelSelectValueProps) => (
-  <SelectValue className={cn(className)} {...props} />
 );

@@ -1,86 +1,106 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import {
   PromptInput,
+  PromptInputBody,
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
   PromptInputButton,
   PromptInputSubmit,
+  type PromptInputMessage,
 } from "./ai-prompt-input";
 import { PaperclipIcon, ImageIcon, MicIcon } from "lucide-react";
 
 export default function AIPromptInputDemo() {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    console.log("Message:", formData.get("message"));
+  const handleSubmit = (message: PromptInputMessage) => {
+    console.log("Message:", message.text);
+    console.log("Files:", message.files);
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-8 p-8">
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          Basic Prompt Input
-        </h3>
-        <PromptInput onSubmit={handleSubmit}>
-          <PromptInputTextarea placeholder="Ask me anything..." />
-          <PromptInputToolbar>
-            <PromptInputTools>
-              <PromptInputButton onClick={() => console.log("Attach")}>
-                <PaperclipIcon className="size-4" />
-              </PromptInputButton>
-              <PromptInputButton onClick={() => console.log("Image")}>
-                <ImageIcon className="size-4" />
-              </PromptInputButton>
-            </PromptInputTools>
-            <PromptInputSubmit />
-          </PromptInputToolbar>
-        </PromptInput>
-      </div>
+    <Box sx={{ width: "100%", maxWidth: 672, mx: "auto", p: 4 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <Box>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: 500, color: "text.secondary", mb: 1 }}
+          >
+            Basic Prompt Input
+          </Typography>
+          <PromptInput onSubmit={handleSubmit}>
+            <PromptInputBody>
+              <PromptInputTextarea placeholder="Ask me anything..." />
+            </PromptInputBody>
+            <PromptInputToolbar>
+              <PromptInputTools>
+                <PromptInputButton onClick={() => console.log("Attach")}>
+                  <PaperclipIcon size={16} />
+                </PromptInputButton>
+                <PromptInputButton onClick={() => console.log("Image")}>
+                  <ImageIcon size={16} />
+                </PromptInputButton>
+              </PromptInputTools>
+              <PromptInputSubmit />
+            </PromptInputToolbar>
+          </PromptInput>
+        </Box>
 
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          With Additional Tools
-        </h3>
-        <PromptInput onSubmit={handleSubmit}>
-          <PromptInputTextarea placeholder="Type your message here..." />
-          <PromptInputToolbar>
-            <PromptInputTools>
-              <PromptInputButton onClick={() => console.log("Attach")}>
-                <PaperclipIcon className="size-4" />
-                <span className="text-xs">Attach</span>
-              </PromptInputButton>
-              <PromptInputButton onClick={() => console.log("Image")}>
-                <ImageIcon className="size-4" />
-                <span className="text-xs">Image</span>
-              </PromptInputButton>
-              <PromptInputButton onClick={() => console.log("Voice")}>
-                <MicIcon className="size-4" />
-                <span className="text-xs">Voice</span>
-              </PromptInputButton>
-            </PromptInputTools>
-            <PromptInputSubmit />
-          </PromptInputToolbar>
-        </PromptInput>
-      </div>
+        <Box>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: 500, color: "text.secondary", mb: 1 }}
+          >
+            With Additional Tools
+          </Typography>
+          <PromptInput onSubmit={handleSubmit}>
+            <PromptInputBody>
+              <PromptInputTextarea placeholder="Type your message here..." />
+            </PromptInputBody>
+            <PromptInputToolbar>
+              <PromptInputTools>
+                <PromptInputButton onClick={() => console.log("Attach")}>
+                  <PaperclipIcon size={16} />
+                  <Typography variant="caption">Attach</Typography>
+                </PromptInputButton>
+                <PromptInputButton onClick={() => console.log("Image")}>
+                  <ImageIcon size={16} />
+                  <Typography variant="caption">Image</Typography>
+                </PromptInputButton>
+                <PromptInputButton onClick={() => console.log("Voice")}>
+                  <MicIcon size={16} />
+                  <Typography variant="caption">Voice</Typography>
+                </PromptInputButton>
+              </PromptInputTools>
+              <PromptInputSubmit />
+            </PromptInputToolbar>
+          </PromptInput>
+        </Box>
 
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          Loading State
-        </h3>
-        <PromptInput onSubmit={handleSubmit}>
-          <PromptInputTextarea placeholder="Processing..." disabled />
-          <PromptInputToolbar>
-            <PromptInputTools>
-              <PromptInputButton disabled>
-                <PaperclipIcon className="size-4" />
-              </PromptInputButton>
-            </PromptInputTools>
-            <PromptInputSubmit status="streaming" disabled />
-          </PromptInputToolbar>
-        </PromptInput>
-      </div>
-    </div>
+        <Box>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: 500, color: "text.secondary", mb: 1 }}
+          >
+            Loading State
+          </Typography>
+          <PromptInput onSubmit={handleSubmit}>
+            <PromptInputBody>
+              <PromptInputTextarea placeholder="Processing..." disabled />
+            </PromptInputBody>
+            <PromptInputToolbar>
+              <PromptInputTools>
+                <PromptInputButton disabled>
+                  <PaperclipIcon size={16} />
+                </PromptInputButton>
+              </PromptInputTools>
+              <PromptInputSubmit status="streaming" disabled />
+            </PromptInputToolbar>
+          </PromptInput>
+        </Box>
+      </Box>
+    </Box>
   );
 }

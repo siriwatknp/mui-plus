@@ -101,7 +101,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-message/ai-message.tsx`
 
-### 12. [ ] ai-open-in-chat
+### 12. [x] ai-open-in-chat
 
 **Current:** Uses Radix Dialog, Tailwind classes
 **Target:** MUI Dialog, DialogTitle, DialogContent

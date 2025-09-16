@@ -24,7 +24,7 @@ export default function AIMessageDemo() {
                   How do I create a custom hook in React?
                 </Typography>
               </MessageContent>
-              <MessageAvatar name="User" src="" />
+              <MessageAvatar name="User" />
             </Message>
 
             {/* Assistant Message */}
@@ -53,12 +53,12 @@ export default function AIMessageDemo() {
                   </Typography>
                 </Box>
               </MessageContent>
-              <MessageAvatar name="AI" src="" />
+              <MessageAvatar name="AI" />
             </Message>
 
             {/* User Message with longer content */}
             <Message from="user">
-              <MessageAvatar name="User" src="" />
+              <MessageAvatar name="User" />
               <MessageContent>
                 <Typography variant="body2">
                   Can you show me an example?
@@ -68,7 +68,7 @@ export default function AIMessageDemo() {
 
             {/* Assistant Message with code */}
             <Message from="assistant">
-              <MessageAvatar name="AI" src="" />
+              <MessageAvatar name="AI" />
               <MessageContent>
                 <Typography variant="body2">
                   Here's a simple example of a custom hook:
@@ -108,7 +108,7 @@ export default function AIMessageDemo() {
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Message from="user">
-              <MessageAvatar name="User" src="" />
+              <MessageAvatar name="User" />
               <MessageContent variant="flat">
                 <Typography variant="body2">
                   What about TypeScript support?
@@ -117,7 +117,7 @@ export default function AIMessageDemo() {
             </Message>
 
             <Message from="assistant">
-              <MessageAvatar name="AI" src="" />
+              <MessageAvatar name="AI" />
               <MessageContent variant="flat">
                 <Typography variant="body2">
                   TypeScript works great with custom hooks. You can add type
@@ -141,6 +141,64 @@ export default function AIMessageDemo() {
 }`}</code>
                 </Paper>
               </MessageContent>
+            </Message>
+          </Box>
+        </Box>
+
+        <Box>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: 500, color: "text.secondary", mb: 2 }}
+          >
+            Avatar Positioning
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{ color: "text.secondary", display: "block", mb: 2 }}
+          >
+            The avatar position automatically adjusts based on the order of
+            children
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {/* Avatar after content for user messages */}
+            <Message from="user">
+              <MessageContent>
+                <Typography variant="body2">
+                  Avatar appears on the right for user messages
+                </Typography>
+              </MessageContent>
+              <MessageAvatar name="John" />
+            </Message>
+
+            {/* Avatar before content for assistant messages */}
+            <Message from="assistant">
+              <MessageAvatar name="Bot" />
+              <MessageContent>
+                <Typography variant="body2">
+                  Avatar appears on the left for assistant messages
+                </Typography>
+              </MessageContent>
+            </Message>
+
+            {/* Avatar can also be placed differently */}
+            <Message from="user">
+              <MessageAvatar name="Jane" />
+              <MessageContent>
+                <Typography variant="body2">
+                  When avatar is placed first for user messages, it appears on
+                  the left
+                </Typography>
+              </MessageContent>
+            </Message>
+
+            <Message from="assistant">
+              <MessageContent>
+                <Typography variant="body2">
+                  When avatar is placed last for assistant messages, it appears
+                  on the right
+                </Typography>
+              </MessageContent>
+              <MessageAvatar name="AI" />
             </Message>
           </Box>
         </Box>
