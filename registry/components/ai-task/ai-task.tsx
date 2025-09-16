@@ -1,94 +1,158 @@
 "use client";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
+import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
+import Typography from "@mui/material/Typography";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { ChevronDownIcon, SearchIcon } from "lucide-react";
-import type { ComponentProps } from "react";
+import React, { useState, type ReactNode } from "react";
 
-export type TaskItemFileProps = ComponentProps<"div">;
+export type TaskItemFileProps = {
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+};
 
-export const TaskItemFile = ({
-  children,
-  className,
-  ...props
-}: TaskItemFileProps) => (
-  <div
-    className={cn(
-      "inline-flex items-center gap-1 rounded-md border bg-secondary px-1.5 py-0.5 text-foreground text-xs",
-      className,
-    )}
-    {...props}
+export const TaskItemFile = ({ children, sx }: TaskItemFileProps) => (
+  <Box
+    sx={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 0.5,
+      borderRadius: 1,
+      border: 1,
+      borderColor: "divider",
+      bgcolor: "action.hover",
+      px: 0.75,
+      py: 0,
+      color: "text.primary",
+      fontSize: "0.75rem",
+      ...sx,
+    }}
   >
     {children}
-  </div>
+  </Box>
 );
 
-export type TaskItemProps = ComponentProps<"div">;
+export type TaskItemProps = {
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+};
 
-export const TaskItem = ({ children, className, ...props }: TaskItemProps) => (
-  <div className={cn("text-muted-foreground text-sm", className)} {...props}>
+export const TaskItem = ({ children, sx }: TaskItemProps) => (
+  <Box
+    sx={{
+      color: "text.secondary",
+      fontSize: "0.875rem",
+      ...sx,
+    }}
+  >
     {children}
-  </div>
+  </Box>
 );
 
-export type TaskProps = ComponentProps<typeof Collapsible>;
+export type TaskProps = {
+  defaultOpen?: boolean;
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+};
 
-export const Task = ({
-  defaultOpen = true,
-  className,
-  ...props
-}: TaskProps) => (
-  <Collapsible
-    className={cn(
-      "data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 data-[state=closed]:animate-out data-[state=open]:animate-in",
-      className,
-    )}
-    defaultOpen={defaultOpen}
-    {...props}
-  />
-);
+export const Task = ({ defaultOpen = true, children, sx }: TaskProps) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
-export type TaskTriggerProps = ComponentProps<typeof CollapsibleTrigger> & {
+  return (
+    <Box sx={sx}>
+      {React.Children.map(children, (child) =>
+        React.isValidElement(child)
+          ? React.cloneElement(child as React.ReactElement<any>, {
+              isOpen,
+              onToggle: () => setIsOpen(!isOpen),
+            })
+          : child
+      )}
+    </Box>
+  );
+};
+
+export type TaskTriggerProps = {
   title: string;
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+  isOpen?: boolean;
+  onToggle?: () => void;
 };
 
 export const TaskTrigger = ({
   children,
-  className,
   title,
-  ...props
+  sx,
+  isOpen = false,
+  onToggle,
 }: TaskTriggerProps) => (
-  <CollapsibleTrigger asChild className={cn("group", className)} {...props}>
+  <Box
+    component="button"
+    onClick={onToggle}
+    sx={{
+      display: "flex",
+      width: "100%",
+      alignItems: "center",
+      gap: 1,
+      color: "text.secondary",
+      fontSize: "0.875rem",
+      transition: "color 0.2s",
+      border: "none",
+      background: "transparent",
+      cursor: "pointer",
+      p: 0,
+      "&:hover": {
+        color: "text.primary",
+      },
+      ...sx,
+    }}
+  >
     {children ?? (
-      <div className="flex w-full cursor-pointer items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground">
-        <SearchIcon className="size-4" />
-        <p className="text-sm">{title}</p>
-        <ChevronDownIcon className="size-4 transition-transform group-data-[state=open]:rotate-180" />
-      </div>
+      <>
+        <SearchIcon size={16} />
+        <Typography component="span" sx={{ fontSize: "0.875rem" }}>
+          {title}
+        </Typography>
+        <Box
+          component={ChevronDownIcon}
+          size={16}
+          sx={{
+            transition: "transform 0.2s",
+            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        />
+      </>
     )}
-  </CollapsibleTrigger>
+  </Box>
 );
 
-export type TaskContentProps = ComponentProps<typeof CollapsibleContent>;
+export type TaskContentProps = {
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+  isOpen?: boolean;
+};
 
 export const TaskContent = ({
   children,
-  className,
-  ...props
+  sx,
+  isOpen = false,
 }: TaskContentProps) => (
-  <CollapsibleContent
-    className={cn(
-      "data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-popover-foreground outline-none data-[state=closed]:animate-out data-[state=open]:animate-in",
-      className,
-    )}
-    {...props}
-  >
-    <div className="mt-4 space-y-2 border-muted border-l-2 pl-4">
+  <Collapse in={isOpen}>
+    <Box
+      sx={{
+        mt: 2,
+        pl: 2,
+        borderLeft: 2,
+        borderColor: "divider",
+        "& > *:not(:last-child)": {
+          mb: 1,
+        },
+        ...sx,
+      }}
+    >
       {children}
-    </div>
-  </CollapsibleContent>
+    </Box>
+  </Collapse>
 );

@@ -1,26 +1,55 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import type { ComponentProps } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import type { ButtonProps } from "@mui/material/Button";
+import type { SxProps, Theme } from "@mui/material/styles";
+import type { ReactNode } from "react";
 
-export type SuggestionsProps = ComponentProps<typeof ScrollArea>;
+export type SuggestionsProps = {
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+};
 
-export const Suggestions = ({
-  className,
-  children,
-  ...props
-}: SuggestionsProps) => (
-  <ScrollArea className="w-full overflow-x-auto whitespace-nowrap" {...props}>
-    <div className={cn("flex w-max flex-nowrap items-center gap-2", className)}>
+export const Suggestions = ({ children, sx }: SuggestionsProps) => (
+  <Box
+    sx={{
+      width: "100%",
+      overflowX: "auto",
+      overflowY: "hidden",
+      whiteSpace: "nowrap",
+      "&::-webkit-scrollbar": {
+        height: 8,
+      },
+      "&::-webkit-scrollbar-track": {
+        bgcolor: "action.hover",
+        borderRadius: 1,
+      },
+      "&::-webkit-scrollbar-thumb": {
+        bgcolor: "action.disabled",
+        borderRadius: 1,
+        "&:hover": {
+          bgcolor: "action.selected",
+        },
+      },
+      ...sx,
+    }}
+  >
+    <Box
+      sx={{
+        display: "flex",
+        width: "max-content",
+        flexWrap: "nowrap",
+        alignItems: "center",
+        gap: 1,
+      }}
+    >
       {children}
-    </div>
-    <ScrollBar className="hidden" orientation="horizontal" />
-  </ScrollArea>
+    </Box>
+  </Box>
 );
 
-export type SuggestionProps = Omit<ComponentProps<typeof Button>, "onClick"> & {
+export type SuggestionProps = Omit<ButtonProps, "onClick"> & {
   suggestion: string;
   onClick?: (suggestion: string) => void;
 };
@@ -28,9 +57,9 @@ export type SuggestionProps = Omit<ComponentProps<typeof Button>, "onClick"> & {
 export const Suggestion = ({
   suggestion,
   onClick,
-  className,
-  variant = "outline",
-  size = "sm",
+  sx,
+  variant = "outlined",
+  size = "small",
   children,
   ...props
 }: SuggestionProps) => {
@@ -40,11 +69,17 @@ export const Suggestion = ({
 
   return (
     <Button
-      className={cn("cursor-pointer rounded-full px-4", className)}
       onClick={handleClick}
       size={size}
       type="button"
       variant={variant}
+      sx={{
+        borderRadius: 99,
+        px: 2,
+        textTransform: "none",
+        whiteSpace: "nowrap",
+        ...sx,
+      }}
       {...props}
     >
       {children || suggestion}
