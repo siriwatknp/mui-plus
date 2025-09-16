@@ -1,13 +1,9 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
-import { Badge } from "@/components/ui/badge";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import Collapse from "@mui/material/Collapse";
+import Typography from "@mui/material/Typography";
 import {
   BrainIcon,
   ChevronDownIcon,
@@ -15,7 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { ComponentProps } from "react";
-import { createContext, memo, useContext } from "react";
+import { createContext, memo, useContext, useState } from "react";
 
 type ChainOfThoughtContextValue = {
   isOpen: boolean;
@@ -36,7 +32,7 @@ const useChainOfThought = () => {
   return context;
 };
 
-export type ChainOfThoughtProps = ComponentProps<"div"> & {
+export type ChainOfThoughtProps = ComponentProps<typeof Box> & {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -44,66 +40,83 @@ export type ChainOfThoughtProps = ComponentProps<"div"> & {
 
 export const ChainOfThought = memo(
   ({
-    className,
     open,
     defaultOpen = false,
     onOpenChange,
     children,
+    sx,
     ...props
   }: ChainOfThoughtProps) => {
-    const [isOpen, setIsOpen] = useControllableState({
-      prop: open,
-      defaultProp: defaultOpen,
-      onChange: onOpenChange,
-    });
+    const [isOpen, setIsOpen] = useState(open ?? defaultOpen);
+
+    const handleOpenChange = (newOpen: boolean) => {
+      setIsOpen(newOpen);
+      onOpenChange?.(newOpen);
+    };
 
     return (
-      <ChainOfThoughtContext.Provider value={{ isOpen, setIsOpen }}>
-        <div
-          className={cn("not-prose max-w-prose space-y-4", className)}
+      <ChainOfThoughtContext.Provider
+        value={{ isOpen, setIsOpen: handleOpenChange }}
+      >
+        <Box
+          sx={{
+            maxWidth: "65ch",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            ...sx,
+          }}
           {...props}
         >
           {children}
-        </div>
+        </Box>
       </ChainOfThoughtContext.Provider>
     );
   },
 );
 
-export type ChainOfThoughtHeaderProps = ComponentProps<
-  typeof CollapsibleTrigger
->;
+export type ChainOfThoughtHeaderProps = ComponentProps<typeof Box>;
 
 export const ChainOfThoughtHeader = memo(
-  ({ className, children, ...props }: ChainOfThoughtHeaderProps) => {
+  ({ children, sx, ...props }: ChainOfThoughtHeaderProps) => {
     const { isOpen, setIsOpen } = useChainOfThought();
 
     return (
-      <Collapsible onOpenChange={setIsOpen} open={isOpen}>
-        <CollapsibleTrigger
-          className={cn(
-            "flex w-full items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground",
-            className,
-          )}
-          {...props}
-        >
-          <BrainIcon className="size-4" />
-          <span className="flex-1 text-left">
-            {children ?? "Chain of Thought"}
-          </span>
-          <ChevronDownIcon
-            className={cn(
-              "size-4 transition-transform",
-              isOpen ? "rotate-180" : "rotate-0",
-            )}
-          />
-        </CollapsibleTrigger>
-      </Collapsible>
+      <Box
+        onClick={() => setIsOpen(!isOpen)}
+        sx={{
+          display: "flex",
+          width: "100%",
+          alignItems: "center",
+          gap: 1,
+          color: "text.secondary",
+          fontSize: "0.875rem",
+          transition: "color 0.2s",
+          cursor: "pointer",
+          "&:hover": {
+            color: "text.primary",
+          },
+          ...sx,
+        }}
+        {...props}
+      >
+        <BrainIcon className="size-4" />
+        <Box sx={{ flex: 1, textAlign: "left" }}>
+          {children ?? "Chain of Thought"}
+        </Box>
+        <ChevronDownIcon
+          className="size-4"
+          style={{
+            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.2s",
+          }}
+        />
+      </Box>
     );
   },
 );
 
-export type ChainOfThoughtStepProps = ComponentProps<"div"> & {
+export type ChainOfThoughtStepProps = ComponentProps<typeof Box> & {
   icon?: LucideIcon;
   label: string;
   description?: string;
@@ -112,105 +125,159 @@ export type ChainOfThoughtStepProps = ComponentProps<"div"> & {
 
 export const ChainOfThoughtStep = memo(
   ({
-    className,
     icon: Icon = DotIcon,
     label,
     description,
     status = "complete",
     children,
+    sx,
     ...props
   }: ChainOfThoughtStepProps) => {
-    const statusStyles = {
-      complete: "text-muted-foreground",
-      active: "text-foreground",
-      pending: "text-muted-foreground/50",
+    const statusColors = {
+      complete: "text.secondary",
+      active: "text.primary",
+      pending: "text.disabled",
     };
 
     return (
-      <div
-        className={cn(
-          "flex gap-2 text-sm",
-          statusStyles[status],
-          "fade-in-0 slide-in-from-top-2 animate-in",
-          className,
-        )}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+          fontSize: "0.875rem",
+          color: statusColors[status],
+          ...sx,
+        }}
         {...props}
       >
-        <div className="relative mt-0.5">
+        <Box sx={{ position: "relative", mt: 0.25 }}>
           <Icon className="size-4" />
-          <div className="-mx-px absolute top-7 bottom-0 left-1/2 w-px bg-border" />
-        </div>
-        <div className="flex-1 space-y-2">
-          <div>{label}</div>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "1.5rem",
+              bottom: 0,
+              left: "50%",
+              width: "1px",
+              bgcolor: "divider",
+              transform: "translateX(-50%)",
+            }}
+          />
+        </Box>
+        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 1 }}>
+          <Typography variant="body2">{label}</Typography>
           {description && (
-            <div className="text-muted-foreground text-xs">{description}</div>
+            <Typography
+              variant="caption"
+              sx={{ color: "text.secondary", display: "block" }}
+            >
+              {description}
+            </Typography>
           )}
           {children}
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   },
 );
 
-export type ChainOfThoughtSearchResultsProps = ComponentProps<"div">;
+export type ChainOfThoughtSearchResultsProps = ComponentProps<typeof Box>;
 
 export const ChainOfThoughtSearchResults = memo(
-  ({ className, ...props }: ChainOfThoughtSearchResultsProps) => (
-    <div className={cn("flex items-center gap-2", className)} {...props} />
+  ({ sx, ...props }: ChainOfThoughtSearchResultsProps) => (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+        flexWrap: "wrap",
+        ...sx,
+      }}
+      {...props}
+    />
   ),
 );
 
-export type ChainOfThoughtSearchResultProps = ComponentProps<typeof Badge>;
+export type ChainOfThoughtSearchResultProps = ComponentProps<typeof Chip>;
 
 export const ChainOfThoughtSearchResult = memo(
-  ({ className, children, ...props }: ChainOfThoughtSearchResultProps) => (
-    <Badge
-      className={cn("gap-1 px-2 py-0.5 font-normal text-xs", className)}
-      variant="secondary"
+  ({ sx, ...props }: ChainOfThoughtSearchResultProps) => (
+    <Chip
+      size="small"
+      color="secondary"
+      sx={{
+        height: 24,
+        fontSize: "0.75rem",
+        fontWeight: 400,
+        ...sx,
+      }}
       {...props}
-    >
-      {children}
-    </Badge>
+    />
   ),
 );
 
-export type ChainOfThoughtContentProps = ComponentProps<
-  typeof CollapsibleContent
->;
+export type ChainOfThoughtContentProps = ComponentProps<typeof Box>;
 
 export const ChainOfThoughtContent = memo(
-  ({ className, children, ...props }: ChainOfThoughtContentProps) => {
+  ({ children, sx, ...props }: ChainOfThoughtContentProps) => {
     const { isOpen } = useChainOfThought();
 
     return (
-      <Collapsible open={isOpen}>
-        <CollapsibleContent
-          className={cn(
-            "mt-2 space-y-3",
-            "data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-popover-foreground outline-none data-[state=closed]:animate-out data-[state=open]:animate-in",
-            className,
-          )}
+      <Collapse in={isOpen}>
+        <Box
+          sx={{
+            mt: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: 1.5,
+            ...sx,
+          }}
           {...props}
         >
           {children}
-        </CollapsibleContent>
-      </Collapsible>
+        </Box>
+      </Collapse>
     );
   },
 );
 
-export type ChainOfThoughtImageProps = ComponentProps<"div"> & {
+export type ChainOfThoughtImageProps = ComponentProps<typeof Box> & {
   caption?: string;
 };
 
 export const ChainOfThoughtImage = memo(
-  ({ className, children, caption, ...props }: ChainOfThoughtImageProps) => (
-    <div className={cn("mt-2 space-y-2", className)} {...props}>
-      <div className="relative flex max-h-[22rem] items-center justify-center overflow-hidden rounded-lg bg-muted p-3">
+  ({ children, caption, sx, ...props }: ChainOfThoughtImageProps) => (
+    <Box
+      sx={{
+        mt: 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: 1,
+        ...sx,
+      }}
+      {...props}
+    >
+      <Box
+        sx={{
+          position: "relative",
+          display: "flex",
+          maxHeight: "22rem",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          borderRadius: 2,
+          bgcolor: "action.hover",
+          p: 1.5,
+        }}
+      >
         {children}
-      </div>
-      {caption && <p className="text-muted-foreground text-xs">{caption}</p>}
-    </div>
+      </Box>
+      {caption && (
+        <Typography variant="caption" sx={{ color: "text.secondary" }}>
+          {caption}
+        </Typography>
+      )}
+    </Box>
   ),
 );
 

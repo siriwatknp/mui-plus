@@ -37,7 +37,7 @@ Converting all ai-elements from Tailwind CSS/Radix UI to Material UI components.
 
 - `registry/components/ai-branch/ai-branch.tsx`
 
-### 4. [ ] ai-chain-of-thought
+### 4. [x] ai-chain-of-thought
 
 **Current:** Uses Tailwind classes
 **Target:** MUI components
