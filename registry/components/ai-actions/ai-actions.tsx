@@ -1,24 +1,27 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import type { ComponentProps } from "react";
 
-export type ActionsProps = ComponentProps<"div">;
+export type ActionsProps = ComponentProps<typeof Box>;
 
-export const Actions = ({ className, children, ...props }: ActionsProps) => (
-  <div className={cn("flex items-center gap-1", className)} {...props}>
+export const Actions = ({ children, sx, ...props }: ActionsProps) => (
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 0.5,
+      ...sx,
+    }}
+    {...props}
+  >
     {children}
-  </div>
+  </Box>
 );
 
-export type ActionProps = ComponentProps<typeof Button> & {
+export type ActionProps = ComponentProps<typeof IconButton> & {
   tooltip?: string;
   label?: string;
 };
@@ -27,37 +30,38 @@ export const Action = ({
   tooltip,
   children,
   label,
-  className,
-  variant = "ghost",
-  size = "sm",
+  size = "small",
+  sx,
   ...props
 }: ActionProps) => {
   const button = (
-    <Button
-      className={cn(
-        "relative size-9 p-1.5 text-muted-foreground hover:text-foreground",
-        className,
-      )}
+    <IconButton
       size={size}
       type="button"
-      variant={variant}
+      sx={{
+        position: "relative",
+        width: 36,
+        height: 36,
+        p: 0.75,
+        color: "text.secondary",
+        "&:hover": {
+          color: "text.primary",
+          bgcolor: "action.hover",
+        },
+        ...sx,
+      }}
+      aria-label={label || tooltip}
       {...props}
     >
       {children}
-      <span className="sr-only">{label || tooltip}</span>
-    </Button>
+    </IconButton>
   );
 
   if (tooltip) {
     return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>{button}</TooltipTrigger>
-          <TooltipContent>
-            <p>{tooltip}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip title={tooltip} arrow>
+        {button}
+      </Tooltip>
     );
   }
 
