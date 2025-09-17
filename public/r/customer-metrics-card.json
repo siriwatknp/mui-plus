@@ -22,7 +22,6 @@
   ],
   "meta": {
     "screenshot": "/screenshots/customer-metrics-card.png",
-    "category": "dashboard",
-    "tags": []
+    "category": "dashboard"
   }
 }

@@ -22,7 +22,6 @@
   ],
   "meta": {
     "screenshot": "/screenshots/members-metric.png",
-    "category": "dashboard",
-    "tags": []
+    "category": "dashboard"
   }
 }

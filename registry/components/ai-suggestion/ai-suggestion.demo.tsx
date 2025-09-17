@@ -73,17 +73,16 @@ export default function AISuggestionDemo() {
           <Suggestion
             suggestion="Primary action"
             onClick={handleSuggestionClick}
-            variant="default"
           />
           <Suggestion
-            suggestion="Secondary action"
+            suggestion="Contained action"
             onClick={handleSuggestionClick}
-            variant="secondary"
+            variant="contained"
           />
           <Suggestion
-            suggestion="Ghost action"
+            suggestion="text action"
             onClick={handleSuggestionClick}
-            variant="ghost"
+            variant="text"
           />
         </Suggestions>
       </div>

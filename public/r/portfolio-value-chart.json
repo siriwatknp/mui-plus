@@ -21,7 +21,6 @@
   ],
   "meta": {
     "screenshot": "/screenshots/portfolio-value-chart.png",
-    "category": "dashboard",
-    "tags": []
+    "category": "dashboard"
   }
 }

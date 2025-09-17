@@ -22,7 +22,6 @@
   ],
   "meta": {
     "screenshot": "/screenshots/payroll-summary-card.png",
-    "category": "dashboard",
-    "tags": []
+    "category": "dashboard"
   }
 }

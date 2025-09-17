@@ -21,7 +21,6 @@
   ],
   "meta": {
     "screenshot": "/screenshots/payment-overview-card.png",
-    "category": "dashboard",
-    "tags": []
+    "category": "dashboard"
   }
 }

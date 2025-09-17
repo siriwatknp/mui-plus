@@ -4,7 +4,11 @@
   "type": "registry:item",
   "title": "Ai Actions",
   "description": "A ai-actions item.",
-  "dependencies": [],
+  "dependencies": [
+    "@mui/material",
+    "@emotion/react",
+    "@emotion/styled"
+  ],
   "registryDependencies": [],
   "files": [
     {
@@ -16,7 +20,7 @@
     {
       "path": "components/ai-actions/ai-actions.tsx",
       "target": "src/mui-plus/components/ai-actions/ai-actions.tsx",
-      "content": "\"use client\";\n\nimport { Button } from \"@/components/ui/button\";\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n} from \"@/components/ui/tooltip\";\nimport { cn } from \"@/lib/utils\";\nimport type { ComponentProps } from \"react\";\n\nexport type ActionsProps = ComponentProps<\"div\">;\n\nexport const Actions = ({ className, children, ...props }: ActionsProps) => (\n  <div className={cn(\"flex items-center gap-1\", className)} {...props}>\n    {children}\n  </div>\n);\n\nexport type ActionProps = ComponentProps<typeof Button> & {\n  tooltip?: string;\n  label?: string;\n};\n\nexport const Action = ({\n  tooltip,\n  children,\n  label,\n  className,\n  variant = \"ghost\",\n  size = \"sm\",\n  ...props\n}: ActionProps) => {\n  const button = (\n    <Button\n      className={cn(\n        \"size-9 p-1.5 text-muted-foreground hover:text-foreground relative\",\n        className,\n      )}\n      size={size}\n      type=\"button\"\n      variant={variant}\n      {...props}\n    >\n      {children}\n      <span className=\"sr-only\">{label || tooltip}</span>\n    </Button>\n  );\n\n  if (tooltip) {\n    return (\n      <TooltipProvider>\n        <Tooltip>\n          <TooltipTrigger asChild>{button}</TooltipTrigger>\n          <TooltipContent>\n            <p>{tooltip}</p>\n          </TooltipContent>\n        </Tooltip>\n      </TooltipProvider>\n    );\n  }\n\n  return button;\n};\n",
+      "content": "\"use client\";\n\nimport Box from \"@mui/material/Box\";\nimport IconButton from \"@mui/material/IconButton\";\nimport Tooltip from \"@mui/material/Tooltip\";\nimport type { ComponentProps } from \"react\";\n\nexport type ActionsProps = ComponentProps<typeof Box>;\n\nexport const Actions = ({ children, sx, ...props }: ActionsProps) => (\n  <Box\n    sx={{\n      display: \"flex\",\n      alignItems: \"center\",\n      gap: 0.5,\n      ...sx,\n    }}\n    {...props}\n  >\n    {children}\n  </Box>\n);\n\nexport type ActionProps = ComponentProps<typeof IconButton> & {\n  tooltip?: string;\n  label?: string;\n};\n\nexport const Action = ({\n  tooltip,\n  children,\n  label,\n  size = \"small\",\n  sx,\n  ...props\n}: ActionProps) => {\n  const button = (\n    <IconButton\n      size={size}\n      type=\"button\"\n      sx={{\n        position: \"relative\",\n        width: 36,\n        height: 36,\n        p: 0.75,\n        color: \"text.secondary\",\n        \"&:hover\": {\n          color: \"text.primary\",\n          bgcolor: \"action.hover\",\n        },\n        ...sx,\n      }}\n      aria-label={label || tooltip}\n      {...props}\n    >\n      {children}\n    </IconButton>\n  );\n\n  if (tooltip) {\n    return (\n      <Tooltip title={tooltip} arrow>\n        {button}\n      </Tooltip>\n    );\n  }\n\n  return button;\n};\n",
       "type": "registry:item"
     }
   ],

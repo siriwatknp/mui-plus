@@ -21,7 +21,6 @@
   ],
   "meta": {
     "screenshot": "/screenshots/space-login.png",
-    "category": "authentication",
-    "tags": []
+    "category": "authentication"
   }
 }

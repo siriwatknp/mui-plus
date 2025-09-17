@@ -10,17 +10,9 @@ import {
 } from "./ai-tool";
 
 export default function AIToolDemo() {
-  const [openTools, setOpenTools] = useState<number[]>([0]);
-
-  const toggleTool = (index: number) => {
-    setOpenTools((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
-    );
-  };
-
   const tools = [
     {
-      type: "search_web",
+      type: "tool-search_web" as const,
       state: "output-available" as const,
       input: {
         query: "React 18 features",
@@ -30,7 +22,7 @@ export default function AIToolDemo() {
         "Found 5 relevant results about React 18 features including automatic batching, transitions, and suspense improvements.",
     },
     {
-      type: "read_file",
+      type: "tool-read_file" as const,
       state: "input-available" as const,
       input: {
         path: "/src/components/Button.tsx",
@@ -38,7 +30,7 @@ export default function AIToolDemo() {
       output: null,
     },
     {
-      type: "execute_code",
+      type: "tool-execute_code" as const,
       state: "output-error" as const,
       input: {
         language: "javascript",
@@ -60,13 +52,7 @@ export default function AIToolDemo() {
 
         <div className="space-y-3">
           {tools.map((tool, index) => (
-            <Tool
-              key={index}
-              open={openTools.includes(index)}
-              onOpenChange={(open) =>
-                open !== openTools.includes(index) && toggleTool(index)
-              }
-            >
+            <Tool key={index} defaultOpen>
               <ToolHeader type={tool.type} state={tool.state} />
               <ToolContent>
                 <ToolInput input={tool.input} />

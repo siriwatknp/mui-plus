@@ -21,7 +21,6 @@
   ],
   "meta": {
     "screenshot": "/screenshots/sla-performance-card.png",
-    "category": "dashboard",
-    "tags": []
+    "category": "dashboard"
   }
 }
