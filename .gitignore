@@ -41,7 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 # generated at build time
-public/r/registry.json 
+public/r/
 .playwright-mcp
 
 examples/**/pnpm-lock.yaml
