@@ -38,26 +38,9 @@ export default async function RegistryPage({ params }: RegistryPageProps) {
     notFound();
   }
 
-  // Extract component code from the first file
-  const componentFile = item.files.find(
-    (file) =>
-      file.type === "registry:block" || file.type === "registry:component"
-  );
-
-  if (!componentFile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Component code not found</p>
-      </div>
-    );
-  }
-
   // For now, let's use dynamic import to load the actual component from the registry
   // This is a more reliable approach than executing code from JSON
   try {
-    // Extract the component path from the first file
-    const componentPath = item.files[0].path.replace(".tsx", "");
-
     return (
       <div>
         {/* Page Header */}
@@ -95,7 +78,9 @@ export default async function RegistryPage({ params }: RegistryPageProps) {
         <main className="p-6">
           <div className="max-w-7xl mx-auto">
             <PreviewComponent>
-              <DynamicComponentLoader componentPath={componentPath} />
+              <DynamicComponentLoader
+                componentPath={item.path.replace(".tsx", "")}
+              />
             </PreviewComponent>
           </div>
         </main>

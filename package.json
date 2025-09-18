@@ -4,12 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:screenshot": "npx tsx scripts/screenshot-demos.ts --port=3001",
+    "dev:screenshot": "tsx scripts/screenshot-demos.ts --port=3001",
     "build": "pnpm registry:build && next build",
     "start": "next start",
     "lint": "next lint",
-    "registry:build": "node scripts/create-registry-json.js --all && node scripts/generate-registry.js",
-    "registry:create": "node scripts/create-registry-json.js"
+    "registry:build": "tsx scripts/create-registry-json.ts && tsx scripts/generate-registry.ts"
   },
   "dependencies": {
     "@emotion/cache": "11.14.0",
@@ -72,6 +71,7 @@
     "@types/react": "19.1.2",
     "@types/react-dom": "19.1.2",
     "@types/react-syntax-highlighter": "15.5.13",
+    "commander": "14.0.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
     "eslint-plugin-react-hooks": "5.2.0",

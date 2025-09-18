@@ -4,10 +4,6 @@
   "title": "AI Actions",
   "description": "Interactive AI action components",
   "meta": {
-    "category": "ai",
-    "tags": [
-      "ai",
-      "actions"
-    ]
+    "category": "ai"
   }
 }

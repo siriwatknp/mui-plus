@@ -38,7 +38,7 @@ const ComponentPreviewContent = React.memo(
       if (needsIframe) return null;
 
       try {
-        const componentPath = item.files[0].path.replace(".tsx", "");
+        const componentPath = item.path.replace(".tsx", "");
         return dynamic(
           () =>
             // First try to import .demo version
@@ -77,7 +77,7 @@ const ComponentPreviewContent = React.memo(
           );
         };
       }
-    }, [item.files, needsIframe]);
+    }, [item, needsIframe]);
 
     if (needsIframe) {
       return (

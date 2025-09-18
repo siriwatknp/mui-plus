@@ -1,34 +1,82 @@
 #!/usr/bin/env node
-/* eslint-disable @typescript-eslint/no-require-imports */
 
-const fs = require("fs");
-const path = require("path");
+import * as fs from "fs";
+import * as path from "path";
+import { Command } from "commander";
 
-// Usage: node scripts/create-registry-json.js <item-name> <item-title> <item-description> [category] [tags]
-// Usage: node scripts/create-registry-json.js --all
-const [, , firstArg, itemTitle, itemDescription, itemCategory, itemTags] =
-  process.argv;
-
-if (!firstArg) {
-  console.error(
-    "Usage: node scripts/create-registry-json.js <item-name> [title] [description] [category] [tags]",
-  );
-  console.error("       node scripts/create-registry-json.js --all");
-  console.error("Examples:");
-  console.error(
-    '  node scripts/create-registry-json.js login-form "Login Form" "A login form component" authentication "form,login,auth"',
-  );
-  process.exit(1);
+interface FileInfo {
+  path: string;
+  relativePath: string;
+  name: string;
 }
 
-const isAllFlag = firstArg === "--all";
-const itemName = isAllFlag ? null : firstArg;
+interface RegistryFile {
+  path: string;
+  target: string;
+  content: string;
+  type: string;
+}
 
-function scanRegistryFiles(dir = null) {
+interface RegistryMeta {
+  $schema: string;
+  type: string;
+  title: string;
+  description: string;
+  meta: {
+    screenshot?: string;
+    category?: string;
+    tags?: string[];
+    previewMode?: string;
+  };
+}
+
+interface RegistryJson {
+  $schema: string;
+  name: string;
+  type: string;
+  title: string;
+  description: string;
+  dependencies: string[];
+  registryDependencies: string[];
+  files: RegistryFile[];
+  meta: RegistryMeta["meta"];
+}
+
+const program = new Command();
+
+program
+  .name("create-registry-json")
+  .description("Generate registry JSON files for MUI Plus components")
+  .version("1.0.0")
+  .argument("[name]", "Component name (if not provided, generates all)")
+  .option("-t, --title <title>", "Component title")
+  .option("-d, --description <desc>", "Component description")
+  .option("-c, --category <category>", "Component category")
+  .option("--tags <tags>", "Comma-separated tags")
+  .action((name: string | undefined, options) => {
+    if (!name) {
+      // If no name provided, generate all
+      processAllRegistries();
+    } else {
+      // Generate for specific component
+      const tags = options.tags
+        ? options.tags.split(",").map((t: string) => t.trim())
+        : undefined;
+      generateRegistryForItem(
+        name,
+        options.title,
+        options.description,
+        options.category,
+        tags,
+      );
+    }
+  });
+
+function scanRegistryFiles(dir: string | null = null): string[] {
   const registryPath = dir || path.join(process.cwd(), "registry");
-  const files = [];
+  const files: string[] = [];
 
-  function scanRecursive(currentPath) {
+  function scanRecursive(currentPath: string): void {
     try {
       const items = fs.readdirSync(currentPath, { withFileTypes: true });
 
@@ -46,7 +94,7 @@ function scanRegistryFiles(dir = null) {
       }
     } catch (error) {
       console.warn(
-        `Warning: Could not read directory ${currentPath}: ${error.message}`,
+        `Warning: Could not read directory ${currentPath}: ${(error as Error).message}`,
       );
     }
   }
@@ -58,12 +106,12 @@ function scanRegistryFiles(dir = null) {
   return files;
 }
 
-function findAllRelatedFiles(itemPath, itemName) {
+function findAllRelatedFiles(itemPath: string, itemName: string): FileInfo[] {
   const itemDir = path.dirname(itemPath);
   const registryPath = path.join(process.cwd(), "registry");
-  const allFiles = [];
+  const allFiles: FileInfo[] = [];
 
-  function scanDirectory(dirPath) {
+  function scanDirectory(dirPath: string): void {
     try {
       const items = fs.readdirSync(dirPath, { withFileTypes: true });
 
@@ -86,7 +134,7 @@ function findAllRelatedFiles(itemPath, itemName) {
       }
     } catch (error) {
       console.warn(
-        `Warning: Could not read directory ${dirPath}: ${error.message}`,
+        `Warning: Could not read directory ${dirPath}: ${(error as Error).message}`,
       );
     }
   }
@@ -95,9 +143,9 @@ function findAllRelatedFiles(itemPath, itemName) {
   return allFiles;
 }
 
-function findMatchingFiles(name) {
-  const allFiles = scanRegistryFiles();
-  const matches = [];
+function findMatchingFiles(name: string): FileInfo[] {
+  const allFiles = scanRegistryFiles(null);
+  const matches: FileInfo[] = [];
 
   for (const filePath of allFiles) {
     const fileName = path.basename(filePath, path.extname(filePath));
@@ -124,9 +172,9 @@ function findMatchingFiles(name) {
   return matches;
 }
 
-function getAllRegistryItems() {
-  const allFiles = scanRegistryFiles();
-  const registryItems = new Map();
+function getAllRegistryItems(): FileInfo[] {
+  const allFiles = scanRegistryFiles(null);
+  const registryItems = new Map<string, FileInfo>();
 
   for (const filePath of allFiles) {
     const fileName = path.basename(filePath, path.extname(filePath));
@@ -135,7 +183,7 @@ function getAllRegistryItems() {
     const pathSegments = relativePath.split(path.sep);
 
     // Determine the registry item name from the path structure
-    let registryItemName;
+    let registryItemName: string;
 
     if (pathSegments.length >= 2) {
       // For themes like themes/mui-plus/... -> mui-plus
@@ -165,14 +213,16 @@ function getAllRegistryItems() {
   return Array.from(registryItems.values());
 }
 
-function extractDependencies(content) {
-  const dependencies = new Set();
+function extractDependencies(content: string): string[] {
+  const dependencies = new Set<string>();
 
   // Extract @mui imports
   const muiImports = content.match(/from\s+["']@mui\/[^"']+["']/g) || [];
   muiImports.forEach((imp) => {
-    const pkg = imp.match(/@mui\/[^"'/]+/)[0];
-    dependencies.add(pkg);
+    const match = imp.match(/@mui\/[^"'/]+/);
+    if (match) {
+      dependencies.add(match[0]);
+    }
   });
 
   // Always add emotion dependencies if MUI is used
@@ -185,25 +235,25 @@ function extractDependencies(content) {
 }
 
 function processRegistryFile(
-  fileInfo,
-  title = null,
-  description = null,
-  category = null,
-  tags = null,
-) {
+  fileInfo: FileInfo,
+  title?: string,
+  description?: string,
+  category?: string,
+  tags?: string[],
+): { metadata: RegistryMeta; registryJson: RegistryJson } {
   const { path: filePath, name } = fileInfo;
   const OUTPUT_PATH = path.join(process.cwd(), "public", "r", `${name}.json`);
 
   // Determine the component/block directory
-  let itemDir = path.dirname(filePath);
+  const itemDir = path.dirname(filePath);
   const META_PATH = path.join(itemDir, `${name}.meta.json`);
 
   // Find all related files in the same directory structure
   const allRelatedFiles = findAllRelatedFiles(filePath, name);
 
   // Extract dependencies from all files
-  const allDependencies = new Set();
-  const files = [];
+  const allDependencies = new Set<string>();
+  const files: RegistryFile[] = [];
 
   for (const fileData of allRelatedFiles) {
     try {
@@ -259,7 +309,7 @@ function processRegistryFile(
       });
     } catch (error) {
       console.warn(
-        `Warning: Could not read file ${fileData.path}: ${error.message}`,
+        `Warning: Could not read file ${fileData.path}: ${(error as Error).message}`,
       );
     }
   }
@@ -267,23 +317,25 @@ function processRegistryFile(
   const dependencies = Array.from(allDependencies);
 
   // Check if meta.json exists and load it
-  let existingMeta = null;
+  let existingMeta: Partial<RegistryMeta> | null = null;
   if (fs.existsSync(META_PATH)) {
     try {
       existingMeta = JSON.parse(fs.readFileSync(META_PATH, "utf-8"));
     } catch (error) {
       console.warn(
-        `Warning: Could not parse existing meta.json file: ${error.message}`,
+        `Warning: Could not parse existing meta.json file: ${(error as Error).message}`,
       );
     }
   }
 
   // Determine metadata fields
-  let finalTitle, finalDescription, finalType;
+  let finalTitle: string;
+  let finalDescription: string;
+  let finalType: string;
 
   if (title) {
     finalTitle = title;
-  } else if (existingMeta && existingMeta.title) {
+  } else if (existingMeta?.title) {
     finalTitle = existingMeta.title;
   } else {
     finalTitle = name
@@ -294,39 +346,38 @@ function processRegistryFile(
 
   if (description) {
     finalDescription = description;
-  } else if (existingMeta && existingMeta.description) {
+  } else if (existingMeta?.description) {
     finalDescription = existingMeta.description;
   } else {
     finalDescription = `A ${name} item.`;
   }
 
   // Use type from existing meta or default
-  if (existingMeta && existingMeta.type) {
+  if (existingMeta?.type) {
     finalType = existingMeta.type;
   } else {
     finalType = "registry:item";
   }
 
   // Determine category, tags, and previewMode
-  let finalCategory, finalTags, finalPreviewMode;
+  let finalCategory: string | undefined;
+  let finalTags: string[] | undefined;
+  let finalPreviewMode: string | undefined;
 
   if (category) {
     finalCategory = category;
-  } else if (existingMeta && existingMeta.meta && existingMeta.meta.category) {
+  } else if (existingMeta?.meta?.category) {
     finalCategory = existingMeta.meta.category;
   }
 
   if (tags) {
-    finalTags = tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean);
-  } else if (existingMeta && existingMeta.meta && existingMeta.meta.tags) {
+    finalTags = tags;
+  } else if (existingMeta?.meta?.tags) {
     finalTags = existingMeta.meta.tags;
   }
 
   // Preserve existing previewMode if it exists
-  if (existingMeta && existingMeta.meta && existingMeta.meta.previewMode) {
+  if (existingMeta?.meta?.previewMode) {
     finalPreviewMode = existingMeta.meta.previewMode;
   }
 
@@ -340,7 +391,7 @@ function processRegistryFile(
   const hasScreenshot = fs.existsSync(screenshotPath);
 
   // Create the metadata structure (without name field)
-  const metadata = {
+  const metadata: RegistryMeta = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     type: finalType,
     title: finalTitle,
@@ -368,7 +419,7 @@ function processRegistryFile(
   fs.writeFileSync(META_PATH, JSON.stringify(metadata, null, 2));
 
   // Create the public registry JSON structure (with metadata)
-  const registryJson = {
+  const registryJson: RegistryJson = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: name,
     type: finalType,
@@ -399,7 +450,7 @@ function processRegistryFile(
   const v0Json = JSON.parse(JSON.stringify(registryJson)); // Deep clone
 
   // Replace all occurrences of registry:item with registry:block
-  function replaceRegistryType(obj) {
+  function replaceRegistryType(obj: any): void {
     if (typeof obj !== "object" || obj === null) return;
 
     for (const key in obj) {
@@ -427,8 +478,13 @@ function processRegistryFile(
   return { metadata, registryJson };
 }
 
-// Legacy function for backward compatibility
-function createRegistryJson(name, title, description, category, tags) {
+function generateRegistryForItem(
+  name: string,
+  title?: string,
+  description?: string,
+  category?: string,
+  tags?: string[],
+): void {
   const matches = findMatchingFiles(name);
 
   if (matches.length === 0) {
@@ -437,26 +493,22 @@ function createRegistryJson(name, title, description, category, tags) {
   }
 
   if (matches.length === 1) {
-    return processRegistryFile(matches[0], title, description, category, tags);
+    processRegistryFile(matches[0], title, description, category, tags);
+    return;
   }
 
   // Multiple matches - process all
   console.log(`Found ${matches.length} files matching '${name}':`);
-  const results = [];
 
   matches.forEach((match, index) => {
     console.log(
       `\n[${index + 1}/${matches.length}] Processing: ${match.relativePath}`,
     );
-    results.push(
-      processRegistryFile(match, title, description, category, tags),
-    );
+    processRegistryFile(match, title, description, category, tags);
   });
-
-  return results;
 }
 
-function processAllRegistries() {
+function processAllRegistries(): void {
   const allItems = getAllRegistryItems();
   console.log(`Found ${allItems.length} registry items:`);
 
@@ -470,15 +522,5 @@ function processAllRegistries() {
   console.log(`\n✓ Processed all ${allItems.length} registry items`);
 }
 
-// Run the script
-if (isAllFlag) {
-  processAllRegistries();
-} else {
-  createRegistryJson(
-    itemName,
-    itemTitle,
-    itemDescription,
-    itemCategory,
-    itemTags,
-  );
-}
+// Parse command-line arguments
+program.parse(process.argv);
