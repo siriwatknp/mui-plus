@@ -120,12 +120,16 @@ function generateRegistry(options: {
         meta: content.meta,
       };
 
-      // Remove undefined fields
+      // Remove undefined fields and ensure required fields exist
       const cleanedItem = Object.fromEntries(
         Object.entries(item).filter(([_, value]) => value !== undefined),
-      ) as RegistryItem;
+      );
 
-      items.push(cleanedItem);
+      // Type assertion is safe here because we know the required fields exist
+      // from the Partial<RegistryItem> construction above
+      const registryItem = cleanedItem as unknown as RegistryItem;
+
+      items.push(registryItem);
     } catch (error) {
       console.error(`Error processing ${file}:`, (error as Error).message);
     }
