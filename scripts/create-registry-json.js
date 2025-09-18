@@ -11,12 +11,12 @@ const [, , firstArg, itemTitle, itemDescription, itemCategory, itemTags] =
 
 if (!firstArg) {
   console.error(
-    "Usage: node scripts/create-registry-json.js <item-name> [title] [description] [category] [tags]",
+    "Usage: node scripts/create-registry-json.js <item-name> [title] [description] [category] [tags]"
   );
   console.error("       node scripts/create-registry-json.js --all");
   console.error("Examples:");
   console.error(
-    '  node scripts/create-registry-json.js login-form "Login Form" "A login form component" authentication "form,login,auth"',
+    '  node scripts/create-registry-json.js login-form "Login Form" "A login form component" authentication "form,login,auth"'
   );
   process.exit(1);
 }
@@ -46,7 +46,7 @@ function scanRegistryFiles(dir = null) {
       }
     } catch (error) {
       console.warn(
-        `Warning: Could not read directory ${currentPath}: ${error.message}`,
+        `Warning: Could not read directory ${currentPath}: ${error.message}`
       );
     }
   }
@@ -86,7 +86,7 @@ function findAllRelatedFiles(itemPath, itemName) {
       }
     } catch (error) {
       console.warn(
-        `Warning: Could not read directory ${dirPath}: ${error.message}`,
+        `Warning: Could not read directory ${dirPath}: ${error.message}`
       );
     }
   }
@@ -189,7 +189,7 @@ function processRegistryFile(
   title = null,
   description = null,
   category = null,
-  tags = null,
+  tags = null
 ) {
   const { path: filePath, name } = fileInfo;
   const OUTPUT_PATH = path.join(process.cwd(), "public", "r", `${name}.json`);
@@ -218,7 +218,7 @@ function processRegistryFile(
         // e.g., "themes/mui-plus/components/alert.ts" -> "src/mui-plus/theme/components/alert.ts"
         targetPath = targetPath.replace(
           /^themes\/[^\/]+\//,
-          "src/mui-plus/theme/",
+          "src/mui-plus/theme/"
         );
       } else {
         // For non-theme files, just prepend src/mui-plus/
@@ -251,11 +251,11 @@ function processRegistryFile(
         path: fileData.relativePath,
         target: targetPath,
         content: content,
-        type: "registry:item",
+        type: "registry:block",
       });
     } catch (error) {
       console.warn(
-        `Warning: Could not read file ${fileData.path}: ${error.message}`,
+        `Warning: Could not read file ${fileData.path}: ${error.message}`
       );
     }
   }
@@ -269,7 +269,7 @@ function processRegistryFile(
       existingJson = JSON.parse(fs.readFileSync(OUTPUT_PATH, "utf-8"));
     } catch (error) {
       console.warn(
-        `Warning: Could not parse existing JSON file: ${error.message}`,
+        `Warning: Could not parse existing JSON file: ${error.message}`
       );
     }
   }
@@ -323,7 +323,7 @@ function processRegistryFile(
   const registryJson = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: name,
-    type: "registry:item",
+    type: "registry:block",
     title: finalTitle,
     description: finalDescription,
     dependencies: dependencies,
@@ -355,7 +355,7 @@ function processRegistryFile(
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(registryJson, null, 2));
 
   console.log(
-    `✓ ${existingJson ? "Updated" : "Created"} registry JSON: ${OUTPUT_PATH}`,
+    `✓ ${existingJson ? "Updated" : "Created"} registry JSON: ${OUTPUT_PATH}`
   );
   console.log(`  Item: ${registryJson.title}`);
   console.log(`  Files: ${files.length} file(s) included`);
@@ -383,10 +383,10 @@ function createRegistryJson(name, title, description, category, tags) {
 
   matches.forEach((match, index) => {
     console.log(
-      `\n[${index + 1}/${matches.length}] Processing: ${match.relativePath}`,
+      `\n[${index + 1}/${matches.length}] Processing: ${match.relativePath}`
     );
     results.push(
-      processRegistryFile(match, title, description, category, tags),
+      processRegistryFile(match, title, description, category, tags)
     );
   });
 
@@ -399,7 +399,7 @@ function processAllRegistries() {
 
   allItems.forEach((itemInfo, index) => {
     console.log(
-      `\n[${index + 1}/${allItems.length}] Processing: ${itemInfo.name}`,
+      `\n[${index + 1}/${allItems.length}] Processing: ${itemInfo.name}`
     );
     processRegistryFile(itemInfo);
   });
@@ -416,6 +416,6 @@ if (isAllFlag) {
     itemTitle,
     itemDescription,
     itemCategory,
-    itemTags,
+    itemTags
   );
 }
