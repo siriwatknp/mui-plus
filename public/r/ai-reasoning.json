@@ -7,9 +7,10 @@
   "dependencies": [
     "@mui/material",
     "@emotion/react",
-    "@emotion/styled"
+    "@emotion/styled",
+    "lucide-react"
   ],
-  "registryDependencies": [],
+  "registryDependencies": ["ai-response"],
   "files": [
     {
       "path": "components/ai-reasoning/ai-reasoning.demo.tsx",

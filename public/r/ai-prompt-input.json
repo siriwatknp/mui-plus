@@ -7,7 +7,10 @@
   "dependencies": [
     "@mui/material",
     "@emotion/react",
-    "@emotion/styled"
+    "@emotion/styled",
+    "lucide-react",
+    "ai",
+    "nanoid"
   ],
   "registryDependencies": [],
   "files": [

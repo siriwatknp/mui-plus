@@ -7,9 +7,11 @@
   "dependencies": [
     "@mui/material",
     "@emotion/react",
-    "@emotion/styled"
+    "@emotion/styled",
+    "lucide-react",
+    "ai"
   ],
-  "registryDependencies": [],
+  "registryDependencies": ["ai-code-block"],
   "files": [
     {
       "path": "components/ai-tool/ai-tool.demo.tsx",

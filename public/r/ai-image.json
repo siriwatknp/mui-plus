@@ -4,11 +4,7 @@
   "type": "registry:item",
   "title": "Ai Image",
   "description": "A ai-image item.",
-  "dependencies": [
-    "@mui/material",
-    "@emotion/react",
-    "@emotion/styled"
-  ],
+  "dependencies": ["@mui/material", "@emotion/react", "@emotion/styled", "ai"],
   "registryDependencies": [],
   "files": [
     {

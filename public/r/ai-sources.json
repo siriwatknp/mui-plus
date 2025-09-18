@@ -7,7 +7,8 @@
   "dependencies": [
     "@mui/material",
     "@emotion/react",
-    "@emotion/styled"
+    "@emotion/styled",
+    "lucide-react"
   ],
   "registryDependencies": [],
   "files": [
