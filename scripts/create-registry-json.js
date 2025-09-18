@@ -194,6 +194,10 @@ function processRegistryFile(
   const { path: filePath, name } = fileInfo;
   const OUTPUT_PATH = path.join(process.cwd(), "public", "r", `${name}.json`);
 
+  // Determine the component/block directory
+  let itemDir = path.dirname(filePath);
+  const META_PATH = path.join(itemDir, `${name}.meta.json`);
+
   // Find all related files in the same directory structure
   const allRelatedFiles = findAllRelatedFiles(filePath, name);
 
@@ -262,25 +266,25 @@ function processRegistryFile(
 
   const dependencies = Array.from(allDependencies);
 
-  // Check if JSON already exists
-  let existingJson = null;
-  if (fs.existsSync(OUTPUT_PATH)) {
+  // Check if meta.json exists and load it
+  let existingMeta = null;
+  if (fs.existsSync(META_PATH)) {
     try {
-      existingJson = JSON.parse(fs.readFileSync(OUTPUT_PATH, "utf-8"));
+      existingMeta = JSON.parse(fs.readFileSync(META_PATH, "utf-8"));
     } catch (error) {
       console.warn(
-        `Warning: Could not parse existing JSON file: ${error.message}`,
+        `Warning: Could not parse existing meta.json file: ${error.message}`,
       );
     }
   }
 
-  // Determine title and description
-  let finalTitle, finalDescription;
+  // Determine metadata fields
+  let finalTitle, finalDescription, finalType;
 
   if (title) {
     finalTitle = title;
-  } else if (existingJson && existingJson.title) {
-    finalTitle = existingJson.title;
+  } else if (existingMeta && existingMeta.title) {
+    finalTitle = existingMeta.title;
   } else {
     finalTitle = name
       .split("-")
@@ -290,10 +294,17 @@ function processRegistryFile(
 
   if (description) {
     finalDescription = description;
-  } else if (existingJson && existingJson.description) {
-    finalDescription = existingJson.description;
+  } else if (existingMeta && existingMeta.description) {
+    finalDescription = existingMeta.description;
   } else {
     finalDescription = `A ${name} item.`;
+  }
+
+  // Use type from existing meta or default
+  if (existingMeta && existingMeta.type) {
+    finalType = existingMeta.type;
+  } else {
+    finalType = "registry:item";
   }
 
   // Determine category, tags, and previewMode
@@ -301,8 +312,8 @@ function processRegistryFile(
 
   if (category) {
     finalCategory = category;
-  } else if (existingJson && existingJson.meta && existingJson.meta.category) {
-    finalCategory = existingJson.meta.category;
+  } else if (existingMeta && existingMeta.meta && existingMeta.meta.category) {
+    finalCategory = existingMeta.meta.category;
   }
 
   if (tags) {
@@ -310,40 +321,64 @@ function processRegistryFile(
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean);
-  } else if (existingJson && existingJson.meta && existingJson.meta.tags) {
-    finalTags = existingJson.meta.tags;
+  } else if (existingMeta && existingMeta.meta && existingMeta.meta.tags) {
+    finalTags = existingMeta.meta.tags;
   }
 
   // Preserve existing previewMode if it exists
-  if (existingJson && existingJson.meta && existingJson.meta.previewMode) {
-    finalPreviewMode = existingJson.meta.previewMode;
+  if (existingMeta && existingMeta.meta && existingMeta.meta.previewMode) {
+    finalPreviewMode = existingMeta.meta.previewMode;
   }
 
-  // Create the registry JSON structure
+  // Check if screenshot file exists
+  const screenshotPath = path.join(
+    process.cwd(),
+    "public",
+    "screenshots",
+    `${name}.png`,
+  );
+  const hasScreenshot = fs.existsSync(screenshotPath);
+
+  // Create the metadata structure (without name field)
+  const metadata = {
+    $schema: "https://ui.shadcn.com/schema/registry-item.json",
+    type: finalType,
+    title: finalTitle,
+    description: finalDescription,
+    meta: {},
+  };
+
+  // Add screenshot to meta only if the file exists
+  if (hasScreenshot) {
+    metadata.meta.screenshot = `/screenshots/${name}.png`;
+  }
+
+  // Add category, tags, and previewMode to meta if they exist
+  if (finalCategory) {
+    metadata.meta.category = finalCategory;
+  }
+  if (finalTags && finalTags.length > 0) {
+    metadata.meta.tags = finalTags;
+  }
+  if (finalPreviewMode) {
+    metadata.meta.previewMode = finalPreviewMode;
+  }
+
+  // Write the meta.json file
+  fs.writeFileSync(META_PATH, JSON.stringify(metadata, null, 2));
+
+  // Create the public registry JSON structure (with metadata)
   const registryJson = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: name,
-    type: "registry:item",
+    type: finalType,
     title: finalTitle,
     description: finalDescription,
     dependencies: dependencies,
     registryDependencies: [],
     files: files,
-    meta: {
-      screenshot: `/screenshots/${name}.png`,
-    },
+    meta: metadata.meta,
   };
-
-  // Add category, tags, and previewMode to meta if they exist
-  if (finalCategory) {
-    registryJson.meta.category = finalCategory;
-  }
-  if (finalTags && finalTags.length > 0) {
-    registryJson.meta.tags = finalTags;
-  }
-  if (finalPreviewMode) {
-    registryJson.meta.previewMode = finalPreviewMode;
-  }
 
   // Ensure the output directory exists
   const outputDir = path.dirname(OUTPUT_PATH);
@@ -351,17 +386,45 @@ function processRegistryFile(
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  // Write the JSON file
+  // Write the public JSON file
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(registryJson, null, 2));
 
-  console.log(
-    `✓ ${existingJson ? "Updated" : "Created"} registry JSON: ${OUTPUT_PATH}`,
+  // Create v0.json with registry:block type
+  const V0_OUTPUT_PATH = path.join(
+    process.cwd(),
+    "public",
+    "r",
+    `${name}.v0.json`,
   );
-  console.log(`  Item: ${registryJson.title}`);
+  const v0Json = JSON.parse(JSON.stringify(registryJson)); // Deep clone
+
+  // Replace all occurrences of registry:item with registry:block
+  function replaceRegistryType(obj) {
+    if (typeof obj !== "object" || obj === null) return;
+
+    for (const key in obj) {
+      if (key === "type" && obj[key] === "registry:item") {
+        obj[key] = "registry:block";
+      } else if (typeof obj[key] === "object") {
+        replaceRegistryType(obj[key]);
+      }
+    }
+  }
+
+  replaceRegistryType(v0Json);
+
+  // Write the v0.json file
+  fs.writeFileSync(V0_OUTPUT_PATH, JSON.stringify(v0Json, null, 2));
+
+  console.log(`✓ ${existingMeta ? "Updated" : "Created"} files:`);
+  console.log(`  Meta: ${path.relative(process.cwd(), META_PATH)}`);
+  console.log(`  Public: ${path.relative(process.cwd(), OUTPUT_PATH)}`);
+  console.log(`  v0: ${path.relative(process.cwd(), V0_OUTPUT_PATH)}`);
+  console.log(`  Item: ${metadata.title}`);
   console.log(`  Files: ${files.length} file(s) included`);
   console.log(`  Dependencies: ${dependencies.join(", ")}`);
 
-  return registryJson;
+  return { metadata, registryJson };
 }
 
 // Legacy function for backward compatibility
