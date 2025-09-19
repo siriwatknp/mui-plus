@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const autocompleteTheme: ThemeOptions["components"] = {
+export const autocompleteTheme: ThemeComponents = {
   MuiAutocomplete: {
     defaultProps: {
       slotProps: {

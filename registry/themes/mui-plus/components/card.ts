@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const cardTheme: ThemeOptions["components"] = {
+export const cardTheme: ThemeComponents = {
   MuiCard: {
     defaultProps: {
       variant: "outlined",

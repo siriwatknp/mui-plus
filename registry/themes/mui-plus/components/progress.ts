@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const progressTheme: ThemeOptions["components"] = {
+export const progressTheme: ThemeComponents = {
   MuiCircularProgress: {
     styleOverrides: {
       circle: {

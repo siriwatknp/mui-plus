@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const alertTheme: ThemeOptions["components"] = {
+export const alertTheme: ThemeComponents = {
   MuiAlert: {
     styleOverrides: {
       root: {

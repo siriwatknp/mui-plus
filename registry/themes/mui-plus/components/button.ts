@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const buttonTheme: ThemeOptions["components"] = {
+export const buttonTheme: ThemeComponents = {
   MuiButtonBase: {
     styleOverrides: {
       root: ({ theme }) => ({

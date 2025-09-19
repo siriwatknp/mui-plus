@@ -1,4 +1,4 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeOptions } from "./types";
 
 export const shadows: ThemeOptions["shadows"] = [
   "none",

@@ -1,7 +1,7 @@
-import type { ThemeOptions } from "@mui/material/styles";
 import type {} from "@mui/x-data-grid/themeAugmentation";
+import { ThemeComponents } from "../types";
 
-export const dataGridTheme: ThemeOptions["components"] = {
+export const dataGridTheme: ThemeComponents = {
   MuiDataGrid: {
     styleOverrides: {
       root: ({ theme }) => ({

@@ -1,7 +1,7 @@
-import type { ThemeOptions } from "@mui/material/styles";
 import type {} from "@mui/x-tree-view/themeAugmentation";
+import { ThemeComponents } from "../types";
 
-export const treeViewTheme: ThemeOptions["components"] = {
+export const treeViewTheme: ThemeComponents = {
   MuiTreeItem: {
     styleOverrides: {
       content: ({ theme }) => ({

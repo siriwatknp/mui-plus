@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const selectTheme: ThemeOptions["components"] = {
+export const selectTheme: ThemeComponents = {
   MuiSelect: {
     defaultProps: {
       variant: "outlined",

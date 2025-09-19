@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const chipTheme: ThemeOptions["components"] = {
+export const chipTheme: ThemeComponents = {
   MuiChip: {
     styleOverrides: {
       root: ({ theme }) => ({

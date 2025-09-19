@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const menuTheme: ThemeOptions["components"] = {
+export const menuTheme: ThemeComponents = {
   MuiMenu: {
     defaultProps: {
       PaperProps: {

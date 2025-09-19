@@ -7,7 +7,7 @@ declare module "@mui/material/styles" {
   }
 
   interface SimplePaletteColorOptions {
-    text: string;
+    text?: string;
   }
 
   interface TypeText {

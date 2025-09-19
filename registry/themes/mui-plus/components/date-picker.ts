@@ -1,8 +1,8 @@
-import type { ThemeOptions } from "@mui/material/styles";
 import type {} from "@mui/x-date-pickers/themeAugmentation";
 import type {} from "@mui/x-date-pickers-pro/themeAugmentation";
+import { ThemeComponents } from "../types";
 
-export const datePickerTheme: ThemeOptions["components"] = {
+export const datePickerTheme: ThemeComponents = {
   MuiPickersTextField: {
     defaultProps: {
       variant: "outlined",

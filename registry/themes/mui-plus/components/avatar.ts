@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const avatarTheme: ThemeOptions["components"] = {
+export const avatarTheme: ThemeComponents = {
   MuiAvatar: {
     styleOverrides: {
       root: ({ theme }) => ({

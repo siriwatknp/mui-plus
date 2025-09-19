@@ -1,7 +1,8 @@
 import React from "react";
-import type { ThemeOptions } from "@mui/material/styles";
+
 import { switchClasses } from "@mui/material/Switch";
 import { styled } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
 const borderWidth = 1;
 
@@ -49,7 +50,7 @@ const Unradio = styled("span")(({ theme }) => ({
   },
 }));
 
-export const controlsTheme: ThemeOptions["components"] = {
+export const controlsTheme: ThemeComponents = {
   MuiCheckbox: {
     defaultProps: {
       icon: <Uncheckbox />,

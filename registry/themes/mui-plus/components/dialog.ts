@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const dialogTheme: ThemeOptions["components"] = {
+export const dialogTheme: ThemeComponents = {
   MuiDialog: {
     styleOverrides: {
       root: ({ theme }) => ({

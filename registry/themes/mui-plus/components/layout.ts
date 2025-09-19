@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const layoutTheme: ThemeOptions["components"] = {
+export const layoutTheme: ThemeComponents = {
   MuiStack: {
     defaultProps: {
       useFlexGap: true,

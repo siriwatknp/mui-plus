@@ -1,6 +1,6 @@
 "use client";
-import type { ThemeOptions } from "@mui/material/styles";
 import { unstable_createBreakpoints as createBreakpoints } from "@mui/material/styles";
+import { ThemeOptions } from "./types";
 
 const breakpoints = createBreakpoints({});
 

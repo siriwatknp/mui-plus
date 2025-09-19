@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const tableTheme: ThemeOptions["components"] = {
+export const tableTheme: ThemeComponents = {
   MuiTable: {
     styleOverrides: {
       root: {

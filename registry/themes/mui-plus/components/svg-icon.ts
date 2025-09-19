@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const svgIconTheme: ThemeOptions["components"] = {
+export const svgIconTheme: ThemeComponents = {
   MuiSvgIcon: {
     styleOverrides: {
       root: ({ theme }) => ({

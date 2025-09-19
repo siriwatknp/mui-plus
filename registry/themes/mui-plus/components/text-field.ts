@@ -1,6 +1,6 @@
-import type { ThemeOptions } from "@mui/material/styles";
+import { ThemeComponents } from "../types";
 
-export const textFieldTheme: ThemeOptions["components"] = {
+export const textFieldTheme: ThemeComponents = {
   MuiFormControl: {
     defaultProps: {
       variant: "outlined",
