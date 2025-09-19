@@ -460,6 +460,27 @@ function processRegistryFile(
   );
   const v0Json = JSON.parse(JSON.stringify(registryJson)); // Deep clone
 
+  // Update registryDependencies for v0 format
+  if (
+    v0Json.registryDependencies &&
+    Array.isArray(v0Json.registryDependencies)
+  ) {
+    v0Json.registryDependencies = v0Json.registryDependencies.map(
+      (dep: string) => {
+        // Check if the dependency matches https://mui-plus.dev/r/*.json pattern
+        const muiPlusMatch = dep.match(
+          /^https:\/\/mui-plus\.dev\/r\/([^\/]+)\.json$/,
+        );
+        if (muiPlusMatch) {
+          const itemName = muiPlusMatch[1];
+          // Replace with v0.json version
+          return `https://mui-plus.dev/r/${itemName}.v0.json`;
+        }
+        return dep;
+      },
+    );
+  }
+
   // Replace all occurrences of registry:item with registry:block
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function replaceRegistryType(obj: any): void {
