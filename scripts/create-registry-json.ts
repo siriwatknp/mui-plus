@@ -22,6 +22,7 @@ interface RegistryMeta {
   type: string;
   title: string;
   description: string;
+  registryDependencies?: string[];
   meta: {
     screenshot?: string;
     category?: string;
@@ -94,7 +95,9 @@ function scanRegistryFiles(dir: string | null = null): string[] {
       }
     } catch (error) {
       console.warn(
-        `Warning: Could not read directory ${currentPath}: ${(error as Error).message}`,
+        `Warning: Could not read directory ${currentPath}: ${
+          (error as Error).message
+        }`,
       );
     }
   }
@@ -134,7 +137,9 @@ function findAllRelatedFiles(itemPath: string, itemName: string): FileInfo[] {
       }
     } catch (error) {
       console.warn(
-        `Warning: Could not read directory ${dirPath}: ${(error as Error).message}`,
+        `Warning: Could not read directory ${dirPath}: ${
+          (error as Error).message
+        }`,
       );
     }
   }
@@ -309,7 +314,9 @@ function processRegistryFile(
       });
     } catch (error) {
       console.warn(
-        `Warning: Could not read file ${fileData.path}: ${(error as Error).message}`,
+        `Warning: Could not read file ${fileData.path}: ${
+          (error as Error).message
+        }`,
       );
     }
   }
@@ -318,115 +325,119 @@ function processRegistryFile(
 
   // Check if meta.json exists and load it
   let existingMeta: Partial<RegistryMeta> | null = null;
+  let metaExists = false;
   if (fs.existsSync(META_PATH)) {
+    metaExists = true;
     try {
       existingMeta = JSON.parse(fs.readFileSync(META_PATH, "utf-8"));
     } catch (error) {
       console.warn(
-        `Warning: Could not parse existing meta.json file: ${(error as Error).message}`,
+        `Warning: Could not parse existing meta.json file: ${
+          (error as Error).message
+        }`,
       );
+      metaExists = false; // Treat corrupt file as non-existent
     }
   }
 
-  // Determine metadata fields
-  let finalTitle: string;
-  let finalDescription: string;
-  let finalType: string;
+  // If meta.json exists and we're not forcing an update with CLI args, use existing metadata
+  let metadata: RegistryMeta;
 
-  if (title) {
-    finalTitle = title;
-  } else if (existingMeta?.title) {
-    finalTitle = existingMeta.title;
+  if (metaExists && !title && !description && !category && !tags) {
+    // Meta exists and no CLI overrides provided - use existing metadata as-is
+    metadata = existingMeta as RegistryMeta;
+    console.log(`✓ Using existing meta.json for ${name}`);
+  } else if (metaExists && (title || description || category || tags)) {
+    // Meta exists but CLI overrides provided - update only specified fields
+    metadata = existingMeta as RegistryMeta;
+
+    if (title) {
+      metadata.title = title;
+    }
+    if (description) {
+      metadata.description = description;
+    }
+    if (category) {
+      metadata.meta = metadata.meta || {};
+      metadata.meta.category = category;
+    }
+    if (tags) {
+      metadata.meta = metadata.meta || {};
+      metadata.meta.tags = tags;
+    }
+
+    // Write the updated meta.json file
+    fs.writeFileSync(META_PATH, JSON.stringify(metadata, null, 2));
+    console.log(`✓ Updated meta.json for ${name} with CLI overrides`);
   } else {
-    finalTitle = name
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+    // Meta doesn't exist - create new metadata
+
+    // Determine metadata fields
+    let finalTitle: string;
+    let finalDescription: string;
+
+    if (title) {
+      finalTitle = title;
+    } else {
+      finalTitle = name
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    }
+
+    if (description) {
+      finalDescription = description;
+    } else {
+      finalDescription = `A ${name} item.`;
+    }
+
+    const finalType = "registry:item";
+
+    // Check if screenshot file exists
+    const screenshotPath = path.join(
+      process.cwd(),
+      "public",
+      "screenshots",
+      `${name}.png`,
+    );
+    const hasScreenshot = fs.existsSync(screenshotPath);
+
+    // Create the metadata structure (without name field)
+    metadata = {
+      $schema: "https://ui.shadcn.com/schema/registry-item.json",
+      type: finalType,
+      title: finalTitle,
+      description: finalDescription,
+      meta: {},
+    };
+
+    // Add screenshot to meta only if the file exists
+    if (hasScreenshot) {
+      metadata.meta.screenshot = `/screenshots/${name}.png`;
+    }
+
+    // Add category and tags if provided
+    if (category) {
+      metadata.meta.category = category;
+    }
+    if (tags && tags.length > 0) {
+      metadata.meta.tags = tags;
+    }
+
+    // Write the new meta.json file
+    fs.writeFileSync(META_PATH, JSON.stringify(metadata, null, 2));
+    console.log(`✓ Created new meta.json for ${name}`);
   }
-
-  if (description) {
-    finalDescription = description;
-  } else if (existingMeta?.description) {
-    finalDescription = existingMeta.description;
-  } else {
-    finalDescription = `A ${name} item.`;
-  }
-
-  // Use type from existing meta or default
-  if (existingMeta?.type) {
-    finalType = existingMeta.type;
-  } else {
-    finalType = "registry:item";
-  }
-
-  // Determine category, tags, and previewMode
-  let finalCategory: string | undefined;
-  let finalTags: string[] | undefined;
-  let finalPreviewMode: string | undefined;
-
-  if (category) {
-    finalCategory = category;
-  } else if (existingMeta?.meta?.category) {
-    finalCategory = existingMeta.meta.category;
-  }
-
-  if (tags) {
-    finalTags = tags;
-  } else if (existingMeta?.meta?.tags) {
-    finalTags = existingMeta.meta.tags;
-  }
-
-  // Preserve existing previewMode if it exists
-  if (existingMeta?.meta?.previewMode) {
-    finalPreviewMode = existingMeta.meta.previewMode;
-  }
-
-  // Check if screenshot file exists
-  const screenshotPath = path.join(
-    process.cwd(),
-    "public",
-    "screenshots",
-    `${name}.png`,
-  );
-  const hasScreenshot = fs.existsSync(screenshotPath);
-
-  // Create the metadata structure (without name field)
-  const metadata: RegistryMeta = {
-    $schema: "https://ui.shadcn.com/schema/registry-item.json",
-    type: finalType,
-    title: finalTitle,
-    description: finalDescription,
-    meta: {},
-  };
-
-  // Add screenshot to meta only if the file exists
-  if (hasScreenshot) {
-    metadata.meta.screenshot = `/screenshots/${name}.png`;
-  }
-
-  // Add category, tags, and previewMode to meta if they exist
-  if (finalCategory) {
-    metadata.meta.category = finalCategory;
-  }
-  if (finalTags && finalTags.length > 0) {
-    metadata.meta.tags = finalTags;
-  }
-  if (finalPreviewMode) {
-    metadata.meta.previewMode = finalPreviewMode;
-  }
-
-  // Write the meta.json file
-  fs.writeFileSync(META_PATH, JSON.stringify(metadata, null, 2));
 
   // Create the public registry JSON structure (with metadata)
   const registryJson: RegistryJson = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: name,
-    type: finalType,
-    title: finalTitle,
-    description: finalDescription,
+    type: metadata.type,
+    title: metadata.title,
+    description: metadata.description,
     dependencies: dependencies,
-    registryDependencies: [],
+    registryDependencies: metadata.registryDependencies || [],
     files: files,
     meta: metadata.meta,
   };
@@ -450,6 +461,7 @@ function processRegistryFile(
   const v0Json = JSON.parse(JSON.stringify(registryJson)); // Deep clone
 
   // Replace all occurrences of registry:item with registry:block
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function replaceRegistryType(obj: any): void {
     if (typeof obj !== "object" || obj === null) return;
 
@@ -467,7 +479,7 @@ function processRegistryFile(
   // Write the v0.json file
   fs.writeFileSync(V0_OUTPUT_PATH, JSON.stringify(v0Json, null, 2));
 
-  console.log(`✓ ${existingMeta ? "Updated" : "Created"} files:`);
+  console.log(`✓ Generated registry files:`);
   console.log(`  Meta: ${path.relative(process.cwd(), META_PATH)}`);
   console.log(`  Public: ${path.relative(process.cwd(), OUTPUT_PATH)}`);
   console.log(`  v0: ${path.relative(process.cwd(), V0_OUTPUT_PATH)}`);

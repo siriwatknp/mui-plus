@@ -3,6 +3,7 @@
   "type": "registry:item",
   "title": "Ai Task",
   "description": "A ai-task item.",
+  "registryDependencies": ["https://mui-plus.dev/r/mui-plus.json"],
   "meta": {
     "category": "ai"
   }
