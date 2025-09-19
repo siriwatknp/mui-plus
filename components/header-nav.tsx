@@ -8,11 +8,19 @@ export function HeaderNav() {
 
   const navItems = [
     { href: "/theme-preview", label: "Theme" },
-    { href: "/primitive", label: "Primitive" },
+    ...(process.env.NODE_ENV === "development"
+      ? [{ href: "/primitive", label: "Primitive" }]
+      : []),
     { href: "/ai", label: "AI Elements" },
-    { href: "/authentication", label: "Authentication" },
-    { href: "/dashboard", label: "Dashboard" },
-    { href: "/ecommerce", label: "Ecommerce" },
+    ...(process.env.NODE_ENV === "development"
+      ? [{ href: "/authentication", label: "Authentication" }]
+      : []),
+    ...(process.env.NODE_ENV === "development"
+      ? [{ href: "/dashboard", label: "Dashboard" }]
+      : []),
+    ...(process.env.NODE_ENV === "development"
+      ? [{ href: "/ecommerce", label: "Ecommerce" }]
+      : []),
   ];
 
   const getFirstSegment = (path: string) => {
