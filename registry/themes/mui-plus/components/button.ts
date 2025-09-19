@@ -56,6 +56,8 @@ export const buttonTheme: ThemeOptions["components"] = {
     },
     styleOverrides: {
       root: ({ theme }) => ({
+        "--_g": "initial",
+        gap: "var(--_g)",
         minWidth: "unset",
         textTransform: "capitalize",
         "&.Mui-focusVisible": {
@@ -66,6 +68,9 @@ export const buttonTheme: ThemeOptions["components"] = {
         "&:active": {
           transform: "scale(0.98)",
         },
+        "&:not(:has(.MuiButton-icon))": {
+          "--_g": `calc(${theme.spacing(1)} - 1px)`,
+        },
         "@media (hover: hover)": {
           "&:disabled": {
             pointerEvents: "auto",
@@ -73,34 +78,33 @@ export const buttonTheme: ThemeOptions["components"] = {
           },
         },
         // When button contains only an icon (with or without TouchRipple)
-        "&:has(> svg:first-of-type):not(:has(> :not(svg):not(.MuiTouchRipple-root)))":
-          {
-            "--Icon-color": "currentColor",
+        "&:has(> svg:only-child, > svg + .MuiTouchRipple-root)": {
+          "--Icon-color": "currentColor",
+          "&.MuiButton-sizeSmall": {
+            padding: "4px",
+            minWidth: "28px",
+          },
+          "&.MuiButton-sizeMedium": {
+            padding: "8px",
+            minWidth: "36px",
+          },
+          "&.MuiButton-sizeLarge": {
+            padding: "12px",
+            minWidth: "48px",
+          },
+          // Outlined variant needs to compensate for border
+          "&.MuiButton-outlined": {
             "&.MuiButton-sizeSmall": {
-              padding: "4px",
-              minWidth: "28px",
+              padding: "3px",
             },
             "&.MuiButton-sizeMedium": {
-              padding: "8px",
-              minWidth: "36px",
+              padding: "7px",
             },
             "&.MuiButton-sizeLarge": {
-              padding: "12px",
-              minWidth: "48px",
-            },
-            // Outlined variant needs to compensate for border
-            "&.MuiButton-outlined": {
-              "&.MuiButton-sizeSmall": {
-                padding: "3px",
-              },
-              "&.MuiButton-sizeMedium": {
-                padding: "7px",
-              },
-              "&.MuiButton-sizeLarge": {
-                padding: "11px",
-              },
+              padding: "11px",
             },
           },
+        },
         variants: [
           // Size variants
           {
@@ -120,13 +124,9 @@ export const buttonTheme: ThemeOptions["components"] = {
           {
             props: { size: "large" },
             style: {
-              "--_fs": "1rem",
               padding: "12px 24px",
               lineHeight: "24px",
-              fontSize: "var(--_fs)",
-              [theme.breakpoints.up(768)]: {
-                "--_fs": "0.875rem",
-              },
+              fontSize: "1rem",
             },
           },
           // Outlined border compensation for all sizes

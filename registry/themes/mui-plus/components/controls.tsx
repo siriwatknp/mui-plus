@@ -39,8 +39,10 @@ const Unradio = styled("span")(({ theme }) => ({
   "&::before": {
     content: '""',
     display: "block",
-    width: "100%",
-    height: "100%",
+    marginTop: 1,
+    marginLeft: 1,
+    width: "calc(100% - 2px)",
+    height: "calc(100% - 2px)",
     border: "1px solid",
     borderColor: "currentColor",
     borderRadius: "inherit",
