@@ -8,9 +8,7 @@ export function HeaderNav() {
 
   const navItems = [
     { href: "/theme-preview", label: "Theme" },
-    ...(process.env.NODE_ENV === "development"
-      ? [{ href: "/primitive", label: "Primitive" }]
-      : []),
+    { href: "/primitive", label: "Primitive" },
     { href: "/ai", label: "AI Elements" },
     ...(process.env.NODE_ENV === "development"
       ? [{ href: "/authentication", label: "Authentication" }]
