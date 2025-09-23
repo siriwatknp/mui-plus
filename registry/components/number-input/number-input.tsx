@@ -1,24 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { PropsWithChildren } from "react";
+import React from "react";
 import { unstable_useId as useId } from "@mui/material/utils";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
-import InputAdornment from "@mui/material/InputAdornment";
-import TextField from "@mui/material/TextField";
 import OutlinedInput, { OutlinedInputProps } from "@mui/material/OutlinedInput";
 import SvgIcon from "@mui/material/SvgIcon";
-import {
-  useNumberInput,
-  UseNumberInputOptions,
-} from "../../hooks/use-number-input";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import InputLabel from "@mui/material/InputLabel";
-
-export type {
-  NumberInputError,
-  NumberInputEventType,
-} from "../../hooks/use-number-input";
+import {
+  useNumberInput,
+  UseNumberInputOptions,
+} from "@/registry/hooks/use-number-input";
 
 export type NumberInputProps = UseNumberInputOptions & {
   inputElement?: React.ReactElement;

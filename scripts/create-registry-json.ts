@@ -43,6 +43,20 @@ interface RegistryJson {
   meta: RegistryMeta["meta"];
 }
 
+// Get the base URL for registry dependencies based on environment
+function getRegistryBaseUrl(): string {
+  const vercelEnv = process.env.VERCEL_ENV;
+  const vercelUrl = process.env.VERCEL_URL;
+
+  // Use preview URL for non-production Vercel deployments
+  if (vercelEnv && vercelEnv !== "production" && vercelUrl) {
+    return `https://${vercelUrl}`;
+  }
+
+  // Use production URL for production or local development
+  return "https://mui-plus.dev";
+}
+
 const program = new Command();
 
 program
@@ -239,6 +253,52 @@ function extractDependencies(content: string): string[] {
   return Array.from(dependencies);
 }
 
+function extractRegistryDependencies(content: string): string[] {
+  const registryDeps = new Set<string>();
+  const baseUrl = getRegistryBaseUrl();
+
+  // Match both relative imports and @/registry imports
+  // Examples:
+  // from "../../hooks/use-number-input"
+  // from "../../../ui/button"
+  // from "@/registry/hooks/use-number-input"
+  const imports = content.match(/from\s+["'][^"']+["']/g) || [];
+
+  imports.forEach((imp) => {
+    // Check for relative imports
+    const relativeMatch = imp.match(/from\s+["']((?:\.\.\/)+)([^"']+)["']/);
+    if (relativeMatch) {
+      const relativePath = relativeMatch[2];
+
+      // Check if this points to a registry item
+      const registryMatch = relativePath.match(
+        /^(hooks|ui|components|blocks|themes)\/([^/]+)/,
+      );
+      if (registryMatch) {
+        const itemName = registryMatch[2];
+        registryDeps.add(`${baseUrl}/r/${itemName}.json`);
+      }
+    }
+
+    // Check for @/registry imports
+    const aliasMatch = imp.match(/from\s+["']@\/registry\/([^"']+)["']/);
+    if (aliasMatch) {
+      const registryPath = aliasMatch[1];
+
+      // Extract the item name from the registry path
+      const registryMatch = registryPath.match(
+        /^(hooks|ui|components|blocks|themes)\/([^/]+)/,
+      );
+      if (registryMatch) {
+        const itemName = registryMatch[2];
+        registryDeps.add(`${baseUrl}/r/${itemName}.json`);
+      }
+    }
+  });
+
+  return Array.from(registryDeps);
+}
+
 function processRegistryFile(
   fileInfo: FileInfo,
   title?: string,
@@ -258,15 +318,18 @@ function processRegistryFile(
 
   // Extract dependencies from all files
   const allDependencies = new Set<string>();
+  const allRegistryDependencies = new Set<string>();
   const files: RegistryFile[] = [];
 
   for (const fileData of allRelatedFiles) {
     try {
       const content = fs.readFileSync(fileData.path, "utf-8");
       const fileDependencies = extractDependencies(content);
+      const registryDependencies = extractRegistryDependencies(content);
 
       // Add to overall dependencies
       fileDependencies.forEach((dep) => allDependencies.add(dep));
+      registryDependencies.forEach((dep) => allRegistryDependencies.add(dep));
 
       // Add to files array
       // Convert registry path to target path with src/mui-plus prefix
@@ -322,6 +385,7 @@ function processRegistryFile(
   }
 
   const dependencies = Array.from(allDependencies);
+  const registryDependencies = Array.from(allRegistryDependencies);
 
   // Check if meta.json exists and load it
   let existingMeta: Partial<RegistryMeta> | null = null;
@@ -430,6 +494,7 @@ function processRegistryFile(
   }
 
   // Create the public registry JSON structure (with metadata)
+  // For the public JSON, always use detected registry dependencies, not from meta.json
   const registryJson: RegistryJson = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: name,
@@ -437,7 +502,7 @@ function processRegistryFile(
     title: metadata.title,
     description: metadata.description,
     dependencies: dependencies,
-    registryDependencies: metadata.registryDependencies || [],
+    registryDependencies: registryDependencies,
     files: files,
     meta: metadata.meta,
   };
@@ -467,14 +532,15 @@ function processRegistryFile(
   ) {
     v0Json.registryDependencies = v0Json.registryDependencies.map(
       (dep: string) => {
-        // Check if the dependency matches https://mui-plus.dev/r/*.json pattern
-        const muiPlusMatch = dep.match(
-          /^https:\/\/mui-plus\.dev\/r\/([^\/]+)\.json$/,
+        // Check if the dependency matches any registry URL pattern
+        const registryMatch = dep.match(
+          /^(https?:\/\/[^\/]+)\/r\/([^\/]+)\.json$/,
         );
-        if (muiPlusMatch) {
-          const itemName = muiPlusMatch[1];
-          // Replace with v0.json version
-          return `https://mui-plus.dev/r/${itemName}.v0.json`;
+        if (registryMatch) {
+          const baseUrl = registryMatch[1];
+          const itemName = registryMatch[2];
+          // Replace with v0.json version, preserving the base URL
+          return `${baseUrl}/r/${itemName}.v0.json`;
         }
         return dep;
       },
