@@ -46,7 +46,7 @@ interface RegistryJson {
 // Get the base URL for registry dependencies based on environment
 function getRegistryBaseUrl(): string {
   const vercelEnv = process.env.VERCEL_ENV;
-  const vercelUrl = process.env.VERCEL_URL;
+  const vercelUrl = process.env.VERCEL_BRANCH_URL;
 
   // Use preview URL for non-production Vercel deployments
   if (vercelEnv && vercelEnv !== "production" && vercelUrl) {
@@ -82,7 +82,7 @@ program
         options.title,
         options.description,
         options.category,
-        tags,
+        tags
       );
     }
   });
@@ -111,7 +111,7 @@ function scanRegistryFiles(dir: string | null = null): string[] {
       console.warn(
         `Warning: Could not read directory ${currentPath}: ${
           (error as Error).message
-        }`,
+        }`
       );
     }
   }
@@ -153,7 +153,7 @@ function findAllRelatedFiles(itemPath: string, itemName: string): FileInfo[] {
       console.warn(
         `Warning: Could not read directory ${dirPath}: ${
           (error as Error).message
-        }`,
+        }`
       );
     }
   }
@@ -272,7 +272,7 @@ function extractRegistryDependencies(content: string): string[] {
 
       // Check if this points to a registry item
       const registryMatch = relativePath.match(
-        /^(hooks|ui|components|blocks|themes)\/([^/]+)/,
+        /^(hooks|ui|components|blocks|themes)\/([^/]+)/
       );
       if (registryMatch) {
         const itemName = registryMatch[2];
@@ -287,7 +287,7 @@ function extractRegistryDependencies(content: string): string[] {
 
       // Extract the item name from the registry path
       const registryMatch = registryPath.match(
-        /^(hooks|ui|components|blocks|themes)\/([^/]+)/,
+        /^(hooks|ui|components|blocks|themes)\/([^/]+)/
       );
       if (registryMatch) {
         const itemName = registryMatch[2];
@@ -304,7 +304,7 @@ function processRegistryFile(
   title?: string,
   description?: string,
   category?: string,
-  tags?: string[],
+  tags?: string[]
 ): { metadata: RegistryMeta; registryJson: RegistryJson } {
   const { path: filePath, name } = fileInfo;
   const OUTPUT_PATH = path.join(process.cwd(), "public", "r", `${name}.json`);
@@ -340,7 +340,7 @@ function processRegistryFile(
         // e.g., "themes/mui-plus/components/alert.ts" -> "src/mui-plus/theme/components/alert.ts"
         targetPath = targetPath.replace(
           /^themes\/[^\/]+\//,
-          "src/mui-plus/theme/",
+          "src/mui-plus/theme/"
         );
       } else {
         // For non-theme files, just prepend src/mui-plus/
@@ -379,7 +379,7 @@ function processRegistryFile(
       console.warn(
         `Warning: Could not read file ${fileData.path}: ${
           (error as Error).message
-        }`,
+        }`
       );
     }
   }
@@ -398,7 +398,7 @@ function processRegistryFile(
       console.warn(
         `Warning: Could not parse existing meta.json file: ${
           (error as Error).message
-        }`,
+        }`
       );
       metaExists = false; // Treat corrupt file as non-existent
     }
@@ -462,7 +462,7 @@ function processRegistryFile(
       process.cwd(),
       "public",
       "screenshots",
-      `${name}.png`,
+      `${name}.png`
     );
     const hasScreenshot = fs.existsSync(screenshotPath);
 
@@ -521,7 +521,7 @@ function processRegistryFile(
     process.cwd(),
     "public",
     "r",
-    `${name}.v0.json`,
+    `${name}.v0.json`
   );
   const v0Json = JSON.parse(JSON.stringify(registryJson)); // Deep clone
 
@@ -534,7 +534,7 @@ function processRegistryFile(
       (dep: string) => {
         // Check if the dependency matches any registry URL pattern
         const registryMatch = dep.match(
-          /^(https?:\/\/[^\/]+)\/r\/([^\/]+)\.json$/,
+          /^(https?:\/\/[^\/]+)\/r\/([^\/]+)\.json$/
         );
         if (registryMatch) {
           const baseUrl = registryMatch[1];
@@ -543,7 +543,7 @@ function processRegistryFile(
           return `${baseUrl}/r/${itemName}.v0.json`;
         }
         return dep;
-      },
+      }
     );
   }
 
@@ -582,7 +582,7 @@ function generateRegistryForItem(
   title?: string,
   description?: string,
   category?: string,
-  tags?: string[],
+  tags?: string[]
 ): void {
   const matches = findMatchingFiles(name);
 
@@ -601,7 +601,7 @@ function generateRegistryForItem(
 
   matches.forEach((match, index) => {
     console.log(
-      `\n[${index + 1}/${matches.length}] Processing: ${match.relativePath}`,
+      `\n[${index + 1}/${matches.length}] Processing: ${match.relativePath}`
     );
     processRegistryFile(match, title, description, category, tags);
   });
@@ -613,7 +613,7 @@ function processAllRegistries(): void {
 
   allItems.forEach((itemInfo, index) => {
     console.log(
-      `\n[${index + 1}/${allItems.length}] Processing: ${itemInfo.name}`,
+      `\n[${index + 1}/${allItems.length}] Processing: ${itemInfo.name}`
     );
     processRegistryFile(itemInfo);
   });
