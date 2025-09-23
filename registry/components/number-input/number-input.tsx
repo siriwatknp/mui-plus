@@ -13,6 +13,11 @@ import {
   UseNumberInputOptions,
 } from "@/registry/hooks/use-number-input";
 
+export type {
+  NumberInputError,
+  NumberInputEventType,
+} from "@/registry/hooks/use-number-input";
+
 export type NumberInputProps = UseNumberInputOptions & {
   inputElement?: React.ReactElement;
   incrementIcon?: React.ReactNode;
