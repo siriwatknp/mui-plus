@@ -22,6 +22,7 @@ interface RegistryMeta {
   type: string;
   title: string;
   description: string;
+  dependencies?: string[];
   registryDependencies?: string[];
   meta: {
     screenshot?: string;
@@ -173,28 +174,68 @@ function findAllRelatedFiles(itemPath: string, itemName: string): FileInfo[] {
 }
 
 function findMatchingFiles(name: string): FileInfo[] {
-  const allFiles = scanRegistryFiles(null);
+  const registryPath = path.join(process.cwd(), "registry");
   const matches: FileInfo[] = [];
 
-  for (const filePath of allFiles) {
-    const fileName = path.basename(filePath, path.extname(filePath));
-    const registryPath = path.join(process.cwd(), "registry");
-    const relativePath = path.relative(registryPath, filePath);
-    const pathSegments = relativePath.split(path.sep);
+  // First, look for .meta.json files
+  function scanForMetaFiles(currentPath: string): void {
+    try {
+      const items = fs.readdirSync(currentPath, { withFileTypes: true });
 
-    // Check if this file matches the name we're looking for
-    // Also check for index files in a directory matching the name
-    if (
-      fileName === name ||
-      (fileName === "index" &&
-        pathSegments.length >= 2 &&
-        pathSegments[pathSegments.length - 2] === name)
-    ) {
-      matches.push({
-        path: filePath,
-        relativePath: relativePath,
-        name: name,
-      });
+      for (const item of items) {
+        const fullPath = path.join(currentPath, item.name);
+
+        if (item.isDirectory()) {
+          // Check if this directory matches the name and has a meta.json
+          if (item.name === name) {
+            const metaPath = path.join(fullPath, `${name}.meta.json`);
+            if (fs.existsSync(metaPath)) {
+              // Found a matching meta.json, use it as the reference
+              const relativePath = path.relative(registryPath, metaPath);
+              matches.push({
+                path: metaPath,
+                relativePath: relativePath,
+                name: name,
+              });
+            }
+          }
+          scanForMetaFiles(fullPath);
+        }
+      }
+    } catch (error) {
+      console.warn(
+        `Warning: Could not read directory ${currentPath}: ${
+          (error as Error).message
+        }`,
+      );
+    }
+  }
+
+  scanForMetaFiles(registryPath);
+
+  // If no meta.json found, fall back to looking for .ts/.tsx files
+  if (matches.length === 0) {
+    const allFiles = scanRegistryFiles(null);
+
+    for (const filePath of allFiles) {
+      const fileName = path.basename(filePath, path.extname(filePath));
+      const relativePath = path.relative(registryPath, filePath);
+      const pathSegments = relativePath.split(path.sep);
+
+      // Check if this file matches the name we're looking for
+      // Also check for index files in a directory matching the name
+      if (
+        fileName === name ||
+        (fileName === "index" &&
+          pathSegments.length >= 2 &&
+          pathSegments[pathSegments.length - 2] === name)
+      ) {
+        matches.push({
+          path: filePath,
+          relativePath: relativePath,
+          name: name,
+        });
+      }
     }
   }
 
@@ -320,7 +361,10 @@ function processRegistryFile(
   const OUTPUT_PATH = path.join(process.cwd(), "public", "r", `${name}.json`);
 
   // Determine the component/block directory
-  const itemDir = path.dirname(filePath);
+  // If the file is a meta.json, use its directory. Otherwise use the parent directory.
+  const itemDir = filePath.endsWith(".meta.json")
+    ? path.dirname(filePath)
+    : path.dirname(filePath);
   const META_PATH = path.join(itemDir, `${name}.meta.json`);
 
   // Find all related files in the same directory structure
@@ -394,9 +438,6 @@ function processRegistryFile(
     }
   }
 
-  const dependencies = Array.from(allDependencies);
-  const registryDependencies = Array.from(allRegistryDependencies);
-
   // Check if meta.json exists and load it
   let existingMeta: Partial<RegistryMeta> | null = null;
   let metaExists = false;
@@ -413,6 +454,29 @@ function processRegistryFile(
       metaExists = false; // Treat corrupt file as non-existent
     }
   }
+
+  // Merge dependencies from meta file (if exists) with extracted ones
+  if (existingMeta?.dependencies) {
+    for (const dep of existingMeta.dependencies) {
+      allDependencies.add(dep);
+    }
+  }
+
+  // Merge registryDependencies from meta file (if exists) with extracted ones
+  if (existingMeta?.registryDependencies) {
+    const baseUrl = getRegistryBaseUrl();
+    for (const dep of existingMeta.registryDependencies) {
+      // Convert simple dependency names to full URLs
+      if (!dep.startsWith("http")) {
+        allRegistryDependencies.add(`${baseUrl}/r/${dep}.json`);
+      } else {
+        allRegistryDependencies.add(dep);
+      }
+    }
+  }
+
+  const dependencies = Array.from(allDependencies);
+  const registryDependencies = Array.from(allRegistryDependencies);
 
   // If meta.json exists and we're not forcing an update with CLI args, use existing metadata
   let metadata: RegistryMeta;
