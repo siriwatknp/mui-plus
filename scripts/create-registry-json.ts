@@ -243,12 +243,14 @@ function findMatchingFiles(name: string): FileInfo[] {
 }
 
 function getAllRegistryItems(): FileInfo[] {
-  const allFiles = scanRegistryFiles(null);
+  const registryPath = path.join(process.cwd(), "registry");
   const registryItems = new Map<string, FileInfo>();
+
+  // First, scan for TypeScript files
+  const allFiles = scanRegistryFiles(null);
 
   for (const filePath of allFiles) {
     const fileName = path.basename(filePath, path.extname(filePath));
-    const registryPath = path.join(process.cwd(), "registry");
     const relativePath = path.relative(registryPath, filePath);
     const pathSegments = relativePath.split(path.sep);
 
@@ -279,6 +281,41 @@ function getAllRegistryItems(): FileInfo[] {
       });
     }
   }
+
+  // Also scan for meta-only items (items with only .meta.json files)
+  function scanForMetaOnlyItems(currentPath: string): void {
+    try {
+      const items = fs.readdirSync(currentPath, { withFileTypes: true });
+
+      for (const item of items) {
+        const fullPath = path.join(currentPath, item.name);
+
+        if (item.isDirectory()) {
+          // Check if this directory has a meta.json file but no TypeScript files
+          const metaPath = path.join(fullPath, `${item.name}.meta.json`);
+          if (fs.existsSync(metaPath) && !registryItems.has(item.name)) {
+            // This is a meta-only item
+            const relativePath = path.relative(registryPath, metaPath);
+            registryItems.set(item.name, {
+              path: metaPath,
+              relativePath: relativePath,
+              name: item.name,
+            });
+          }
+          // Recurse into subdirectories
+          scanForMetaOnlyItems(fullPath);
+        }
+      }
+    } catch (error) {
+      console.warn(
+        `Warning: Could not read directory ${currentPath}: ${
+          (error as Error).message
+        }`,
+      );
+    }
+  }
+
+  scanForMetaOnlyItems(registryPath);
 
   return Array.from(registryItems.values());
 }
