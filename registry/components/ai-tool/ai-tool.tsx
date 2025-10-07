@@ -14,7 +14,7 @@ import {
   WrenchIcon,
   XCircleIcon,
 } from "lucide-react";
-import React, { useState, type ReactNode } from "react";
+import React, { memo, useState, type ReactNode } from "react";
 import { CodeBlock } from "../ai-code-block/ai-code-block";
 
 export type ToolProps = {
@@ -23,7 +23,7 @@ export type ToolProps = {
   defaultOpen?: boolean;
 };
 
-export const Tool = ({ children, sx, defaultOpen = false }: ToolProps) => {
+export const Tool = memo(({ children, sx, defaultOpen = false }: ToolProps) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
@@ -43,11 +43,13 @@ export const Tool = ({ children, sx, defaultOpen = false }: ToolProps) => {
               isOpen,
               onToggle: () => setIsOpen(!isOpen),
             })
-          : child
+          : child,
       )}
     </Box>
   );
-};
+});
+
+Tool.displayName = "Tool";
 
 export type ToolHeaderProps = {
   type: ToolUIPart["type"];
@@ -169,15 +171,15 @@ export type ToolContentProps = {
   isOpen?: boolean;
 };
 
-export const ToolContent = ({
-  children,
-  sx,
-  isOpen = false,
-}: ToolContentProps) => (
-  <Collapse in={isOpen}>
-    <Box sx={sx}>{children}</Box>
-  </Collapse>
+export const ToolContent = memo(
+  ({ children, sx, isOpen = false }: ToolContentProps) => (
+    <Collapse in={isOpen}>
+      <Box sx={sx}>{children}</Box>
+    </Collapse>
+  ),
 );
+
+ToolContent.displayName = "ToolContent";
 
 export type ToolInputProps = {
   input: ToolUIPart["input"];

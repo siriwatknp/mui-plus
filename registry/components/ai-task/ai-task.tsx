@@ -5,7 +5,7 @@ import Collapse from "@mui/material/Collapse";
 import Typography from "@mui/material/Typography";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { ChevronDownIcon, SearchIcon } from "lucide-react";
-import React, { useState, type ReactNode } from "react";
+import React, { memo, useState, type ReactNode } from "react";
 
 export type TaskItemFileProps = {
   children?: ReactNode;
@@ -56,7 +56,7 @@ export type TaskProps = {
   sx?: SxProps<Theme>;
 };
 
-export const Task = ({ defaultOpen = true, children, sx }: TaskProps) => {
+export const Task = memo(({ defaultOpen = true, children, sx }: TaskProps) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
@@ -67,11 +67,13 @@ export const Task = ({ defaultOpen = true, children, sx }: TaskProps) => {
               isOpen,
               onToggle: () => setIsOpen(!isOpen),
             })
-          : child
+          : child,
       )}
     </Box>
   );
-};
+});
+
+Task.displayName = "Task";
 
 export type TaskTriggerProps = {
   title: string;
@@ -134,25 +136,25 @@ export type TaskContentProps = {
   isOpen?: boolean;
 };
 
-export const TaskContent = ({
-  children,
-  sx,
-  isOpen = false,
-}: TaskContentProps) => (
-  <Collapse in={isOpen}>
-    <Box
-      sx={{
-        mt: 2,
-        pl: 2,
-        borderLeft: 2,
-        borderColor: "divider",
-        "& > *:not(:last-child)": {
-          mb: 1,
-        },
-        ...sx,
-      }}
-    >
-      {children}
-    </Box>
-  </Collapse>
+export const TaskContent = memo(
+  ({ children, sx, isOpen = false }: TaskContentProps) => (
+    <Collapse in={isOpen}>
+      <Box
+        sx={{
+          mt: 2,
+          pl: 2,
+          borderLeft: 2,
+          borderColor: "divider",
+          "& > *:not(:last-child)": {
+            mb: 1,
+          },
+          ...sx,
+        }}
+      >
+        {children}
+      </Box>
+    </Collapse>
+  ),
 );
+
+TaskContent.displayName = "TaskContent";

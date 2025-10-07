@@ -6,7 +6,7 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { BookIcon, ChevronDownIcon } from "lucide-react";
-import React, { useState, type ReactNode } from "react";
+import React, { memo, useState, type ReactNode } from "react";
 
 export type SourcesProps = {
   children?: ReactNode;
@@ -91,26 +91,26 @@ export type SourcesContentProps = {
   isOpen?: boolean;
 };
 
-export const SourcesContent = ({
-  children,
-  sx,
-  isOpen = false,
-}: SourcesContentProps) => (
-  <Collapse in={isOpen}>
-    <Box
-      sx={{
-        mt: 1.5,
-        display: "flex",
-        flexDirection: "column",
-        gap: 1,
-        width: "fit-content",
-        ...sx,
-      }}
-    >
-      {children}
-    </Box>
-  </Collapse>
+export const SourcesContent = memo(
+  ({ children, sx, isOpen = false }: SourcesContentProps) => (
+    <Collapse in={isOpen}>
+      <Box
+        sx={{
+          mt: 1.5,
+          display: "flex",
+          flexDirection: "column",
+          gap: 1,
+          width: "fit-content",
+          ...sx,
+        }}
+      >
+        {children}
+      </Box>
+    </Collapse>
+  ),
 );
+
+SourcesContent.displayName = "SourcesContent";
 
 export type SourceProps = {
   href?: string;
@@ -119,7 +119,7 @@ export type SourceProps = {
   sx?: SxProps<Theme>;
 };
 
-export const Source = ({ href, title, children, sx }: SourceProps) => (
+export const Source = memo(({ href, title, children, sx }: SourceProps) => (
   <Link
     href={href}
     rel="noreferrer"
@@ -142,4 +142,6 @@ export const Source = ({ href, title, children, sx }: SourceProps) => (
       </>
     )}
   </Link>
-);
+));
+
+Source.displayName = "Source";

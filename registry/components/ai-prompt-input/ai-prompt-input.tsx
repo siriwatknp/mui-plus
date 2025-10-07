@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { nanoid } from "nanoid";
 import React, {
+  memo,
   type ChangeEventHandler,
   Children,
   type ComponentProps,
@@ -608,50 +609,54 @@ export type PromptInputButtonProps = ComponentProps<typeof Button> & {
   variant?: "text" | "contained" | "outlined";
 };
 
-export const PromptInputButton = ({
-  variant = "text",
-  size,
-  children,
-  sx,
-  ...props
-}: PromptInputButtonProps) => {
-  const isIconButton = Children.count(children) === 1;
+export const PromptInputButton = memo(
+  ({
+    variant = "text",
+    size,
+    children,
+    sx,
+    ...props
+  }: PromptInputButtonProps) => {
+    const isIconButton = Children.count(children) === 1;
 
-  if (isIconButton) {
+    if (isIconButton) {
+      return (
+        <IconButton
+          size={size || "medium"}
+          sx={{
+            borderRadius: 2,
+            color: variant === "text" ? "text.secondary" : undefined,
+            ...sx,
+          }}
+          {...props}
+        >
+          {children}
+        </IconButton>
+      );
+    }
+
     return (
-      <IconButton
+      <Button
+        variant={variant}
         size={size || "medium"}
         sx={{
+          minWidth: "auto",
+          px: 1.5,
+          gap: 0.75,
           borderRadius: 2,
+          flexShrink: 0,
           color: variant === "text" ? "text.secondary" : undefined,
           ...sx,
         }}
         {...props}
       >
         {children}
-      </IconButton>
+      </Button>
     );
-  }
+  },
+);
 
-  return (
-    <Button
-      variant={variant}
-      size={size || "medium"}
-      sx={{
-        minWidth: "auto",
-        px: 1.5,
-        gap: 0.75,
-        borderRadius: 2,
-        flexShrink: 0,
-        color: variant === "text" ? "text.secondary" : undefined,
-        ...sx,
-      }}
-      {...props}
-    >
-      {children}
-    </Button>
-  );
-};
+PromptInputButton.displayName = "PromptInputButton";
 
 export type PromptInputActionMenuProps = {
   children?: React.ReactNode;
@@ -745,58 +750,62 @@ export type PromptInputSubmitProps = ComponentProps<typeof Button> & {
   status?: ChatStatus;
 };
 
-export const PromptInputSubmit = ({
-  variant = "contained",
-  size = "medium",
-  status,
-  children,
-  sx,
-  ...props
-}: PromptInputSubmitProps) => {
-  let Icon = <SendIcon size={16} />;
+export const PromptInputSubmit = memo(
+  ({
+    variant = "contained",
+    size = "medium",
+    status,
+    children,
+    sx,
+    ...props
+  }: PromptInputSubmitProps) => {
+    let Icon = <SendIcon size={16} />;
 
-  if (status === "submitted") {
-    Icon = <CircularProgress size={16} />;
-  } else if (status === "streaming") {
-    Icon = <SquareIcon size={16} />;
-  } else if (status === "error") {
-    Icon = <XIcon size={16} />;
-  }
+    if (status === "submitted") {
+      Icon = <CircularProgress size={16} />;
+    } else if (status === "streaming") {
+      Icon = <SquareIcon size={16} />;
+    } else if (status === "error") {
+      Icon = <XIcon size={16} />;
+    }
 
-  const isIconOnly = !children;
+    const isIconOnly = !children;
 
-  if (isIconOnly) {
+    if (isIconOnly) {
+      return (
+        <IconButton
+          type="submit"
+          size={size}
+          sx={{
+            borderRadius: 2,
+            ...sx,
+          }}
+          {...props}
+        >
+          {Icon}
+        </IconButton>
+      );
+    }
+
     return (
-      <IconButton
+      <Button
         type="submit"
+        variant={variant}
         size={size}
         sx={{
+          gap: 0.75,
           borderRadius: 2,
           ...sx,
         }}
         {...props}
       >
-        {Icon}
-      </IconButton>
+        {children}
+      </Button>
     );
-  }
+  },
+);
 
-  return (
-    <Button
-      type="submit"
-      variant={variant}
-      size={size}
-      sx={{
-        gap: 0.75,
-        borderRadius: 2,
-        ...sx,
-      }}
-      {...props}
-    >
-      {children}
-    </Button>
-  );
-};
+PromptInputSubmit.displayName = "PromptInputSubmit";
 
 export type PromptInputModelSelectProps = ComponentProps<typeof Select>;
 

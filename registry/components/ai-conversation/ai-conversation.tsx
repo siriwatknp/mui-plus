@@ -4,13 +4,13 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { ArrowDownIcon } from "lucide-react";
-import type { ComponentProps } from "react";
+import { memo, type ComponentProps } from "react";
 import { useCallback } from "react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 
 export type ConversationProps = ComponentProps<typeof StickToBottom>;
 
-export const Conversation = ({ ...props }: ConversationProps) => (
+export const Conversation = memo(({ ...props }: ConversationProps) => (
   <StickToBottom
     style={{
       position: "relative",
@@ -22,7 +22,9 @@ export const Conversation = ({ ...props }: ConversationProps) => (
     role="log"
     {...props}
   />
-);
+));
+
+Conversation.displayName = "Conversation";
 
 export type ConversationContentProps = ComponentProps<
   typeof StickToBottom.Content

@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import useEmblaCarousel from "embla-carousel-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import {
+  memo,
   type ComponentProps,
   createContext,
   useCallback,
@@ -421,69 +422,73 @@ export type InlineCitationSourceProps = ComponentProps<typeof Box> & {
   description?: string;
 };
 
-export const InlineCitationSource = ({
-  title,
-  url,
-  description,
-  children,
-  sx,
-  ...props
-}: InlineCitationSourceProps) => (
-  <Box
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      gap: 0.5,
-      ...sx,
-    }}
-    {...props}
-  >
-    {title && (
-      <Typography
-        variant="body2"
-        sx={{
-          fontWeight: 500,
-          lineHeight: 1.2,
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {title}
-      </Typography>
-    )}
-    {url && (
-      <Typography
-        variant="caption"
-        sx={{
-          color: "text.secondary",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-          wordBreak: "break-all",
-        }}
-      >
-        {url}
-      </Typography>
-    )}
-    {description && (
-      <Typography
-        variant="body2"
-        sx={{
-          color: "text.secondary",
-          lineHeight: 1.6,
-          display: "-webkit-box",
-          WebkitLineClamp: 3,
-          WebkitBoxOrient: "vertical",
-          overflow: "hidden",
-        }}
-      >
-        {description}
-      </Typography>
-    )}
-    {children}
-  </Box>
+export const InlineCitationSource = memo(
+  ({
+    title,
+    url,
+    description,
+    children,
+    sx,
+    ...props
+  }: InlineCitationSourceProps) => (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 0.5,
+        ...sx,
+      }}
+      {...props}
+    >
+      {title && (
+        <Typography
+          variant="body2"
+          sx={{
+            fontWeight: 500,
+            lineHeight: 1.2,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {title}
+        </Typography>
+      )}
+      {url && (
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            wordBreak: "break-all",
+          }}
+        >
+          {url}
+        </Typography>
+      )}
+      {description && (
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            lineHeight: 1.6,
+            display: "-webkit-box",
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          {description}
+        </Typography>
+      )}
+      {children}
+    </Box>
+  ),
 );
+
+InlineCitationSource.displayName = "InlineCitationSource";
 
 export type InlineCitationQuoteProps = ComponentProps<"blockquote"> & {
   sx?: ComponentProps<typeof Box>["sx"];

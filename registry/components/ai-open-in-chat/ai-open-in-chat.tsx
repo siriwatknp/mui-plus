@@ -14,6 +14,7 @@ import {
   MessageCircleIcon,
 } from "lucide-react";
 import {
+  memo,
   type ComponentProps,
   createContext,
   useContext,
@@ -187,7 +188,7 @@ export type OpenInProps = {
   children: ReactNode;
 };
 
-export const OpenIn = ({ query, children }: OpenInProps) => {
+export const OpenIn = memo(({ query, children }: OpenInProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -206,7 +207,9 @@ export const OpenIn = ({ query, children }: OpenInProps) => {
       {children}
     </OpenInContext.Provider>
   );
-};
+});
+
+OpenIn.displayName = "OpenIn";
 
 export type OpenInContentProps = Omit<
   ComponentProps<typeof Menu>,

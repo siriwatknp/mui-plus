@@ -6,7 +6,7 @@ import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { XIcon } from "lucide-react";
-import type { ComponentProps } from "react";
+import { memo, type ComponentProps } from "react";
 
 export type ArtifactProps = ComponentProps<typeof Paper>;
 
@@ -56,31 +56,30 @@ export const ArtifactHeader = ({
 
 export type ArtifactCloseProps = ComponentProps<typeof IconButton>;
 
-export const ArtifactClose = ({
-  children,
-  size = "small",
-  sx,
-  ...props
-}: ArtifactCloseProps) => (
-  <IconButton
-    size={size}
-    type="button"
-    sx={{
-      width: 32,
-      height: 32,
-      p: 0,
-      color: "text.secondary",
-      "&:hover": {
-        color: "text.primary",
-      },
-      ...sx,
-    }}
-    aria-label="Close"
-    {...props}
-  >
-    {children ?? <XIcon className="size-4" />}
-  </IconButton>
+export const ArtifactClose = memo(
+  ({ children, size = "small", sx, ...props }: ArtifactCloseProps) => (
+    <IconButton
+      size={size}
+      type="button"
+      sx={{
+        width: 32,
+        height: 32,
+        p: 0,
+        color: "text.secondary",
+        "&:hover": {
+          color: "text.primary",
+        },
+        ...sx,
+      }}
+      aria-label="Close"
+      {...props}
+    >
+      {children ?? <XIcon className="size-4" />}
+    </IconButton>
+  ),
 );
+
+ArtifactClose.displayName = "ArtifactClose";
 
 export type ArtifactTitleProps = ComponentProps<typeof Typography>;
 

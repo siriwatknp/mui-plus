@@ -5,7 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import type { UIMessage } from "ai";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import type { ComponentProps, ReactElement } from "react";
+import { memo, type ComponentProps, type ReactElement } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type BranchContextType = {
@@ -130,36 +130,35 @@ export type BranchSelectorProps = ComponentProps<typeof Box> & {
   from: UIMessage["role"];
 };
 
-export const BranchSelector = ({
-  from,
-  sx,
-  children,
-  ...props
-}: BranchSelectorProps) => {
-  const { totalBranches } = useBranch();
+export const BranchSelector = memo(
+  ({ from, sx, children, ...props }: BranchSelectorProps) => {
+    const { totalBranches } = useBranch();
 
-  // Don't render if there's only one branch
-  if (totalBranches <= 1) {
-    return null;
-  }
+    // Don't render if there's only one branch
+    if (totalBranches <= 1) {
+      return null;
+    }
 
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 1,
-        alignSelf: "end",
-        px: 5,
-        justifyContent: from === "assistant" ? "flex-start" : "flex-end",
-        ...sx,
-      }}
-      {...props}
-    >
-      {children}
-    </Box>
-  );
-};
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          alignSelf: "end",
+          px: 5,
+          justifyContent: from === "assistant" ? "flex-start" : "flex-end",
+          ...sx,
+        }}
+        {...props}
+      >
+        {children}
+      </Box>
+    );
+  },
+);
+
+BranchSelector.displayName = "BranchSelector";
 
 export type BranchPreviousProps = ComponentProps<typeof IconButton>;
 
