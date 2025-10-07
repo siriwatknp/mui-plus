@@ -37,7 +37,15 @@
       "Bash(__NEW_LINE__ cp src/components/ai-elements/suggestion.tsx registry/components/ai-suggestion/ai-suggestion.tsx)",
       "Bash(__NEW_LINE__ cp src/components/ai-elements/tool.tsx registry/components/ai-tool/ai-tool.tsx)",
       "Bash(__NEW_LINE__ cp src/components/ai-elements/web-preview.tsx registry/components/ai-web-preview/ai-web-preview.tsx)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $file.json ===\")",
+      "Bash(head:*)",
+      "Bash(done)",
+      "Bash(do echo \"=== Checking $file ===\")",
+      "Bash(grep:*)",
+      "Bash(do echo \"=== Checking $file for ai imports ===\")"
     ],
     "deny": []
   },

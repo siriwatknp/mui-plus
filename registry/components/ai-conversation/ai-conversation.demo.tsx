@@ -58,8 +58,8 @@ export default function AIConversationDemo() {
               }}
             >
               <Typography variant="body2">
-                I'd be happy to help you with React components! What specific
-                aspect would you like to explore?
+                I&apos;d be happy to help you with React components! What
+                specific aspect would you like to explore?
               </Typography>
             </Paper>
 

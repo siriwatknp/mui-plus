@@ -3,5 +3,7 @@
   "type": "registry:item",
   "title": "Ai Context",
   "description": "A ai-context item.",
-  "meta": {}
+  "meta": {
+    "category": "ai"
+  }
 }

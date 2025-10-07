@@ -24,7 +24,8 @@ interface CategoryClientProps {
   allItems: RegistryItem[];
   availableTags: string[];
   selectedTags: string[];
-  filteredItems: RegistryItem[];
+  metaOnlyItems: RegistryItem[];
+  regularItems: RegistryItem[];
 }
 
 interface ComponentPreviewContentProps {
@@ -66,7 +67,7 @@ const ComponentPreviewContent = React.memo(
               </div>
             ),
             ssr: false,
-          },
+          }
         );
       } catch {
         return function ErrorFallback() {
@@ -103,7 +104,7 @@ const ComponentPreviewContent = React.memo(
         <DynamicComponent />
       </div>
     );
-  },
+  }
 );
 
 ComponentPreviewContent.displayName = "ComponentPreviewContent";
@@ -290,27 +291,71 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
   );
 }
 
+function MetaOnlyItem({ item }: { item: RegistryItem }) {
+  const [copiedIndex, setCopiedIndex] = React.useState<number>(-1);
+
+  const handleCopyCLI = async () => {
+    const cliCommand = `npx shadcn@latest add ${process.env.NEXT_PUBLIC_BASE_URL}/r/${item.name}.json`;
+    await navigator.clipboard.writeText(cliCommand);
+    setCopiedIndex(-2);
+    setTimeout(() => setCopiedIndex(-1), 2000);
+  };
+
+  return (
+    <div className="bg-muted/50 rounded-lg p-6 text-center">
+      <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+      <p className="text-sm text-muted-foreground mb-4">{item.description}</p>
+      <div className="flex justify-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleCopyCLI}
+          className="h-8 px-3 text-xs font-mono"
+        >
+          {copiedIndex === -2 ? (
+            <Check className="h-3 w-3 mr-1.5" />
+          ) : (
+            <Terminal className="h-3 w-3 mr-1.5" />
+          )}
+          npx shadcn
+        </Button>
+        <OpenInV0Button name={item.name} className="h-8" />
+      </div>
+    </div>
+  );
+}
+
 export default function CategoryClient({
   categoryInfo,
   availableTags,
   selectedTags,
-  filteredItems,
+  metaOnlyItems,
+  regularItems,
 }: CategoryClientProps) {
   return (
     <div className="max-w-7xl mx-auto px-6 pb-10">
       {/* Header */}
       <div className="py-8 text-center">
         <h1 className="text-3xl font-bold capitalize mb-2">
-          {categoryInfo.label}
+          {categoryInfo.label === "Ai" ? "AI" : categoryInfo.label}
         </h1>
         <p className="text-muted-foreground">
-          {filteredItems.length}{" "}
-          {filteredItems.length === 1 ? "component" : "components"}
+          {regularItems.length}{" "}
+          {regularItems.length === 1 ? "component" : "components"}
           {selectedTags.length > 0 && (
             <span> matching: {selectedTags.join(", ")}</span>
           )}
         </p>
       </div>
+
+      {/* Meta-only items (collection items without preview) */}
+      {metaOnlyItems.length > 0 && (
+        <div className="pb-10">
+          {metaOnlyItems.map((item) => (
+            <MetaOnlyItem key={item.name} item={item} />
+          ))}
+        </div>
+      )}
 
       {/* Sticky Tag Filter */}
       <TagFilter
@@ -320,9 +365,10 @@ export default function CategoryClient({
       />
 
       {/* Registry Grid */}
-      {filteredItems.length > 0 ? (
+      {regularItems.length > 0 ? (
         <div className="grid gap-8">
-          {filteredItems.map((item) => (
+          {/* Regular items with preview */}
+          {regularItems.map((item) => (
             <div key={item.name} className="min-w-0 flex flex-col space-y-3">
               {/* Title and Description */}
               <div>

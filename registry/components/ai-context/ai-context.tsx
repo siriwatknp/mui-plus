@@ -7,10 +7,9 @@ import Typography from "@mui/material/Typography";
 import type { LanguageModelUsage } from "ai";
 import {
   type ComponentProps,
+  type ReactNode,
   createContext,
   useContext,
-  useState,
-  type ReactNode,
 } from "react";
 import { estimateCost, type ModelId } from "tokenlens";
 
