@@ -323,20 +323,39 @@ function getAllRegistryItems(): FileInfo[] {
 function extractDependencies(content: string): string[] {
   const dependencies = new Set<string>();
 
-  // Extract @mui imports
-  const muiImports = content.match(/from\s+["']@mui\/[^"']+["']/g) || [];
-  muiImports.forEach((imp) => {
-    const match = imp.match(/@mui\/[^"'/]+/);
+  // Extract all npm package imports (not relative or @/ alias imports)
+  const importMatches = content.match(/from\s+["']([^"']+)["']/g) || [];
+  importMatches.forEach((imp) => {
+    const match = imp.match(/from\s+["']([^"']+)["']/);
     if (match) {
-      dependencies.add(match[0]);
+      const importPath = match[1];
+      // Skip relative imports (. or ..), absolute paths (/), and alias imports (@/)
+      if (
+        importPath.startsWith(".") ||
+        importPath.startsWith("/") ||
+        importPath.startsWith("@/")
+      ) {
+        return;
+      }
+      // Extract package name (handle scoped packages like @mui/material)
+      const pkgMatch = importPath.match(/^(@[^/]+\/[^/]+|[^/]+)/);
+      if (pkgMatch) {
+        dependencies.add(pkgMatch[1]);
+      }
     }
   });
 
   // Always add emotion dependencies if MUI is used
-  if (dependencies.size > 0) {
+  const hasMui = Array.from(dependencies).some((dep) =>
+    dep.startsWith("@mui/"),
+  );
+  if (hasMui) {
     dependencies.add("@emotion/react");
     dependencies.add("@emotion/styled");
   }
+
+  // Filter out React (peer dependency)
+  dependencies.delete("react");
 
   return Array.from(dependencies);
 }
