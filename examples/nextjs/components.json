@@ -17,5 +17,8 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
+  "registries": {
+    "@mui-plus": "https://mui-plus.dev/r/{name}.json"
+  },
   "iconLibrary": "lucide"
 }
