@@ -458,28 +458,6 @@ function processRegistryFile(
         targetPath = "src/mui-plus/" + targetPath;
       }
 
-      // For single file items, simplify the path to avoid duplication
-      // e.g., "components/login-form-split/login-form-split.tsx" -> "components/login-form-split.tsx"
-      if (
-        allRelatedFiles.length === 1 &&
-        !targetPath.startsWith("src/mui-plus/theme/")
-      ) {
-        // Check if the file name duplicates the folder name
-        const pathParts = targetPath.split("/");
-        if (pathParts.length >= 3) {
-          const fileName = pathParts[pathParts.length - 1];
-          const folderName = pathParts[pathParts.length - 2];
-          const fileNameWithoutExt = fileName.replace(/\.(ts|tsx|js|jsx)$/, "");
-
-          // If folder name matches file name (without extension), simplify path
-          if (folderName === fileNameWithoutExt) {
-            // Remove the duplicate folder
-            pathParts.splice(pathParts.length - 2, 1);
-            targetPath = pathParts.join("/");
-          }
-        }
-      }
-
       files.push({
         path: fileData.relativePath,
         target: targetPath,
