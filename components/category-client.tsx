@@ -114,6 +114,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
   const needsIframe = item.meta.previewMode === "iframe";
   const [copiedIndex, setCopiedIndex] = useState<number>(-1);
   const [activeTab, setActiveTab] = useState<string>("preview");
+  const [activeFileIndex, setActiveFileIndex] = useState<number>(0);
   const [SyntaxHighlighter, setSyntaxHighlighter] = useState<{
     Component: React.ComponentType<SyntaxHighlighterProps>;
     lightStyle: Record<string, React.CSSProperties>;
@@ -122,11 +123,14 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
   const panelRef = useRef<ImperativePanelHandle | null>(null);
   const { mode, systemMode } = useColorScheme();
 
-  const handleCopy = async (content: string, index: number) => {
-    await navigator.clipboard.writeText(content);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(-1), 2000);
-  };
+  const handleCopy = React.useCallback(
+    async (content: string, index: number) => {
+      await navigator.clipboard.writeText(content);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(-1), 2000);
+    },
+    []
+  );
 
   const handleCopyCLI = async () => {
     const cliCommand = `npx shadcn@latest add ${process.env.NEXT_PUBLIC_BASE_URL}/r/${item.name}.json`;
@@ -182,6 +186,92 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
     );
   }, [item, needsIframe, panelRef]);
 
+  const renderFileContent = React.useCallback(
+    (file: RegistryItem["files"][0], index: number, showHeader: boolean) => {
+      return (
+        <div
+          key={file.path}
+          className={
+            needsIframe ? "aspect-video max-w-full min-h-[80vh]" : "h-[400px]"
+          }
+        >
+          {showHeader && (
+            <div className="flex items-center justify-between bg-muted px-3 py-2 text-sm">
+              <span className="font-mono">{file.path.split("/").pop()}</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleCopy(file.content, index)}
+                className="h-6 px-2"
+              >
+                {copiedIndex === index ? (
+                  <Check className="h-3 w-3" />
+                ) : (
+                  <Copy className="h-3 w-3" />
+                )}
+              </Button>
+            </div>
+          )}
+          <div
+            className={
+              showHeader
+                ? "h-[calc(100%-40px)] overflow-auto"
+                : "h-full overflow-auto"
+            }
+          >
+            {activeTab === "code" ? (
+              SyntaxHighlighter ? (
+                <SyntaxHighlighter.Component
+                  language={
+                    file.path.endsWith(".tsx") || file.path.endsWith(".ts")
+                      ? "tsx"
+                      : "jsx"
+                  }
+                  style={
+                    (systemMode || mode) === "dark"
+                      ? SyntaxHighlighter.darkStyle
+                      : SyntaxHighlighter.lightStyle
+                  }
+                  customStyle={{
+                    margin: 0,
+                    padding: "16px",
+                    fontSize: "12px",
+                  }}
+                  showLineNumbers
+                >
+                  {file.content}
+                </SyntaxHighlighter.Component>
+              ) : SyntaxHighlighter === null ? (
+                <pre className="p-4 text-xs bg-background">
+                  <code>{file.content}</code>
+                </pre>
+              ) : (
+                <div className="p-4 text-xs bg-background flex items-center justify-center">
+                  <div className="animate-pulse">
+                    Loading syntax highlighter...
+                  </div>
+                </div>
+              )
+            ) : (
+              <pre className="p-4 text-xs bg-background">
+                <code>{file.content}</code>
+              </pre>
+            )}
+          </div>
+        </div>
+      );
+    },
+    [
+      activeTab,
+      copiedIndex,
+      handleCopy,
+      mode,
+      needsIframe,
+      SyntaxHighlighter,
+      systemMode,
+    ]
+  );
+
   return (
     <Tabs
       value={activeTab}
@@ -222,70 +312,54 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
         value="code"
         className="h-full mt-0 border rounded-lg overflow-hidden"
       >
-        {item.files.map((file, index) => (
-          <div
-            key={file.path}
-            className={
-              needsIframe ? "aspect-video max-w-full min-h-[80vh]" : "h-[400px]"
-            }
-          >
-            <div className="flex items-center justify-between bg-muted px-3 py-2 text-sm">
-              <span className="font-mono">{file.path}</span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCopy(file.content, index)}
-                className="h-6 px-2"
-              >
-                {copiedIndex === index ? (
-                  <Check className="h-3 w-3" />
-                ) : (
-                  <Copy className="h-3 w-3" />
-                )}
-              </Button>
+        {item.files.length > 1 ? (
+          <>
+            <div className="flex border-b">
+              {item.files.map((file, index) => (
+                <button
+                  key={file.path}
+                  onClick={() => setActiveFileIndex(index)}
+                  className={`px-4 py-2 text-sm font-mono transition-colors relative ${
+                    activeFileIndex === index
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {file.path.split("/").pop()}
+                  {activeFileIndex === index && (
+                    <div className="absolute bottom-0 left-4 right-4 h-[1px] rounded-2xl bg-foreground" />
+                  )}
+                </button>
+              ))}
+              <div className="ml-auto flex items-center px-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    handleCopy(
+                      item.files[activeFileIndex].content,
+                      activeFileIndex
+                    )
+                  }
+                  className="h-6 px-2"
+                >
+                  {copiedIndex === activeFileIndex ? (
+                    <Check className="h-3 w-3" />
+                  ) : (
+                    <Copy className="h-3 w-3" />
+                  )}
+                </Button>
+              </div>
             </div>
-            <div className="h-[calc(100%-40px)] overflow-auto">
-              {activeTab === "code" ? (
-                SyntaxHighlighter ? (
-                  <SyntaxHighlighter.Component
-                    language={
-                      file.path.endsWith(".tsx") || file.path.endsWith(".ts")
-                        ? "tsx"
-                        : "jsx"
-                    }
-                    style={
-                      (systemMode || mode) === "dark"
-                        ? SyntaxHighlighter.darkStyle
-                        : SyntaxHighlighter.lightStyle
-                    }
-                    customStyle={{
-                      margin: 0,
-                      padding: "16px",
-                      fontSize: "12px",
-                    }}
-                    showLineNumbers
-                  >
-                    {file.content}
-                  </SyntaxHighlighter.Component>
-                ) : SyntaxHighlighter === null ? (
-                  <pre className="p-4 text-xs bg-background">
-                    <code>{file.content}</code>
-                  </pre>
-                ) : (
-                  <div className="p-4 text-xs bg-background flex items-center justify-center">
-                    <div className="animate-pulse">
-                      Loading syntax highlighter...
-                    </div>
-                  </div>
-                )
-              ) : (
-                <pre className="p-4 text-xs bg-background">
-                  <code>{file.content}</code>
-                </pre>
-              )}
-            </div>
-          </div>
-        ))}
+            {renderFileContent(
+              item.files[activeFileIndex],
+              activeFileIndex,
+              false
+            )}
+          </>
+        ) : (
+          renderFileContent(item.files[0], 0, true)
+        )}
       </TabsContent>
     </Tabs>
   );
