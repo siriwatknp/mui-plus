@@ -473,6 +473,37 @@ function processRegistryFile(
     }
   }
 
+  // Add index.ts file that exports all files (if not already exists)
+  if (files.length > 0) {
+    // Get the directory paths from the first file
+    const firstFileTarget = files[0].target;
+    const targetDir = path.dirname(firstFileTarget);
+    const indexTarget = `${targetDir}/index.ts`;
+
+    // Check if index.ts already exists in files
+    const indexExists = files.some((file) => file.target === indexTarget);
+
+    if (!indexExists) {
+      // Create export statements for each file
+      const exportStatements = files
+        .map((file) => {
+          const fileName = path.basename(
+            file.target,
+            path.extname(file.target),
+          );
+          return `export * from './${fileName}';`;
+        })
+        .join("\n");
+
+      // Add index.ts to files array (without path field)
+      files.push({
+        target: indexTarget,
+        content: exportStatements + "\n",
+        type: "registry:item",
+      } as RegistryFile);
+    }
+  }
+
   // Check if meta.json exists and load it
   let existingMeta: Partial<RegistryMeta> | null = null;
   let metaExists = false;
