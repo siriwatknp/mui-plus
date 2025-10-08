@@ -3,5 +3,7 @@
   "type": "registry:item",
   "title": "Ai Open In Chat",
   "description": "A ai-open-in-chat item.",
-  "meta": {}
+  "meta": {
+    "category": "ai"
+  }
 }

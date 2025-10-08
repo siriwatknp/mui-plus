@@ -150,7 +150,8 @@ function findAllRelatedFiles(itemPath: string, itemName: string): FileInfo[] {
           scanDirectory(fullPath);
         } else if (
           item.isFile() &&
-          (item.name.endsWith(".ts") || item.name.endsWith(".tsx"))
+          (item.name.endsWith(".ts") || item.name.endsWith(".tsx")) &&
+          !item.name.endsWith(".demo.tsx")
         ) {
           const relativePath = path.relative(registryPath, fullPath);
           allFiles.push({

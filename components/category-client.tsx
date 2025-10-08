@@ -447,7 +447,9 @@ export default function CategoryClient({
               {/* Title and Description */}
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-lg">{item.title}</h3>
+                  <h3 className="font-semibold text-lg">
+                    {item.title.replace(/^Ai\s/, "AI ")}
+                  </h3>
                   <Link
                     href={`/preview/${item.name}`}
                     className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary"

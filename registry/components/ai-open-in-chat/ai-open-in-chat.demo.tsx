@@ -28,7 +28,7 @@ export default function AIOpenInChatDemo() {
           </Typography>
 
           <Typography variant="body2" sx={{ mb: 2, fontStyle: "italic" }}>
-            Query: "{query}"
+            Query: &quot;{query}&quot;
           </Typography>
         </Box>
 
