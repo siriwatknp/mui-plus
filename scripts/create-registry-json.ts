@@ -65,7 +65,7 @@ function getRegistryBaseUrl(): string {
   }
 
   // Fallback for local development
-  return "https://mui-plus.dev";
+  return "http://localhost:3000";
 }
 
 const program = new Command();
@@ -378,13 +378,21 @@ function extractRegistryDependencies(content: string): string[] {
     if (relativeMatch) {
       const relativePath = relativeMatch[2];
 
-      // Check if this points to a registry item
-      const registryMatch = relativePath.match(
-        /^(hooks|ui|components|blocks|themes)\/([^/]+)/,
-      );
-      if (registryMatch) {
-        const itemName = registryMatch[2];
-        registryDeps.add(`${baseUrl}/r/${itemName}.json`);
+      // Extract the first directory name from the relative path
+      const firstDir = relativePath.split("/")[0];
+
+      // Check if first directory is a type folder (hooks|ui|components|blocks|themes)
+      const typeRegex = /^(hooks|ui|components|blocks|themes)$/;
+      if (typeRegex.test(firstDir)) {
+        // If it's a type folder, extract the second part as item name
+        const parts = relativePath.split("/");
+        if (parts.length >= 2) {
+          const itemName = parts[1];
+          registryDeps.add(`${baseUrl}/r/${itemName}.json`);
+        }
+      } else {
+        // Otherwise, the first directory is the item name
+        registryDeps.add(`${baseUrl}/r/${firstDir}.json`);
       }
     }
 
@@ -476,8 +484,11 @@ function processRegistryFile(
   // Add index.ts file that exports all files (if not already exists)
   if (files.length > 0) {
     // Get the directory paths from the first file
+    const firstFilePath = files[0].path;
     const firstFileTarget = files[0].target;
+    const sourceDir = path.dirname(firstFilePath);
     const targetDir = path.dirname(firstFileTarget);
+    const indexPath = `${sourceDir}/index.ts`;
     const indexTarget = `${targetDir}/index.ts`;
 
     // Check if index.ts already exists in files
@@ -495,12 +506,13 @@ function processRegistryFile(
         })
         .join("\n");
 
-      // Add index.ts to files array (without path field)
+      // Add index.ts to files array
       files.push({
+        path: indexPath,
         target: indexTarget,
         content: exportStatements + "\n",
         type: "registry:item",
-      } as RegistryFile);
+      });
     }
   }
 
