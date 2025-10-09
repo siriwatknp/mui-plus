@@ -123,6 +123,14 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
   const panelRef = useRef<ImperativePanelHandle | null>(null);
   const { mode, systemMode } = useColorScheme();
 
+  // Memoize display files: prepend demo file and filter out index.ts
+  const displayFiles = React.useMemo(() => {
+    const allFiles = item.demoFile
+      ? [item.demoFile, ...item.files]
+      : item.files;
+    return allFiles.filter((file) => !file.path.endsWith("index.ts"));
+  }, [item.demoFile, item.files]);
+
   const handleCopy = React.useCallback(
     async (content: string, index: number) => {
       await navigator.clipboard.writeText(content);
@@ -312,10 +320,10 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
         value="code"
         className="h-full mt-0 border rounded-lg overflow-hidden"
       >
-        {item.files.length > 1 ? (
+        {displayFiles.length > 1 ? (
           <>
             <div className="flex border-b">
-              {item.files.map((file, index) => (
+              {displayFiles.map((file, index) => (
                 <button
                   key={file.path}
                   onClick={() => setActiveFileIndex(index)}
@@ -337,7 +345,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
                   size="sm"
                   onClick={() =>
                     handleCopy(
-                      item.files[activeFileIndex].content,
+                      displayFiles[activeFileIndex].content,
                       activeFileIndex
                     )
                   }
@@ -352,13 +360,13 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
               </div>
             </div>
             {renderFileContent(
-              item.files[activeFileIndex],
+              displayFiles[activeFileIndex],
               activeFileIndex,
               false
             )}
           </>
         ) : (
-          renderFileContent(item.files[0], 0, true)
+          renderFileContent(displayFiles[0], 0, true)
         )}
       </TabsContent>
     </Tabs>

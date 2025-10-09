@@ -29,7 +29,7 @@ The MUI Plus theme offers a refined, minimalist design system that moves beyond 
 
 ### Key Features
 
-- **Monochromatic palette** - Pure black/white primary colors for maximum contrast
+- **Monochromatic palette** - Pure black/white primary colors for maximum contrast (replace them with your brand colors)
 - **System colors** - Native OS colors for semantic states (success, error, warning, info)
 - **Subtle interactions** - Reduced opacity values for understated hover/focus states
 - **Native typography** - System font stacks for optimal performance
@@ -51,7 +51,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
-+ import { MuiPlusThemeProvider } from "@/mui-plus/theme";
++ import { ThemeProvider } from "@/mui-plus/theme";
 import { AppTheme } from "./theme";
 import "./globals.css";
 
@@ -71,7 +71,7 @@ export default function RootLayout({
             enableCssLayer: true,
           }}
         >
-+         <MuiPlusThemeProvider>{children}</MuiPlusThemeProvider>
++         <ThemeProvider>{children}</ThemeProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
@@ -91,65 +91,21 @@ Visit [mui-plus.dev](https://mui-plus.dev) to browse all available components wi
 Add components directly to your project:
 
 ```bash
-# Add a specific component
-npx shadcn@latest add https://mui-plus.dev/r/login-form.json
-
-# Add a block
-npx shadcn@latest add https://mui-plus.dev/r/dashboard-sidebar.json
+npx shadcn@latest add https://mui-plus.dev/r/ai-elements.json
 ```
 
 Components will be installed to `src/mui-plus/` directory by default.
 
 ## MCP Setup
 
-The Model Context Protocol (MCP) enables AI assistants to interact with your codebase and add components automatically.
-
-### Configuration
-
-First, install the Shadcn MCP server with your client.
-
-**Standard config** works in most of the tools:
+Follow [Shadcn MCP Setup](https://ui.shadcn.com/docs/registry/mcp) with the following registry configuration:
 
 ```json
 {
-  "mcpServers": {
-    "shadcn": {
-      "command": "npx",
-      "args": ["-y", "shadcn@canary", "registry:mcp"],
-      "env": {
-        "REGISTRY_URL": "https://mui-plus.dev/r/registry.json"
-      }
-    }
+  "registries": {
+    "@mui-plus": "https://mui-plus.dev/r/{name}.json"
   }
 }
-```
-
-Then, restart your AI client to load the configuration.
-
-### Usage Examples
-
-With MCP configured, you can use natural language commands:
-
-- "Add the payment overview card component"
-- "Install the dashboard sidebar block"
-- "Show me available authentication components"
-
-The AI assistant will handle the installation and setup automatically.
-
-## Project Structure
-
-```
-my-app/
-├── app/                    # Next.js app directory
-│   ├── layout.tsx         # Root layout with theme provider
-│   └── page.tsx           # Home page
-├── src/
-│   └── mui-plus/          # MUI Plus components (auto-generated)
-│       ├── blocks/        # Complex UI blocks
-│       ├── components/    # Reusable components
-│       └── theme/         # Theme configuration
-├── components.json        # shadcn CLI configuration
-└── package.json
 ```
 
 ## Next Steps

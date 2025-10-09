@@ -16,6 +16,12 @@ export interface RegistryItem {
     type: string;
     target?: string;
   }>;
+  demoFile?: {
+    path: string;
+    content: string;
+    type: string;
+    target?: string;
+  };
   meta: {
     screenshot?: string;
     category?: string;
@@ -72,10 +78,31 @@ function loadPublicRegistryData(name: string): Partial<RegistryItem> | null {
     const publicJsonPath = path.join(PUBLIC_R_DIR, `${name}.json`);
     if (fs.existsSync(publicJsonPath)) {
       const content = JSON.parse(fs.readFileSync(publicJsonPath, "utf-8"));
+
+      // Check for .demo.tsx file
+      let demoFile:
+        | { path: string; content: string; type: string; target?: string }
+        | undefined;
+      if (content.files && content.files.length > 0) {
+        const mainFilePath = content.files[0].path;
+        const demoPath = path.join(
+          REGISTRY_DIR,
+          mainFilePath.replace(".tsx", ".demo.tsx"),
+        );
+        if (fs.existsSync(demoPath)) {
+          demoFile = {
+            path: mainFilePath.replace(".tsx", ".demo.tsx"),
+            content: fs.readFileSync(demoPath, "utf-8"),
+            type: "registry:demo",
+          };
+        }
+      }
+
       return {
         dependencies: content.dependencies || [],
         registryDependencies: content.registryDependencies || [],
         files: content.files || [],
+        demoFile,
       };
     }
   } catch (error) {
@@ -121,6 +148,7 @@ export function getRegistryItems(): RegistryItem[] {
           dependencies: publicData?.dependencies || [],
           registryDependencies: publicData?.registryDependencies || [],
           files: publicData?.files || [],
+          demoFile: publicData?.demoFile,
           meta: metaContent.meta || {},
         };
 
@@ -175,6 +203,7 @@ export function getRegistryByName(name: string): RegistryItem | null {
       dependencies: publicData?.dependencies || [],
       registryDependencies: publicData?.registryDependencies || [],
       files: publicData?.files || [],
+      demoFile: publicData?.demoFile,
       meta: metaContent.meta || {},
     };
   } catch (error) {

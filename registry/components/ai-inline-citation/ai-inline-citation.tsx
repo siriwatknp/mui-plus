@@ -147,6 +147,7 @@ export const InlineCitationCardTrigger = ({
 
   return (
     <Chip
+      component="span"
       size="small"
       color="secondary"
       onMouseEnter={onMouseEnter}
