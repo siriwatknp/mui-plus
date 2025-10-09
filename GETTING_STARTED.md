@@ -86,9 +86,10 @@ You can modify them as you want.
 
 MUI Plus provides a growing collection of components and blocks that you can add to your project.
 
-Visit [mui-plus.dev](https://mui-plus.dev) to browse all available components with live previews.
+- [Primitives](/primitive) - Extended building blocks on top of MUI components
+- [AI Elements](/ai) - Components that integrate with AI models and tools
 
-Add components directly to your project:
+Add components directly to your project by clicking the "npx shadcn" button from the preview and pasting the command in your terminal.
 
 ```bash
 npx shadcn@latest add https://mui-plus.dev/r/ai-elements.json
