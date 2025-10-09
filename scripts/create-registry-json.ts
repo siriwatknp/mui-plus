@@ -361,6 +361,43 @@ function extractDependencies(content: string): string[] {
   return Array.from(dependencies);
 }
 
+/**
+ * Extract the name of a default export from file content
+ * Handles patterns like:
+ * - export default function FunctionName
+ * - export default class ClassName
+ * - export default const ConstName
+ * - export default ComponentName
+ */
+function extractDefaultExportName(content: string): string | null {
+  // Pattern 1: export default function/class with a name
+  const namedExportMatch = content.match(
+    /export\s+default\s+(?:function|class)\s+([A-Z][a-zA-Z0-9]*)/,
+  );
+  if (namedExportMatch) {
+    return namedExportMatch[1];
+  }
+
+  // Pattern 2: export default const ConstName
+  const constExportMatch = content.match(
+    /export\s+default\s+const\s+([A-Z][a-zA-Z0-9]*)/,
+  );
+  if (constExportMatch) {
+    return constExportMatch[1];
+  }
+
+  // Pattern 3: export default Identifier (not arrow function or object literal)
+  // Must start with uppercase to be a component/class name
+  const identifierMatch = content.match(
+    /export\s+default\s+([A-Z][a-zA-Z0-9]*)\s*;/,
+  );
+  if (identifierMatch) {
+    return identifierMatch[1];
+  }
+
+  return null;
+}
+
 function extractRegistryDependencies(
   content: string,
   currentFilePath: string,
@@ -562,21 +599,29 @@ function processRegistryFile(
 
     if (!indexExists) {
       // Create export statements for each file
-      const exportStatements = files
-        .map((file) => {
-          const fileName = path.basename(
-            file.target,
-            path.extname(file.target),
+      const exportStatements: string[] = [];
+
+      files.forEach((file) => {
+        const fileName = path.basename(file.target, path.extname(file.target));
+
+        // Add the wildcard export
+        exportStatements.push(`export * from './${fileName}';`);
+
+        // Check if file has a default export and extract the name
+        const defaultExportName = extractDefaultExportName(file.content);
+        if (defaultExportName) {
+          // Add named default export
+          exportStatements.push(
+            `export { default as ${defaultExportName} } from './${fileName}';`,
           );
-          return `export * from './${fileName}';`;
-        })
-        .join("\n");
+        }
+      });
 
       // Add index.ts to files array
       files.push({
         path: indexPath,
         target: indexTarget,
-        content: exportStatements + "\n",
+        content: exportStatements.join("\n") + "\n",
         type: "registry:item",
       });
     }
