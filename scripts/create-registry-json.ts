@@ -361,9 +361,14 @@ function extractDependencies(content: string): string[] {
   return Array.from(dependencies);
 }
 
-function extractRegistryDependencies(content: string): string[] {
+function extractRegistryDependencies(
+  content: string,
+  currentFilePath: string,
+  itemDir: string,
+): string[] {
   const registryDeps = new Set<string>();
   const baseUrl = getRegistryBaseUrl();
+  const registryPath = path.join(process.cwd(), "registry");
 
   // Match both relative imports and @/registry imports
   // Examples:
@@ -374,24 +379,56 @@ function extractRegistryDependencies(content: string): string[] {
 
   imports.forEach((imp) => {
     // Check for relative imports
-    const relativeMatch = imp.match(/from\s+["']((?:\.\.\/)+)([^"']+)["']/);
+    const relativeMatch = imp.match(/from\s+["'](\.\.?\/[^"']+)["']/);
     if (relativeMatch) {
-      const relativePath = relativeMatch[2];
+      const importPath = relativeMatch[1];
 
-      // Extract the first directory name from the relative path
-      const firstDir = relativePath.split("/")[0];
+      // Resolve the import path relative to the current file
+      const currentDir = path.dirname(currentFilePath);
+      let resolvedPath = path.resolve(currentDir, importPath);
 
-      // Check if first directory is a type folder (hooks|ui|components|blocks|themes)
-      const typeRegex = /^(hooks|ui|components|blocks|themes)$/;
-      if (typeRegex.test(firstDir)) {
-        // If it's a type folder, extract the second part as item name
-        const parts = relativePath.split("/");
-        if (parts.length >= 2) {
-          const itemName = parts[1];
-          registryDeps.add(`${baseUrl}/r/${itemName}.json`);
+      // Handle .ts/.tsx extensions - TypeScript allows importing without extension
+      if (
+        !resolvedPath.endsWith(".ts") &&
+        !resolvedPath.endsWith(".tsx") &&
+        !fs.existsSync(resolvedPath)
+      ) {
+        // Try adding extensions
+        if (fs.existsSync(resolvedPath + ".ts")) {
+          resolvedPath = resolvedPath + ".ts";
+        } else if (fs.existsSync(resolvedPath + ".tsx")) {
+          resolvedPath = resolvedPath + ".tsx";
         }
+      }
+
+      // Check if the resolved path is within the same item directory
+      // Need to use path.sep for proper path comparison
+      if (
+        resolvedPath.startsWith(itemDir + path.sep) ||
+        resolvedPath === itemDir
+      ) {
+        // This is an internal import within the same registry item
+        return;
+      }
+
+      // Check if the resolved path is within the registry
+      if (!resolvedPath.startsWith(registryPath)) {
+        // Not a registry import
+        return;
+      }
+
+      // Get the relative path from registry root
+      const relativeFromRegistry = path.relative(registryPath, resolvedPath);
+      const parts = relativeFromRegistry.split(path.sep);
+
+      // Extract the item name
+      const firstDir = parts[0];
+      const typeRegex = /^(hooks|ui|components|blocks|themes)$/;
+
+      if (typeRegex.test(firstDir) && parts.length >= 2) {
+        const itemName = parts[1];
+        registryDeps.add(`${baseUrl}/r/${itemName}.json`);
       } else {
-        // Otherwise, the first directory is the item name
         registryDeps.add(`${baseUrl}/r/${firstDir}.json`);
       }
     }
@@ -399,10 +436,35 @@ function extractRegistryDependencies(content: string): string[] {
     // Check for @/registry imports
     const aliasMatch = imp.match(/from\s+["']@\/registry\/([^"']+)["']/);
     if (aliasMatch) {
-      const registryPath = aliasMatch[1];
+      const registryPathStr = aliasMatch[1];
+
+      // Resolve the full path
+      let fullPath = path.join(
+        registryPath,
+        registryPathStr.replace(/\//g, path.sep),
+      );
+
+      // Handle .ts/.tsx extensions
+      if (
+        !fullPath.endsWith(".ts") &&
+        !fullPath.endsWith(".tsx") &&
+        !fs.existsSync(fullPath)
+      ) {
+        if (fs.existsSync(fullPath + ".ts")) {
+          fullPath = fullPath + ".ts";
+        } else if (fs.existsSync(fullPath + ".tsx")) {
+          fullPath = fullPath + ".tsx";
+        }
+      }
+
+      // Check if this is within the same item directory
+      if (fullPath.startsWith(itemDir + path.sep) || fullPath === itemDir) {
+        // Internal import, skip it
+        return;
+      }
 
       // Extract the item name from the registry path
-      const registryMatch = registryPath.match(
+      const registryMatch = registryPathStr.match(
         /^(hooks|ui|components|blocks|themes)\/([^/]+)/,
       );
       if (registryMatch) {
@@ -444,7 +506,11 @@ function processRegistryFile(
     try {
       const content = fs.readFileSync(fileData.path, "utf-8");
       const fileDependencies = extractDependencies(content);
-      const registryDependencies = extractRegistryDependencies(content);
+      const registryDependencies = extractRegistryDependencies(
+        content,
+        fileData.path,
+        itemDir,
+      );
 
       // Add to overall dependencies
       fileDependencies.forEach((dep) => allDependencies.add(dep));
