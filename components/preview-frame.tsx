@@ -85,9 +85,10 @@ export function PreviewFrame({
               Preview →
             </Link>
           )}
-          {showOpenInV0 && (
-            <OpenInV0Button name={name} className={isIframe ? "w-fit" : ""} />
-          )}
+          {showOpenInV0 &&
+            process.env.NEXT_PUBLIC_OPEN_V0_BUTTON === "true" && (
+              <OpenInV0Button name={name} className={isIframe ? "w-fit" : ""} />
+            )}
         </div>
       </div>
       {isIframe ? (
