@@ -51,13 +51,82 @@ import {
   ToolInput,
   ToolOutput,
 } from "../src/mui-plus/components/ai-tool/ai-tool";
+import {
+  Sources,
+  SourcesTrigger,
+  SourcesContent,
+  Source,
+} from "../src/mui-plus/components/ai-sources/ai-sources";
 
 const SUGGESTED_PROMPTS = [
   "What's the weather like in San Francisco?",
-  "What time is it right now?",
-  "Calculate the sum of 42 and 58",
   "Write a React component for a todo list",
 ];
+
+// Mock sources based on message content
+function getMockSources(messageText: string, hasTool: boolean) {
+  if (!messageText) return null;
+
+  const text = messageText.toLowerCase();
+
+  // Show sources for weather-related queries
+  if (text.includes("weather") || text.includes("temperature")) {
+    return [
+      {
+        title: "OpenWeather API Documentation",
+        href: "https://openweathermap.org/api",
+      },
+      {
+        title: "Weather.gov Climate Data",
+        href: "https://www.weather.gov/",
+      },
+    ];
+  }
+
+  // Show sources for time-related queries
+  if (text.includes("time") || text.includes("date")) {
+    return [
+      {
+        title: "Time and Date API",
+        href: "https://www.timeapi.io/",
+      },
+    ];
+  }
+
+  // Show sources for code-related queries
+  if (
+    text.includes("react") ||
+    text.includes("component") ||
+    text.includes("function")
+  ) {
+    return [
+      {
+        title: "React Documentation",
+        href: "https://react.dev/learn",
+      },
+      {
+        title: "MDN Web Docs",
+        href: "https://developer.mozilla.org",
+      },
+      {
+        title: "TypeScript Handbook",
+        href: "https://www.typescriptlang.org/docs/",
+      },
+    ];
+  }
+
+  // Show sources for math calculations
+  if (text.includes("sum") || text.includes("calculate") || hasTool) {
+    return [
+      {
+        title: "MDN Math Reference",
+        href: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math",
+      },
+    ];
+  }
+
+  return null;
+}
 
 function AttachButton({ disabled }: { disabled?: boolean }) {
   const attachments = usePromptInputAttachments();
@@ -112,7 +181,7 @@ export default function ChatPage() {
 
   const handleSubmit = (
     message: PromptInputMessage,
-    event: React.FormEvent,
+    event: React.FormEvent
   ) => {
     event.preventDefault();
     if (message.text?.trim() || message.files?.length) {
@@ -188,6 +257,17 @@ export default function ChatPage() {
                     .map((part) => part.text)
                     .join("\n");
 
+                  // Check if message has tool usage
+                  const hasTool = message.parts?.some((part) =>
+                    part.type.startsWith("tool-")
+                  );
+
+                  // Get mock sources based on message content
+                  const mockSources =
+                    message.role === "assistant"
+                      ? getMockSources(messageText || "", hasTool || false)
+                      : null;
+
                   return (
                     <Message key={message.id} from={message.role}>
                       <MessageAvatar
@@ -261,6 +341,20 @@ export default function ChatPage() {
                               <RefreshCwIcon size={16} />
                             </Action>
                           </Actions>
+                        )}
+                        {mockSources && mockSources.length > 0 && (
+                          <Sources>
+                            <SourcesTrigger count={mockSources.length} />
+                            <SourcesContent>
+                              {mockSources.map((source, idx) => (
+                                <Source
+                                  key={idx}
+                                  href={source.href}
+                                  title={source.title}
+                                />
+                              ))}
+                            </SourcesContent>
+                          </Sources>
                         )}
                       </MessageContent>
                     </Message>
