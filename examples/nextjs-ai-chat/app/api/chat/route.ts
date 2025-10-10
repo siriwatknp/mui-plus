@@ -1,5 +1,6 @@
 import { ollama } from "ollama-ai-provider-v2";
-import { convertToModelMessages, streamText } from "ai";
+import { convertToModelMessages, streamText, stepCountIs } from "ai";
+import { z } from "zod";
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +13,36 @@ export async function POST(req: Request) {
       model: ollama("llama3.2"),
       messages: modelMessages,
       temperature: 0.7,
+      stopWhen: stepCountIs(5),
+      tools: {
+        getWeather: {
+          description: "Get the current weather for a city",
+          inputSchema: z.object({
+            city: z.string().describe("The city to get weather for"),
+            unit: z
+              .enum(["celsius", "fahrenheit"])
+              .describe("The temperature unit")
+              .default("celsius"),
+          }),
+          execute: async ({
+            city,
+            unit,
+          }: {
+            city: string;
+            unit: "celsius" | "fahrenheit";
+          }) => {
+            // Simulate API call with mock data
+            const temp = unit === "celsius" ? 22 : 72;
+            return {
+              city,
+              temperature: temp,
+              unit,
+              condition: "Sunny",
+              humidity: 65,
+            };
+          },
+        },
+      },
     });
 
     return result.toUIMessageStreamResponse();
@@ -24,7 +55,7 @@ export async function POST(req: Request) {
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      },
+      }
     );
   }
 }

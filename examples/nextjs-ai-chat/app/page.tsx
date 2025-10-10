@@ -44,12 +44,19 @@ import {
   Actions,
   Action,
 } from "../src/mui-plus/components/ai-actions/ai-actions";
+import {
+  Tool,
+  ToolHeader,
+  ToolContent,
+  ToolInput,
+  ToolOutput,
+} from "../src/mui-plus/components/ai-tool/ai-tool";
 
 const SUGGESTED_PROMPTS = [
-  "Explain quantum computing in simple terms",
+  "What's the weather like in San Francisco?",
+  "What time is it right now?",
+  "Calculate the sum of 42 and 58",
   "Write a React component for a todo list",
-  "What are the best practices for API design?",
-  "Create a Python function to sort a list",
 ];
 
 function AttachButton({ disabled }: { disabled?: boolean }) {
@@ -105,7 +112,7 @@ export default function ChatPage() {
 
   const handleSubmit = (
     message: PromptInputMessage,
-    event: React.FormEvent
+    event: React.FormEvent,
   ) => {
     event.preventDefault();
     if (message.text?.trim() || message.files?.length) {
@@ -212,6 +219,32 @@ export default function ChatPage() {
                                   mt: index > 0 ? 1 : 0,
                                 }}
                               />
+                            );
+                          }
+                          if (
+                            part.type.startsWith("tool-") &&
+                            "state" in part &&
+                            "input" in part
+                          ) {
+                            return (
+                              <Box key={index} sx={{ mt: index > 0 ? 1 : 0 }}>
+                                <Tool>
+                                  <ToolHeader
+                                    type={part.type as `tool-${string}`}
+                                    state={part.state}
+                                  />
+                                  <ToolContent>
+                                    <ToolInput input={part.input} />
+                                    {"output" in part &&
+                                      (part.output || part.errorText) && (
+                                        <ToolOutput
+                                          output={part.output}
+                                          errorText={part.errorText}
+                                        />
+                                      )}
+                                  </ToolContent>
+                                </Tool>
+                              </Box>
                             );
                           }
                           return null;
