@@ -4,7 +4,13 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { BotIcon, SquareIcon, CopyIcon, RefreshCwIcon } from "lucide-react";
+import {
+  BotIcon,
+  SquareIcon,
+  CopyIcon,
+  RefreshCwIcon,
+  ImageIcon,
+} from "lucide-react";
 import { useState } from "react";
 import {
   Conversation,
@@ -24,6 +30,10 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputSubmit,
+  PromptInputAttachments,
+  PromptInputAttachment,
+  PromptInputButton,
+  usePromptInputAttachments,
   type PromptInputMessage,
 } from "../src/mui-plus/components/ai-prompt-input/ai-prompt-input";
 import {
@@ -41,6 +51,41 @@ const SUGGESTED_PROMPTS = [
   "What are the best practices for API design?",
   "Create a Python function to sort a list",
 ];
+
+function AttachButton({ disabled }: { disabled?: boolean }) {
+  const attachments = usePromptInputAttachments();
+
+  return (
+    <PromptInputButton
+      onClick={() => attachments.openFileDialog()}
+      disabled={disabled}
+      aria-label="Attach image"
+    >
+      <ImageIcon size={16} />
+    </PromptInputButton>
+  );
+}
+
+function SubmitButton({
+  status,
+  disabled,
+  inputValue,
+}: {
+  status: string;
+  disabled: boolean;
+  inputValue: string;
+}) {
+  const attachments = usePromptInputAttachments();
+  const hasContent =
+    inputValue.trim().length > 0 || attachments.files.length > 0;
+
+  return (
+    <PromptInputSubmit
+      status={status as "ready" | "submitted" | "streaming" | "error"}
+      disabled={disabled || !hasContent}
+    />
+  );
+}
 
 export default function ChatPage() {
   const { messages, sendMessage, status, error, regenerate, stop } = useChat({
@@ -63,8 +108,11 @@ export default function ChatPage() {
     event: React.FormEvent
   ) => {
     event.preventDefault();
-    if (message.text?.trim()) {
-      sendMessage({ text: message.text });
+    if (message.text?.trim() || message.files?.length) {
+      sendMessage({
+        text: message.text || "",
+        files: message.files,
+      });
       setInputValue("");
     }
   };
@@ -139,12 +187,31 @@ export default function ChatPage() {
                         name={message.role === "user" ? "User" : "AI Assistant"}
                       />
                       <MessageContent variant="flat">
-                        {message.parts?.map((part: any, index: number) => {
+                        {message.parts?.map((part, index: number) => {
                           if (part.type === "text") {
                             return message.role === "assistant" ? (
                               <Response key={index}>{part.text}</Response>
                             ) : (
                               <Box key={index}>{part.text}</Box>
+                            );
+                          }
+                          if (
+                            part.type === "file" &&
+                            part.mediaType?.startsWith("image/")
+                          ) {
+                            return (
+                              <Box
+                                key={index}
+                                component="img"
+                                src={part.url}
+                                alt={part.filename || "attachment"}
+                                sx={{
+                                  maxWidth: "100%",
+                                  height: "auto",
+                                  borderRadius: 1,
+                                  mt: index > 0 ? 1 : 0,
+                                }}
+                              />
                             );
                           }
                           return null;
@@ -250,7 +317,15 @@ export default function ChatPage() {
           )}
 
           {/* Input Form */}
-          <PromptInput onSubmit={handleSubmit}>
+          <PromptInput
+            onSubmit={handleSubmit}
+            accept="image/*"
+            multiple
+            maxFiles={5}
+          >
+            <PromptInputAttachments>
+              {(attachment) => <PromptInputAttachment data={attachment} />}
+            </PromptInputAttachments>
             <PromptInputBody>
               <PromptInputTextarea
                 placeholder="Ask me anything..."
@@ -260,7 +335,9 @@ export default function ChatPage() {
               />
             </PromptInputBody>
             <PromptInputToolbar>
-              <Box /> {/* Empty box for spacing */}
+              <AttachButton
+                disabled={status === "submitted" || error != null}
+              />
               {status === "streaming" ? (
                 <Button
                   variant="contained"
@@ -277,13 +354,10 @@ export default function ChatPage() {
                   <SquareIcon size={16} />
                 </Button>
               ) : (
-                <PromptInputSubmit
+                <SubmitButton
                   status={status}
-                  disabled={
-                    status === "submitted" ||
-                    !inputValue.trim() ||
-                    error != null
-                  }
+                  disabled={status === "submitted" || error != null}
+                  inputValue={inputValue}
                 />
               )}
             </PromptInputToolbar>
