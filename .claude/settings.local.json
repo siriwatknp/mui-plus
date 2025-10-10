@@ -45,14 +45,16 @@
       "Bash(done)",
       "Bash(do echo \"=== Checking $file ===\")",
       "Bash(grep:*)",
-      "Bash(do echo \"=== Checking $file for ai imports ===\")"
+      "Bash(do echo \"=== Checking $file for ai imports ===\")",
+      "Bash(npx tsx:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": ["playwright"],
   "hooks": {
-    "PostToolUse": [
+    "Stop": [
       {
         "matcher": "Edit|MultiEdit|Write",
         "hooks": [
