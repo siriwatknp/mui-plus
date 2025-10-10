@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
-import { ThemeProvider } from "@/mui-plus/theme";
+// TODO: Uncomment after `npx shadcn-ui@latest add https://mui-plus.dev/r/mui-plus.json`
+// import { ThemeProvider } from "@/mui-plus/theme";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,7 +37,8 @@ export default function RootLayout({
             enableCssLayer: true,
           }}
         >
-          <ThemeProvider>{children}</ThemeProvider>
+          {/* <ThemeProvider>{children}</ThemeProvider> */}
+          <>{children}</>
         </AppRouterCacheProvider>
       </body>
     </html>
