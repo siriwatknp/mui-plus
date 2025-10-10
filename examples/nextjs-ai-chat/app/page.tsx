@@ -4,7 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { BotIcon, SquareIcon } from "lucide-react";
+import { BotIcon, SquareIcon, CopyIcon, RefreshCwIcon } from "lucide-react";
 import { useState } from "react";
 import {
   Conversation,
@@ -30,6 +30,10 @@ import {
   Suggestions,
   Suggestion,
 } from "../src/mui-plus/components/ai-suggestion/ai-suggestion";
+import {
+  Actions,
+  Action,
+} from "../src/mui-plus/components/ai-actions/ai-actions";
 
 const SUGGESTED_PROMPTS = [
   "Explain quantum computing in simple terms",
@@ -67,6 +71,14 @@ export default function ChatPage() {
 
   const handleRetry = () => {
     regenerate();
+  };
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+    }
   };
 
   const showSuggestions = messages.length === 0 && status === "ready";
@@ -114,25 +126,46 @@ export default function ChatPage() {
               </Box>
             ) : (
               <Box sx={{ display: "flex", flexDirection: "column", gap: 0 }}>
-                {messages.map((message: any) => (
-                  <Message key={message.id} from={message.role}>
-                    <MessageAvatar
-                      name={message.role === "user" ? "User" : "AI Assistant"}
-                    />
-                    <MessageContent variant="flat">
-                      {message.parts?.map((part: any, index: number) => {
-                        if (part.type === "text") {
-                          return message.role === "assistant" ? (
-                            <Response key={index}>{part.text}</Response>
-                          ) : (
-                            <Box key={index}>{part.text}</Box>
-                          );
-                        }
-                        return null;
-                      })}
-                    </MessageContent>
-                  </Message>
-                ))}
+                {messages.map((message) => {
+                  // Get all text parts combined for copying
+                  const messageText = message.parts
+                    ?.filter((part) => part.type === "text")
+                    .map((part) => part.text)
+                    .join("\n");
+
+                  return (
+                    <Message key={message.id} from={message.role}>
+                      <MessageAvatar
+                        name={message.role === "user" ? "User" : "AI Assistant"}
+                      />
+                      <MessageContent variant="flat">
+                        {message.parts?.map((part: any, index: number) => {
+                          if (part.type === "text") {
+                            return message.role === "assistant" ? (
+                              <Response key={index}>{part.text}</Response>
+                            ) : (
+                              <Box key={index}>{part.text}</Box>
+                            );
+                          }
+                          return null;
+                        })}
+                        {message.role === "assistant" && messageText && (
+                          <Actions>
+                            <Action
+                              tooltip="Copy"
+                              onClick={() => handleCopy(messageText)}
+                            >
+                              <CopyIcon size={16} />
+                            </Action>
+                            <Action tooltip="Regenerate" onClick={handleRetry}>
+                              <RefreshCwIcon size={16} />
+                            </Action>
+                          </Actions>
+                        )}
+                      </MessageContent>
+                    </Message>
+                  );
+                })}
 
                 {/* Loading indicator - only show before streaming starts */}
                 {status === "submitted" && (
