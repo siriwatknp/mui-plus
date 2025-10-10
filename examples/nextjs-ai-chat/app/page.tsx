@@ -57,11 +57,70 @@ import {
   SourcesContent,
   Source,
 } from "../src/mui-plus/components/ai-sources/ai-sources";
+import {
+  Reasoning,
+  ReasoningTrigger,
+  ReasoningContent,
+} from "../src/mui-plus/components/ai-reasoning/ai-reasoning";
 
 const SUGGESTED_PROMPTS = [
   "What's the weather like in San Francisco?",
   "Write a React component for a todo list",
 ];
+
+// Mock reasoning based on message content
+function getMockReasoning(messageText: string, hasTool: boolean) {
+  if (!messageText) return null;
+
+  const text = messageText.toLowerCase();
+
+  // Show reasoning for weather queries
+  if (text.includes("weather") || text.includes("temperature")) {
+    return `Let me think about this weather query:
+
+1. The user is asking about weather information
+2. I'll need to use the getWeather tool to fetch current data
+3. I should provide temperature, conditions, and humidity
+4. The response should be clear and concise`;
+  }
+
+  // Show reasoning for time queries
+  if (text.includes("time") || text.includes("date")) {
+    return `Processing the time-related query:
+
+1. User wants current time/date information
+2. I'll call the getCurrentTime tool for accurate data
+3. The response should include time, date, and ISO timestamp
+4. Format should be user-friendly and readable`;
+  }
+
+  // Show reasoning for code queries
+  if (
+    text.includes("react") ||
+    text.includes("component") ||
+    text.includes("function")
+  ) {
+    return `Analyzing the coding request:
+
+1. User needs a code example or component
+2. I should follow best practices and modern patterns
+3. Code should be clear, maintainable, and well-structured
+4. I'll include proper TypeScript typing if applicable
+5. Comments should explain the key concepts`;
+  }
+
+  // Show reasoning for calculations
+  if (text.includes("sum") || text.includes("calculate") || hasTool) {
+    return `Approaching this calculation:
+
+1. Identifying the numbers to calculate
+2. Determining the mathematical operation needed
+3. Using the calculateSum tool for accuracy
+4. Verifying the result before presenting`;
+  }
+
+  return null;
+}
 
 // Mock sources based on message content
 function getMockSources(messageText: string, hasTool: boolean) {
@@ -181,7 +240,7 @@ export default function ChatPage() {
 
   const handleSubmit = (
     message: PromptInputMessage,
-    event: React.FormEvent
+    event: React.FormEvent,
   ) => {
     event.preventDefault();
     if (message.text?.trim() || message.files?.length) {
@@ -259,13 +318,18 @@ export default function ChatPage() {
 
                   // Check if message has tool usage
                   const hasTool = message.parts?.some((part) =>
-                    part.type.startsWith("tool-")
+                    part.type.startsWith("tool-"),
                   );
 
-                  // Get mock sources based on message content
+                  // Get mock sources and reasoning based on message content
                   const mockSources =
                     message.role === "assistant"
                       ? getMockSources(messageText || "", hasTool || false)
+                      : null;
+
+                  const mockReasoning =
+                    message.role === "assistant"
+                      ? getMockReasoning(messageText || "", hasTool || false)
                       : null;
 
                   return (
@@ -274,6 +338,12 @@ export default function ChatPage() {
                         name={message.role === "user" ? "User" : "AI Assistant"}
                       />
                       <MessageContent variant="flat">
+                        {mockReasoning && (
+                          <Reasoning isStreaming={status === "streaming"}>
+                            <ReasoningTrigger />
+                            <ReasoningContent>{mockReasoning}</ReasoningContent>
+                          </Reasoning>
+                        )}
                         {message.parts?.map((part, index: number) => {
                           if (part.type === "text") {
                             return message.role === "assistant" ? (
