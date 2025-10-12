@@ -47,12 +47,15 @@
       "Bash(grep:*)",
       "Bash(do echo \"=== Checking $file for ai imports ===\")",
       "Bash(npx tsx:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(pnpm test:*)"
     ],
     "deny": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["playwright"],
+  "enabledMcpjsonServers": [
+    "playwright"
+  ],
   "hooks": {
     "Stop": [
       {
