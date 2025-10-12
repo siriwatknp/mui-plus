@@ -135,7 +135,7 @@ describe("processRegistryFile", () => {
     vi.restoreAllMocks();
   });
 
-  it("should generate complete registry JSON structure", () => {
+  it("should generate complete registry JSON structure", async () => {
     vol.fromJSON({
       "/project/registry/components/button/button.tsx": `
         import { Button as MuiButton } from '@mui/material';
@@ -143,7 +143,7 @@ describe("processRegistryFile", () => {
       `,
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/components/button/button.tsx",
       relativePath: "components/button/button.tsx",
       name: "button",
@@ -160,12 +160,12 @@ describe("processRegistryFile", () => {
     });
   });
 
-  it("should create meta.json file when it does not exist", () => {
+  it("should create meta.json file when it does not exist", async () => {
     vol.fromJSON({
       "/project/registry/components/card/card.tsx": `export default function Card() {}`,
     });
 
-    processRegistryFile(
+    await processRegistryFile(
       {
         path: "/project/registry/components/card/card.tsx",
         relativePath: "components/card/card.tsx",
@@ -189,7 +189,7 @@ describe("processRegistryFile", () => {
     expect(meta.title).toBe("Custom Card");
   });
 
-  it("should use existing meta.json without CLI overrides", () => {
+  it("should use existing meta.json without CLI overrides", async () => {
     vol.fromJSON({
       "/project/registry/components/alert/alert.tsx": `export default function Alert() {}`,
       "/project/registry/components/alert/alert.meta.json": JSON.stringify({
@@ -201,7 +201,7 @@ describe("processRegistryFile", () => {
       }),
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/components/alert/alert.tsx",
       relativePath: "components/alert/alert.tsx",
       name: "alert",
@@ -211,7 +211,7 @@ describe("processRegistryFile", () => {
     expect(result.metadata.description).toBe("Original description");
   });
 
-  it("should override meta.json fields when CLI args provided", () => {
+  it("should override meta.json fields when CLI args provided", async () => {
     vol.fromJSON({
       "/project/registry/components/chip/chip.tsx": `export default function Chip() {}`,
       "/project/registry/components/chip/chip.meta.json": JSON.stringify({
@@ -221,7 +221,7 @@ describe("processRegistryFile", () => {
       }),
     });
 
-    const result = processRegistryFile(
+    const result = await processRegistryFile(
       {
         path: "/project/registry/components/chip/chip.tsx",
         relativePath: "components/chip/chip.tsx",
@@ -239,13 +239,13 @@ describe("processRegistryFile", () => {
     expect(result.metadata.meta.tags).toEqual(["badge", "tag"]);
   });
 
-  it("should generate index.ts with wildcard and named default exports", () => {
+  it("should generate index.ts with wildcard and named default exports", async () => {
     vol.fromJSON({
       "/project/registry/components/form/form.tsx": `export default function Form() {}`,
       "/project/registry/components/form/form-input.tsx": `export default function FormInput() {}`,
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/components/form/form.tsx",
       relativePath: "components/form/form.tsx",
       name: "form",
@@ -262,12 +262,12 @@ describe("processRegistryFile", () => {
     );
   });
 
-  it("should not generate index.ts if it already exists", () => {
+  it("should not generate index.ts if it already exists", async () => {
     vol.fromJSON({
       "/project/registry/hooks/use-state/index.ts": `export default function useState() {}`,
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/hooks/use-state/index.ts",
       relativePath: "hooks/use-state/index.ts",
       name: "use-state",
@@ -280,12 +280,12 @@ describe("processRegistryFile", () => {
     expect(indexFiles).toHaveLength(1); // Only the original
   });
 
-  it("should map themes/ to src/mui-plus/theme/ in target paths", () => {
+  it("should map themes/ to src/mui-plus/theme/ in target paths", async () => {
     vol.fromJSON({
       "/project/registry/themes/mui-plus/components/alert.ts": `export const alert = {}`,
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/themes/mui-plus/components/alert.ts",
       relativePath: "themes/mui-plus/components/alert.ts",
       name: "mui-plus",
@@ -296,12 +296,12 @@ describe("processRegistryFile", () => {
     );
   });
 
-  it("should prepend src/mui-plus/ to non-theme paths", () => {
+  it("should prepend src/mui-plus/ to non-theme paths", async () => {
     vol.fromJSON({
       "/project/registry/components/button/button.tsx": `export default function Button() {}`,
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/components/button/button.tsx",
       relativePath: "components/button/button.tsx",
       name: "button",
@@ -312,12 +312,12 @@ describe("processRegistryFile", () => {
     );
   });
 
-  it("should create v0.json with registry:block type", () => {
+  it("should create v0.json with registry:block type", async () => {
     vol.fromJSON({
       "/project/registry/blocks/header/header.tsx": `export default function Header() {}`,
     });
 
-    processRegistryFile({
+    await processRegistryFile({
       path: "/project/registry/blocks/header/header.tsx",
       relativePath: "blocks/header/header.tsx",
       name: "header",
@@ -331,7 +331,7 @@ describe("processRegistryFile", () => {
     expect(v0Json.files[0].type).toBe("registry:block");
   });
 
-  it("should transform registryDependencies URLs to v0.json format", () => {
+  it("should transform registryDependencies URLs to v0.json format", async () => {
     vol.fromJSON({
       "/project/registry/components/form/form.tsx": `
         import { Button } from '@/registry/ui/button';
@@ -340,7 +340,7 @@ describe("processRegistryFile", () => {
       "/project/registry/ui/button/button.tsx": `export default function Button() {}`,
     });
 
-    processRegistryFile({
+    await processRegistryFile({
       path: "/project/registry/components/form/form.tsx",
       relativePath: "components/form/form.tsx",
       name: "form",
@@ -353,7 +353,33 @@ describe("processRegistryFile", () => {
     expect(v0Json.registryDependencies[0]).toContain(".v0.json");
   });
 
-  it("should merge dependencies from meta.json with detected ones", () => {
+  it("should transform registryDependencies URLs to .js.json format", async () => {
+    vol.fromJSON({
+      "/project/registry/components/form/form.tsx": `
+        import { Button } from '@/registry/ui/button';
+        export default function Form() {}
+      `,
+      "/project/registry/ui/button/button.tsx": `export default function Button() {}`,
+    });
+
+    await processRegistryFile({
+      path: "/project/registry/components/form/form.tsx",
+      relativePath: "components/form/form.tsx",
+      name: "form",
+    });
+
+    const jsJson = JSON.parse(
+      vol.readFileSync("/project/public/r/form.js.json", "utf-8") as string,
+    );
+
+    expect(jsJson.registryDependencies).toHaveLength(1);
+    expect(jsJson.registryDependencies[0]).toContain(".js.json");
+    expect(jsJson.registryDependencies[0]).toBe(
+      "http://localhost:3000/r/button.js.json",
+    );
+  });
+
+  it("should merge dependencies from meta.json with detected ones", async () => {
     vol.fromJSON({
       "/project/registry/components/custom/custom.tsx": `
         import { Box } from '@mui/material';
@@ -364,7 +390,7 @@ describe("processRegistryFile", () => {
       }),
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/components/custom/custom.tsx",
       relativePath: "components/custom/custom.tsx",
       name: "custom",
@@ -374,13 +400,13 @@ describe("processRegistryFile", () => {
     expect(result.registryJson.dependencies).toContain("@mui/material");
   });
 
-  it("should include screenshot path in meta when file exists", () => {
+  it("should include screenshot path in meta when file exists", async () => {
     vol.fromJSON({
       "/project/registry/components/dialog/dialog.tsx": `export default function Dialog() {}`,
       "/project/public/screenshots/dialog.png": "",
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/components/dialog/dialog.tsx",
       relativePath: "components/dialog/dialog.tsx",
       name: "dialog",

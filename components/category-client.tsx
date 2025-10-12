@@ -6,7 +6,8 @@ import { Suspense, useRef, useState } from "react";
 import { RegistryItem } from "@/lib/registry";
 import TagFilter from "@/components/tag-filter";
 import { OpenInV0Button } from "@/components/open-in-v0-button";
-import { ExternalLinkIcon, Copy, Check, Terminal } from "lucide-react";
+import { InstallCommandButton } from "@/components/install-command-button";
+import { ExternalLinkIcon, Copy, Check } from "lucide-react";
 import { useColorScheme } from "@mui/material/styles";
 import {
   ResizablePanelGroup,
@@ -140,12 +141,6 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
     [],
   );
 
-  const handleCopyCLI = async () => {
-    const cliCommand = `npx shadcn@latest add ${process.env.NEXT_PUBLIC_BASE_URL}/r/${item.name}.json`;
-    await navigator.clipboard.writeText(cliCommand);
-    setCopiedIndex(-2); // Use -2 for CLI button
-    setTimeout(() => setCopiedIndex(-1), 2000);
-  };
 
   const handleTabChange = async (value: string) => {
     setActiveTab(value);
@@ -292,19 +287,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
           <TabsTrigger value="code">Code</TabsTrigger>
         </TabsList>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopyCLI}
-            className="h-8 px-3 text-xs font-mono"
-          >
-            {copiedIndex === -2 ? (
-              <Check className="h-3 w-3 mr-1.5" />
-            ) : (
-              <Terminal className="h-3 w-3 mr-1.5" />
-            )}
-            npx shadcn
-          </Button>
+          <InstallCommandButton itemName={item.name} className="h-8" />
           {process.env.NEXT_PUBLIC_OPEN_V0_BUTTON === "true" && (
             <OpenInV0Button name={item.name} className="h-8" />
           )}
@@ -376,33 +359,12 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
 }
 
 function MetaOnlyItem({ item }: { item: RegistryItem }) {
-  const [copiedIndex, setCopiedIndex] = React.useState<number>(-1);
-
-  const handleCopyCLI = async () => {
-    const cliCommand = `npx shadcn@latest add ${process.env.NEXT_PUBLIC_BASE_URL}/r/${item.name}.json`;
-    await navigator.clipboard.writeText(cliCommand);
-    setCopiedIndex(-2);
-    setTimeout(() => setCopiedIndex(-1), 2000);
-  };
-
   return (
     <div className="bg-muted/50 rounded-lg p-6 text-center">
       <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
       <p className="text-sm text-muted-foreground mb-4">{item.description}</p>
       <div className="flex justify-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleCopyCLI}
-          className="h-8 px-3 text-xs font-mono"
-        >
-          {copiedIndex === -2 ? (
-            <Check className="h-3 w-3 mr-1.5" />
-          ) : (
-            <Terminal className="h-3 w-3 mr-1.5" />
-          )}
-          npx shadcn
-        </Button>
+        <InstallCommandButton itemName={item.name} className="h-8" />
         {process.env.NEXT_PUBLIC_OPEN_V0_BUTTON === "true" && (
           <OpenInV0Button name={item.name} className="h-8" />
         )}

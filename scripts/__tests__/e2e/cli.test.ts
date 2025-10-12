@@ -20,7 +20,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
     vi.restoreAllMocks();
   });
 
-  it("should generate registry files for a specific component", () => {
+  it("should generate registry files for a specific component", async () => {
     // Setup: Create a simple component
     vol.fromJSON({
       "/project/registry/components/test-button/test-button.tsx": `
@@ -31,7 +31,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
       `,
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/components/test-button/test-button.tsx",
       relativePath: "components/test-button/test-button.tsx",
       name: "test-button",
@@ -52,7 +52,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
     expect(vol.existsSync("/project/public/r/test-button.v0.json")).toBe(true);
   });
 
-  it("should generate registry with custom title and description", () => {
+  it("should generate registry with custom title and description", async () => {
     vol.fromJSON({
       "/project/registry/components/custom-card/custom-card.tsx": `
         export default function CustomCard() {
@@ -61,7 +61,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
       `,
     });
 
-    const result = processRegistryFile(
+    const result = await processRegistryFile(
       {
         path: "/project/registry/components/custom-card/custom-card.tsx",
         relativePath: "components/custom-card/custom-card.tsx",
@@ -90,7 +90,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
     expect(metaContent.meta.category).toBe("display");
   });
 
-  it("should generate files for multiple components", () => {
+  it("should generate files for multiple components", async () => {
     vol.fromJSON({
       "/project/registry/components/button/button.tsx": `
         export default function Button() {}
@@ -106,9 +106,9 @@ describe("CLI E2E Tests - Happy Paths", () => {
     const items = getAllRegistryItems();
 
     // Process all items
-    items.forEach((item) => {
-      processRegistryFile(item);
-    });
+    for (const item of items) {
+      await processRegistryFile(item);
+    }
 
     // Verify all files were created
     expect(vol.existsSync("/project/public/r/button.json")).toBe(true);
@@ -121,7 +121,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
     expect(vol.existsSync("/project/public/r/use-theme.v0.json")).toBe(true);
   });
 
-  it("should correctly handle component with registry dependencies", () => {
+  it("should correctly handle component with registry dependencies", async () => {
     vol.fromJSON({
       "/project/registry/components/form/form.tsx": `
         import { Button } from '@/registry/ui/button';
@@ -139,7 +139,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
       `,
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/components/form/form.tsx",
       relativePath: "components/form/form.tsx",
       name: "form",
@@ -155,7 +155,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
     );
   });
 
-  it("should generate index.ts with proper exports", () => {
+  it("should generate index.ts with proper exports", async () => {
     vol.fromJSON({
       "/project/registry/components/dialog/dialog.tsx": `
         export default function Dialog() {}
@@ -165,7 +165,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
       `,
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/components/dialog/dialog.tsx",
       relativePath: "components/dialog/dialog.tsx",
       name: "dialog",
@@ -187,14 +187,14 @@ describe("CLI E2E Tests - Happy Paths", () => {
     );
   });
 
-  it("should properly map theme files to correct target paths", () => {
+  it("should properly map theme files to correct target paths", async () => {
     vol.fromJSON({
       "/project/registry/themes/custom-theme/components/button.ts": `
         export const button = { /* config */ };
       `,
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/themes/custom-theme/components/button.ts",
       relativePath: "themes/custom-theme/components/button.ts",
       name: "custom-theme",
@@ -205,7 +205,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
     expect(buttonFile.target).toBe("src/mui-plus/theme/components/button.ts");
   });
 
-  it("should correctly merge dependencies from existing meta.json", () => {
+  it("should correctly merge dependencies from existing meta.json", async () => {
     vol.fromJSON({
       "/project/registry/components/advanced/advanced.tsx": `
         import { Box } from '@mui/material';
@@ -222,7 +222,7 @@ describe("CLI E2E Tests - Happy Paths", () => {
         }),
     });
 
-    const result = processRegistryFile({
+    const result = await processRegistryFile({
       path: "/project/registry/components/advanced/advanced.tsx",
       relativePath: "components/advanced/advanced.tsx",
       name: "advanced",

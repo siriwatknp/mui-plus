@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import * as esbuild from "esbuild";
 import type {
   FileInfo,
   RegistryFile,
@@ -133,13 +134,26 @@ export function extractRegistryDependencies(
   return Array.from(registryDeps);
 }
 
-export function processRegistryFile(
+async function transpileToJS(
+  code: string,
+  loader: "tsx" | "ts",
+): Promise<string> {
+  const result = await esbuild.transform(code, {
+    loader,
+    target: "es2020",
+    format: "esm",
+    jsx: "preserve",
+  });
+  return result.code;
+}
+
+export async function processRegistryFile(
   fileInfo: FileInfo,
   title?: string,
   description?: string,
   category?: string,
   tags?: string[],
-): { metadata: RegistryMeta; registryJson: RegistryJson } {
+): Promise<{ metadata: RegistryMeta; registryJson: RegistryJson }> {
   const { path: filePath, name } = fileInfo;
   const OUTPUT_PATH = path.join(process.cwd(), "public", "r", `${name}.json`);
 
@@ -448,10 +462,63 @@ export function processRegistryFile(
   // Write the v0.json file
   fs.writeFileSync(V0_OUTPUT_PATH, JSON.stringify(v0Json, null, 2));
 
+  // Generate .js.json file with transpiled code
+  const JS_OUTPUT_PATH = path.join(
+    process.cwd(),
+    "public",
+    "r",
+    `${name}.js.json`,
+  );
+  const jsJson = JSON.parse(JSON.stringify(registryJson)); // Deep clone
+
+  // Update registryDependencies for .js.json format
+  if (
+    jsJson.registryDependencies &&
+    Array.isArray(jsJson.registryDependencies)
+  ) {
+    jsJson.registryDependencies = jsJson.registryDependencies.map(
+      (dep: string) => {
+        // Check if the dependency matches any registry URL pattern
+        const registryMatch = dep.match(
+          /^(https?:\/\/[^\/]+)\/r\/([^\/]+)\.json$/,
+        );
+        if (registryMatch) {
+          const baseUrl = registryMatch[1];
+          const itemName = registryMatch[2];
+          // Replace with .js.json version, preserving the base URL
+          return `${baseUrl}/r/${itemName}.js.json`;
+        }
+        return dep;
+      },
+    );
+  }
+
+  // Transpile all files to JavaScript
+  for (const file of jsJson.files) {
+    const ext = path.extname(file.path);
+    if (ext === ".tsx" || ext === ".ts") {
+      const loader = ext === ".tsx" ? "tsx" : "ts";
+      try {
+        file.content = await transpileToJS(file.content, loader);
+        // Update file path to .js
+        file.path = file.path.replace(/\.tsx?$/, ".js");
+        file.target = file.target.replace(/\.tsx?$/, ".js");
+      } catch (error) {
+        console.warn(
+          `Warning: Could not transpile ${file.path}: ${(error as Error).message}`,
+        );
+      }
+    }
+  }
+
+  // Write the .js.json file
+  fs.writeFileSync(JS_OUTPUT_PATH, JSON.stringify(jsJson, null, 2));
+
   console.log(`✓ Generated registry files:`);
   console.log(`  Meta: ${path.relative(process.cwd(), META_PATH)}`);
   console.log(`  Public: ${path.relative(process.cwd(), OUTPUT_PATH)}`);
   console.log(`  v0: ${path.relative(process.cwd(), V0_OUTPUT_PATH)}`);
+  console.log(`  JS: ${path.relative(process.cwd(), JS_OUTPUT_PATH)}`);
   console.log(`  Item: ${metadata.title}`);
   console.log(`  Files: ${files.length} file(s) included`);
   console.log(`  Dependencies: ${dependencies.join(", ")}`);
@@ -459,13 +526,13 @@ export function processRegistryFile(
   return { metadata, registryJson };
 }
 
-export function generateRegistryForItem(
+export async function generateRegistryForItem(
   name: string,
   title?: string,
   description?: string,
   category?: string,
   tags?: string[],
-): void {
+): Promise<void> {
   const matches = findMatchingFiles(name);
 
   if (matches.length === 0) {
@@ -474,31 +541,31 @@ export function generateRegistryForItem(
   }
 
   if (matches.length === 1) {
-    processRegistryFile(matches[0], title, description, category, tags);
+    await processRegistryFile(matches[0], title, description, category, tags);
     return;
   }
 
   // Multiple matches - process all
   console.log(`Found ${matches.length} files matching '${name}':`);
 
-  matches.forEach((match, index) => {
+  for (const [index, match] of matches.entries()) {
     console.log(
       `\n[${index + 1}/${matches.length}] Processing: ${match.relativePath}`,
     );
-    processRegistryFile(match, title, description, category, tags);
-  });
+    await processRegistryFile(match, title, description, category, tags);
+  }
 }
 
-export function processAllRegistries(): void {
+export async function processAllRegistries(): Promise<void> {
   const allItems = getAllRegistryItems();
   console.log(`Found ${allItems.length} registry items:`);
 
-  allItems.forEach((itemInfo, index) => {
+  for (const [index, itemInfo] of allItems.entries()) {
     console.log(
       `\n[${index + 1}/${allItems.length}] Processing: ${itemInfo.name}`,
     );
-    processRegistryFile(itemInfo);
-  });
+    await processRegistryFile(itemInfo);
+  }
 
   console.log(`\n✓ Processed all ${allItems.length} registry items`);
 }

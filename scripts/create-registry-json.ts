@@ -17,16 +17,16 @@ program
   .option("-d, --description <desc>", "Component description")
   .option("-c, --category <category>", "Component category")
   .option("--tags <tags>", "Comma-separated tags")
-  .action((name: string | undefined, options) => {
+  .action(async (name: string | undefined, options) => {
     if (!name) {
       // If no name provided, generate all
-      processAllRegistries();
+      await processAllRegistries();
     } else {
       // Generate for specific component
       const tags = options.tags
         ? options.tags.split(",").map((t: string) => t.trim())
         : undefined;
-      generateRegistryForItem(
+      await generateRegistryForItem(
         name,
         options.title,
         options.description,
