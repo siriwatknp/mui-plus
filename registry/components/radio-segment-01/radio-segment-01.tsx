@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  Box,
   FormControlLabel,
   Radio,
   RadioGroup,

@@ -12,7 +12,7 @@ export function PreviewComponent({
   className = "",
 }: PreviewComponentProps) {
   return (
-    <div data-preview className={`h-full ${className}`}>
+    <div data-preview className={`h-full p-8 ${className}`}>
       {children}
     </div>
   );

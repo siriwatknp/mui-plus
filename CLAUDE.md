@@ -98,7 +98,7 @@ Before moving to the next step, you MUST do the following:
 ### Step 3: Post task
 
 - Kill the dev server and close the MCP playwright browser
-- At the root terminal, run `node scripts/create-registry-json.js <registry_name> -t [title] -d [description] -c [category]` with meaningful title and description.
+- At the root terminal, run `npx tsx scripts/create-registry-json <registry_name> -t [title] -d [description] -c [category]` with meaningful title and description.
   - category (strict): `primitive`, `ai`, `authentication`, `dashboard`
   <!-- - tags: `form`, `login`, `chart`, `card`, `table` (can be multiple) -->
   - optional: add `previewMode: "iframe"` to the `meta` field if the component is very big.
