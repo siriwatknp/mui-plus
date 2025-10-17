@@ -48,7 +48,7 @@ export default function CardAction01() {
           transform: "scale(1.023)",
         },
         "&:has(:focus-visible)": {
-          outline: `2px solid ${theme.palette.primary.main}`,
+          outline: `2px solid ${(theme.vars || theme).palette.primary.main}`,
           outlineOffset: 2,
         },
       })}

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "type": "registry:item",
+  "title": "Installment Card",
+  "description": "Card with icon, large typography, and action button for showcasing payment options",
+  "meta": {
+    "category": "primitive"
+  }
+}
