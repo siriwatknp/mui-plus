@@ -1,0 +1,9 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "type": "registry:item",
+  "title": "Card with Action Button",
+  "description": "A card component with full-bleed background image and floating action button positioned at the bottom-right corner",
+  "meta": {
+    "category": "primitive"
+  }
+}
