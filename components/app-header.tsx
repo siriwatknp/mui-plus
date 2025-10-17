@@ -25,24 +25,48 @@ export function AppHeader() {
               setMode(e.target.value as "system" | "light" | "dark")
             }
             size="small"
-            sx={{ visibility: mode ? "visible" : "hidden" }}
+            sx={{
+              visibility: mode ? "visible" : "hidden",
+              "& svg + span": { display: { xs: "none", sm: "inline-block" } },
+            }}
           >
             <MenuItem value="system">
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  height: "1lh",
+                }}
+              >
                 <Monitor size={16} />
-                System
+                <span>System</span>
               </Box>
             </MenuItem>
             <MenuItem value="light">
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  height: "1lh",
+                }}
+              >
                 <Sun size={16} />
-                Light
+                <span>Light</span>
               </Box>
             </MenuItem>
             <MenuItem value="dark">
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  height: "1lh",
+                }}
+              >
                 <Moon size={16} />
-                Dark
+                <span>Dark</span>
               </Box>
             </MenuItem>
           </Select>

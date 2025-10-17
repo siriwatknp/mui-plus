@@ -34,26 +34,34 @@ export default function TabsChip01() {
           textTransform: "none",
           color: "text.secondary",
           bgcolor: (theme.vars || theme).palette.grey[100],
-          "&:hover": {
-            bgcolor: (theme.vars || theme).palette.grey[200],
+          "@media (hover: hover)": {
+            "&:hover": {
+              bgcolor: (theme.vars || theme).palette.grey[200],
+            },
           },
           "&.Mui-selected": {
             color: "primary.contrastText",
             bgcolor: "primary.main",
-            "&:hover": {
-              bgcolor: "primary.dark",
+            "@media (hover: hover)": {
+              "&:hover": {
+                bgcolor: "primary.dark",
+              },
             },
           },
           ...theme.applyStyles("dark", {
             bgcolor: (theme.vars || theme).palette.grey[800],
-            "&:hover": {
-              bgcolor: (theme.vars || theme).palette.grey[700],
+            "@media (hover: hover)": {
+              "&:hover": {
+                bgcolor: (theme.vars || theme).palette.grey[700],
+              },
             },
             "&.Mui-selected": {
               color: "primary.contrastText",
               bgcolor: "primary.main",
-              "&:hover": {
-                bgcolor: "primary.dark",
+              "@media (hover: hover)": {
+                "&:hover": {
+                  bgcolor: "primary.dark",
+                },
               },
             },
           }),

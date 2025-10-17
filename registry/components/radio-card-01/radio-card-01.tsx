@@ -34,8 +34,10 @@ export default function RadioCard01() {
             transition: "border-color 0.2s",
             cursor: "pointer",
             position: "relative",
-            "&:hover": {
-              borderColor: "grey.400",
+            "@media (hover: hover)": {
+              "&:hover": {
+                borderColor: "grey.400",
+              },
             },
           },
           "& .MuiFormControlLabel-root:has(.Mui-checked)": {
@@ -61,8 +63,10 @@ export default function RadioCard01() {
           ...theme.applyStyles("dark", {
             "& .MuiFormControlLabel-root": {
               borderColor: "grey.700",
-              "&:hover": {
-                borderColor: "grey.600",
+              "@media (hover: hover)": {
+                "&:hover": {
+                  borderColor: "grey.600",
+                },
               },
             },
           }),

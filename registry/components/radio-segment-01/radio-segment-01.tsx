@@ -29,7 +29,10 @@ export default function RadioSegment01({
       onChange={onChange}
       sx={(theme) => ({
         display: "flex",
+        flexWrap: "nowrap",
         gap: 0,
+        width: "400px",
+        maxWidth: "100%",
         "& .MuiFormControlLabel-root": {
           m: 0,
           flex: 1,
@@ -72,6 +75,7 @@ export default function RadioSegment01({
             }}
           />
         }
+        slotProps={{ typography: { component: "div", sx: { width: "100%" } } }}
         label={
           <Stack
             spacing={0.5}
@@ -79,7 +83,7 @@ export default function RadioSegment01({
               py: 3,
               px: 4,
               textAlign: "center",
-              minWidth: 200,
+              width: "100%",
             }}
           >
             <Typography variant="h4">14-inch</Typography>
@@ -101,6 +105,7 @@ export default function RadioSegment01({
             }}
           />
         }
+        slotProps={{ typography: { component: "div", sx: { width: "100%" } } }}
         label={
           <Stack
             spacing={0.5}
@@ -108,7 +113,7 @@ export default function RadioSegment01({
               py: 3,
               px: 4,
               textAlign: "center",
-              minWidth: 200,
+              width: "100%",
             }}
           >
             <Typography variant="h4">16-inch</Typography>
