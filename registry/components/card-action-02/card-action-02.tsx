@@ -8,7 +8,33 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import Link from "@mui/material/Link";
 
-export default function CardAction02() {
+export interface CardAction02Props {
+  icon?: React.ReactNode;
+  title?: React.ReactNode;
+  description?: string;
+  href?: string;
+}
+
+export default function CardAction02({
+  icon = (
+    <Box
+      component="svg"
+      viewBox="0 0 24 24"
+      sx={{ width: 16, height: 16, fill: "currentColor" }}
+    >
+      <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+    </Box>
+  ),
+  title = (
+    <>
+      Pay over time,
+      <br />
+      interest-free.
+    </>
+  ),
+  description = "When you choose to check out at Apple with Apple Card Monthly Installments.",
+  href = "#",
+}: CardAction02Props) {
   return (
     <Card
       sx={(theme) => ({
@@ -48,20 +74,15 @@ export default function CardAction02() {
           border: "2px solid",
           borderColor: "grey.800",
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: "center",
+          justifyContent: "center",
           p: 1,
           ...theme.applyStyles("dark", {
             borderColor: "grey.300",
           }),
         })}
       >
-        <Box
-          component="svg"
-          viewBox="0 0 24 24"
-          sx={{ width: 16, height: 16, fill: "currentColor" }}
-        >
-          <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-        </Box>
+        {icon}
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
@@ -74,9 +95,7 @@ export default function CardAction02() {
             lineHeight: 1.1,
           }}
         >
-          Pay over time,
-          <br />
-          interest-free.
+          {title}
         </Typography>
         <Typography
           sx={{
@@ -86,12 +105,15 @@ export default function CardAction02() {
             lineHeight: 1.4,
           }}
         >
-          When you choose to check out at Apple with Apple Card Monthly
-          Installments.
+          {description}
         </Typography>
       </Box>
 
-      <Link sx={{ position: "absolute", inset: 0 }} href="#" underline="none">
+      <Link
+        sx={{ position: "absolute", inset: 0 }}
+        href={href}
+        underline="none"
+      >
         <Button
           component="span"
           variant="contained"
@@ -114,11 +136,13 @@ export default function CardAction02() {
               bgcolor: "grey.300",
               color: "grey.900",
             }),
-            "&:hover": {
-              bgcolor: "grey.700",
-              ...theme.applyStyles("dark", {
-                bgcolor: "grey.400",
-              }),
+            "@media (hover: hover)": {
+              "&:hover": {
+                bgcolor: "grey.700",
+                ...theme.applyStyles("dark", {
+                  bgcolor: "grey.400",
+                }),
+              },
             },
           })}
         >
