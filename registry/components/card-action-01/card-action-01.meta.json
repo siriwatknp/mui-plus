@@ -4,6 +4,7 @@
   "title": "Card with Action Button",
   "description": "A card component with full-bleed background image and floating action button positioned at the bottom-right corner",
   "meta": {
-    "category": "primitive"
+    "category": "primitive",
+    "previewClassName": "bg-white dark:bg-neutral-950"
   }
 }

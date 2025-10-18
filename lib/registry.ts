@@ -27,6 +27,7 @@ export interface RegistryItem {
     category?: string;
     tags?: string[];
     previewMode?: "normal" | "iframe";
+    previewClassName?: string;
   };
 }
 

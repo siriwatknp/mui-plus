@@ -100,7 +100,9 @@ const ComponentPreviewContent = React.memo(
     }
 
     return (
-      <div className="w-full h-full flex items-center justify-center p-4 overflow-hidden">
+      <div
+        className={`w-full h-full flex items-center justify-center p-4 overflow-hidden ${item.meta.previewClassName || ""}`}
+      >
         <DynamicComponent />
       </div>
     );
