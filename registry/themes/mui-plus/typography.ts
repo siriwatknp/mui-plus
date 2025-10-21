@@ -93,6 +93,7 @@ export const typography: ThemeOptions["typography"] = {
     lineHeight: "1.4285714286",
   },
   button: {
+    lineHeight: "20px",
     textTransform: "capitalize",
   },
 };
