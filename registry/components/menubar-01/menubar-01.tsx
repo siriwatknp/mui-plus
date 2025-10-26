@@ -164,6 +164,11 @@ export default function Menubar01() {
         >
           Edit
         </Menu.Trigger>
+        <Menu.Portal>
+          <Menu.Positioner>
+            <Menu.Popup></Menu.Popup>
+          </Menu.Positioner>
+        </Menu.Portal>
       </Menu.Root>
 
       <Menu.Root>
@@ -182,6 +187,11 @@ export default function Menubar01() {
         >
           View
         </Menu.Trigger>
+        <Menu.Portal>
+          <Menu.Positioner>
+            <Menu.Popup></Menu.Popup>
+          </Menu.Positioner>
+        </Menu.Portal>
       </Menu.Root>
 
       <Menu.Root>
