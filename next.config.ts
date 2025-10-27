@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   devIndicators: false,
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  turbopack: {
+    root: "./",
+  },
 };
 
 const withMDX = createMDX({
