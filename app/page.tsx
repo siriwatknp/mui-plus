@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Suspense } from "react";
+import Link from "@/components/next-link";
 import {
   Box,
   Typography,
@@ -10,7 +11,6 @@ import {
 } from "@mui/material";
 import { AppHeader } from "@/components/app-header";
 import { GettingStartedContent } from "@/components/getting-started-content";
-import Link from "next/link";
 
 export default function Home() {
   return (
