@@ -5,7 +5,6 @@
   "title": "Card Project",
   "description": "Project card with brand logo, time indicator, and Info components using Blog styles for title/subtitle",
   "meta": {
-    "category": "primitive",
-    "previewClassName": "bg-white dark:bg-neutral-950"
+    "category": "primitive"
   }
 }

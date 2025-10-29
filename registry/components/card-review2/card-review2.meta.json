@@ -5,7 +5,6 @@
   "title": "Card Review2",
   "description": "Magazine-style review card with image, star rating, content excerpt, and comment/view/share metrics",
   "meta": {
-    "category": "primitive",
-    "previewClassName": "bg-white dark:bg-neutral-950"
+    "category": "primitive"
   }
 }

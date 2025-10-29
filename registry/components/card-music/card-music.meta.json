@@ -5,7 +5,6 @@
   "title": "Card Music",
   "description": "Music card with rounded album artwork and Info components displaying artist/title/description using N04 styles",
   "meta": {
-    "category": "primitive",
-    "previewClassName": "bg-white dark:bg-neutral-950"
+    "category": "primitive"
   }
 }

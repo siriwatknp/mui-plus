@@ -5,7 +5,6 @@
   "title": "Card News",
   "description": "News card with image, Info components using N01 styles, and 'Find Out More' button with hover scale effect",
   "meta": {
-    "category": "primitive",
-    "previewClassName": "bg-white dark:bg-neutral-950"
+    "category": "primitive"
   }
 }

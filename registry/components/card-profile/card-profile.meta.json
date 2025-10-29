@@ -5,7 +5,6 @@
   "title": "Card Profile",
   "description": "Profile card with centered avatar, name/location info, and followers/following stats displayed in divided columns",
   "meta": {
-    "category": "primitive",
-    "previewClassName": "bg-white dark:bg-neutral-950"
+    "category": "primitive"
   }
 }

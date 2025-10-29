@@ -5,7 +5,6 @@
   "title": "Card Kanban",
   "description": "Compact horizontal card with avatar, user name, location info, and progress slider showing completion status",
   "meta": {
-    "category": "primitive",
-    "previewClassName": "bg-white dark:bg-neutral-950"
+    "category": "primitive"
   }
 }

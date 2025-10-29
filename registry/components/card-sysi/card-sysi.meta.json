@@ -5,7 +5,6 @@
   "title": "Card Sysi",
   "description": "Program enrollment card with Thai content, Info components, and dual 'Learn more' / 'Apply now' buttons",
   "meta": {
-    "category": "primitive",
-    "previewClassName": "bg-white dark:bg-neutral-950"
+    "category": "primitive"
   }
 }
