@@ -1,0 +1,10 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-blog",
+  "type": "registry:item",
+  "title": "Card Blog",
+  "description": "Blog card with gradient overlay image, info section with custom typography, and call-to-action button",
+  "meta": {
+    "category": "primitive"
+  }
+}
