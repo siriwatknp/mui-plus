@@ -67,7 +67,7 @@ const ComponentPreviewContent = React.memo(
               </div>
             ),
             ssr: false,
-          }
+          },
         );
       } catch {
         return function ErrorFallback() {
@@ -78,7 +78,7 @@ const ComponentPreviewContent = React.memo(
           );
         };
       }
-    }, [item, needsIframe]);
+    }, [item.path, needsIframe]);
 
     if (needsIframe) {
       return (
@@ -112,7 +112,7 @@ const ComponentPreviewContent = React.memo(
         <DynamicComponent />
       </div>
     );
-  }
+  },
 );
 
 ComponentPreviewContent.displayName = "ComponentPreviewContent";
@@ -145,7 +145,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(-1), 2000);
     },
-    []
+    [],
   );
 
   const handleCopyCLI = async () => {
@@ -178,7 +178,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
       } catch (error) {
         console.error("Failed to load syntax highlighter:", error);
         // Set a fallback to prevent infinite loading
-        setSyntaxHighlighter(() => null);
+        setSyntaxHighlighter(null);
       }
     }
   };
@@ -285,7 +285,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
       needsIframe,
       SyntaxHighlighter,
       systemMode,
-    ]
+    ],
   );
 
   return (
@@ -356,7 +356,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
                   onClick={() =>
                     handleCopy(
                       displayFiles[activeFileIndex].content,
-                      activeFileIndex
+                      activeFileIndex,
                     )
                   }
                   className="h-6 px-2"
@@ -372,7 +372,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
             {renderFileContent(
               displayFiles[activeFileIndex],
               activeFileIndex,
-              false
+              false,
             )}
           </>
         ) : (
