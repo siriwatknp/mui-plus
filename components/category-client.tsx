@@ -67,7 +67,7 @@ const ComponentPreviewContent = React.memo(
               </div>
             ),
             ssr: false,
-          },
+          }
         );
       } catch {
         return function ErrorFallback() {
@@ -82,7 +82,11 @@ const ComponentPreviewContent = React.memo(
 
     if (needsIframe) {
       return (
-        <div className="w-full h-full relative">
+        <div
+          className={`w-full h-full relative ${
+            item.meta.previewClassName || ""
+          }`}
+        >
           <iframe
             src={`/preview/${item.name}`}
             className="aspect-video border-none min-h-[80vh] max-w-full [color-scheme:auto]"
@@ -101,12 +105,14 @@ const ComponentPreviewContent = React.memo(
 
     return (
       <div
-        className={`w-full h-full flex items-center justify-center p-4 overflow-hidden ${item.meta.previewClassName || ""}`}
+        className={`w-full h-full flex items-center justify-center p-4 overflow-hidden ${
+          item.meta.previewClassName || ""
+        }`}
       >
         <DynamicComponent />
       </div>
     );
-  },
+  }
 );
 
 ComponentPreviewContent.displayName = "ComponentPreviewContent";
@@ -139,7 +145,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(-1), 2000);
     },
-    [],
+    []
   );
 
   const handleCopyCLI = async () => {
@@ -279,7 +285,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
       needsIframe,
       SyntaxHighlighter,
       systemMode,
-    ],
+    ]
   );
 
   return (
@@ -350,7 +356,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
                   onClick={() =>
                     handleCopy(
                       displayFiles[activeFileIndex].content,
-                      activeFileIndex,
+                      activeFileIndex
                     )
                   }
                   className="h-6 px-2"
@@ -366,7 +372,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
             {renderFileContent(
               displayFiles[activeFileIndex],
               activeFileIndex,
-              false,
+              false
             )}
           </>
         ) : (

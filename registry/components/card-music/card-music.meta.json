@@ -1,9 +1,9 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "card-action-02",
+  "name": "card-music",
   "type": "registry:item",
-  "title": "Card Action 02",
-  "description": "Card with branded icon, large heading, description text, and floating circular add button with customizable props",
+  "title": "Card Music",
+  "description": "Music card with rounded album artwork and Info components displaying artist/title/description using N04 styles",
   "meta": {
     "category": "primitive",
     "previewClassName": "bg-white dark:bg-neutral-950"

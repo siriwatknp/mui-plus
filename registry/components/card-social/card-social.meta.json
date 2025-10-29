@@ -1,9 +1,9 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "card-action-02",
+  "name": "card-social",
   "type": "registry:item",
-  "title": "Card Action 02",
-  "description": "Card with branded icon, large heading, description text, and floating circular add button with customizable props",
+  "title": "Card Social",
+  "description": "Social connection card with avatar, user name, mutual friends count, and follow button",
   "meta": {
     "category": "primitive",
     "previewClassName": "bg-white dark:bg-neutral-950"

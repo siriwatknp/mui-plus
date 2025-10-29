@@ -1,9 +1,11 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-preview-01",
   "type": "registry:item",
-  "title": "Preview Card",
-  "description": "A preview card component that displays content popup on hover using Base UI PreviewCard with Material UI styling",
+  "title": "Card Preview 01",
+  "description": "Preview card using Base UI PreviewCard with hover popup displaying content preview and Material UI styling",
   "meta": {
-    "category": "primitive"
+    "category": "primitive",
+    "previewClassName": "bg-white dark:bg-neutral-950"
   }
 }

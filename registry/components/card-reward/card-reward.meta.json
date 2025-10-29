@@ -1,9 +1,9 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "card-action-02",
+  "name": "card-reward",
   "type": "registry:item",
-  "title": "Card Action 02",
-  "description": "Card with branded icon, large heading, description text, and floating circular add button with customizable props",
+  "title": "Card Reward",
+  "description": "Purple gradient reward card with trophy image, contest title, date range, and 'Enter Now' button",
   "meta": {
     "category": "primitive",
     "previewClassName": "bg-white dark:bg-neutral-950"

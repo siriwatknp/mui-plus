@@ -1,9 +1,9 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "card-action-02",
+  "name": "card-review",
   "type": "registry:item",
-  "title": "Card Action 02",
-  "description": "Card with branded icon, large heading, description text, and floating circular add button with customizable props",
+  "title": "Card Review",
+  "description": "Review card with image, star rating, location info, and avatar group showing reviewers",
   "meta": {
     "category": "primitive",
     "previewClassName": "bg-white dark:bg-neutral-950"

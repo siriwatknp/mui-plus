@@ -1,9 +1,9 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "card-action-02",
+  "name": "card-sysi",
   "type": "registry:item",
-  "title": "Card Action 02",
-  "description": "Card with branded icon, large heading, description text, and floating circular add button with customizable props",
+  "title": "Card Sysi",
+  "description": "Program enrollment card with Thai content, Info components, and dual 'Learn more' / 'Apply now' buttons",
   "meta": {
     "category": "primitive",
     "previewClassName": "bg-white dark:bg-neutral-950"
