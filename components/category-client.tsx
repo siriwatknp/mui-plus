@@ -67,7 +67,7 @@ const ComponentPreviewContent = React.memo(
               </div>
             ),
             ssr: false,
-          },
+          }
         );
       } catch {
         return function ErrorFallback() {
@@ -78,11 +78,15 @@ const ComponentPreviewContent = React.memo(
           );
         };
       }
-    }, [item, needsIframe]);
+    }, [item.path, needsIframe]);
 
     if (needsIframe) {
       return (
-        <div className="w-full h-full relative">
+        <div
+          className={`w-full h-full relative ${
+            item.meta.previewClassName || ""
+          }`}
+        >
           <iframe
             src={`/preview/${item.name}`}
             className="aspect-video border-none min-h-[80vh] max-w-full [color-scheme:auto]"
@@ -101,12 +105,14 @@ const ComponentPreviewContent = React.memo(
 
     return (
       <div
-        className={`w-full h-full flex items-center justify-center p-4 overflow-hidden ${item.meta.previewClassName || ""}`}
+        className={`w-full h-full flex items-center justify-center p-4 overflow-hidden ${
+          item.meta.previewClassName || ""
+        }`}
       >
         <DynamicComponent />
       </div>
     );
-  },
+  }
 );
 
 ComponentPreviewContent.displayName = "ComponentPreviewContent";
@@ -139,7 +145,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(-1), 2000);
     },
-    [],
+    []
   );
 
   const handleCopyCLI = async () => {
@@ -172,7 +178,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
       } catch (error) {
         console.error("Failed to load syntax highlighter:", error);
         // Set a fallback to prevent infinite loading
-        setSyntaxHighlighter(() => null);
+        setSyntaxHighlighter(null);
       }
     }
   };
@@ -279,7 +285,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
       needsIframe,
       SyntaxHighlighter,
       systemMode,
-    ],
+    ]
   );
 
   return (
@@ -350,7 +356,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
                   onClick={() =>
                     handleCopy(
                       displayFiles[activeFileIndex].content,
-                      activeFileIndex,
+                      activeFileIndex
                     )
                   }
                   className="h-6 px-2"
@@ -366,7 +372,7 @@ function ComponentPreview({ item }: { item: RegistryItem }) {
             {renderFileContent(
               displayFiles[activeFileIndex],
               activeFileIndex,
-              false,
+              false
             )}
           </>
         ) : (
@@ -409,6 +415,56 @@ function MetaOnlyItem({ item }: { item: RegistryItem }) {
           <OpenInV0Button name={item.name} className="h-8" />
         )}
       </div>
+    </div>
+  );
+}
+
+function LazyComponentPreview({ item }: { item: RegistryItem }) {
+  const [isVisible, setIsVisible] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin: "200px",
+      }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  const loadingSkeleton = (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <div className="animate-pulse bg-muted rounded h-[36px] w-[128px]"></div>
+        <div className="flex gap-2">
+          <div className="animate-pulse bg-muted rounded h-[32px] w-[114px]"></div>
+          <div className="animate-pulse bg-muted rounded h-[32px] w-[92px]"></div>
+        </div>
+      </div>
+      <div className="animate-pulse bg-muted rounded-lg h-[306px] w-full"></div>
+    </div>
+  );
+
+  return (
+    <div ref={ref} className="min-h-[360px]">
+      {isVisible ? (
+        <Suspense fallback={loadingSkeleton}>
+          <ComponentPreview item={item} />
+        </Suspense>
+      ) : (
+        loadingSkeleton
+      )}
     </div>
   );
 }
@@ -478,17 +534,7 @@ export default function CategoryClient({
               </div>
 
               {/* Live Component Preview */}
-              <div className="min-h-[360px]">
-                <Suspense
-                  fallback={
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="animate-pulse bg-muted rounded w-16 h-16"></div>
-                    </div>
-                  }
-                >
-                  <ComponentPreview item={item} />
-                </Suspense>
-              </div>
+              <LazyComponentPreview item={item} />
             </div>
           ))}
         </div>
