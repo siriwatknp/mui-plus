@@ -17,7 +17,7 @@ export default function TabsInsideTriangle() {
         [`& .${tabClasses.root}`]: {
           height: 80,
           width: 150,
-          color: (theme.vars || theme).palette.common.white,
+          color: (theme.vars || theme).palette.background.paper,
           opacity: 0.7,
           "&:before": {
             position: "absolute",
@@ -36,7 +36,7 @@ export default function TabsInsideTriangle() {
           },
           [`&.${tabClasses.selected}`]: {
             opacity: 0.99,
-            color: (theme.vars || theme).palette.common.white,
+            color: (theme.vars || theme).palette.background.paper,
           },
         },
       })}

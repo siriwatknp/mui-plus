@@ -63,6 +63,9 @@ export default function TabsSerrated() {
                 transform: "skewY(-6deg)",
                 transformOrigin: "100%",
                 zIndex: -1,
+                ...theme.applyStyles("dark", {
+                  bgcolor: (theme.vars || theme).palette.grey[800],
+                }),
               },
               "&::after": {
                 left: "unset",

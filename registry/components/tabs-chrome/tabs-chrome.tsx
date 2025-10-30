@@ -65,10 +65,9 @@ export default function TabsChrome() {
           },
           [`&.${tabClasses.selected}`]: {
             bgcolor: (theme.vars || theme).palette.grey[900],
-            color: (theme.vars || theme).palette.common.white,
+            color: (theme.vars || theme).palette.background.paper,
             ...theme.applyStyles("dark", {
               bgcolor: (theme.vars || theme).palette.grey[100],
-              color: (theme.vars || theme).palette.text.primary,
             }),
           },
           [`&.${tabClasses.selected} + .${tabClasses.root}`]: {

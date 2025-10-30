@@ -60,7 +60,7 @@ export default function TabsContained() {
           },
           [`&.${tabClasses.selected}`]: {
             bgcolor: (theme.vars || theme).palette.primary.main,
-            color: (theme.vars || theme).palette.common.white,
+            color: (theme.vars || theme).palette.background.paper,
           },
           [`&.${tabClasses.selected} + .${tabClasses.root}`]: {
             zIndex: 1,

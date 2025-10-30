@@ -13,7 +13,10 @@ export interface NumberField01Props extends NumberField.Root.Props {
   label?: string;
 }
 
-export function NumberField01({ label, ...props }: NumberField01Props) {
+export default function NumberField01({
+  label = "Amount",
+  ...props
+}: NumberField01Props) {
   const id = React.useId();
   return (
     <NumberField.Root defaultValue={100} {...props} render={<FormControl />}>
